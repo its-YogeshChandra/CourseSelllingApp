@@ -1,27 +1,20 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt"
-
-
-
-const random = "hossana123@";
-
-const rerandom = async () => {
-  return await bcrypt.hash(random, 8);
-};
-
-const compare = async () => {
-  const hashed = await rerandom();
-  const result = await bcrypt.compare(random, hashed);
-  console.log("Password match?", result);
-};
-
-compare();
-
+import jwt from "jsonwebtoken";
+import { ZodStringFormat } from "zod/v4";
 
 
 const userSchema = new Schema(
   {
     username: {
+      type: String,
+      trim: true
+    },
+    firstName: {
+      type: String,
+      trim: true
+    },
+    lastName: {
       type: String,
       trim: true
     },
@@ -45,14 +38,13 @@ const userSchema = new Schema(
 
 // for hashing password 
 userSchema.pre("save", async function(next){
-  !this.isModified("password")? next(): 
-    this.password = await bcrypt.hash("password", 8)
+  !this.isModified("password") ? next() :
+   this.password =  await bcrypt.hash(this.password, 8);
+  next()
 } )
 
 // for password validation 
 userSchema.methods.isPasswordCorrect = async function(password) {
-  console.log(password)
-  console.log(this.password)
   return await bcrypt.compare(password, this.password)
 };
 

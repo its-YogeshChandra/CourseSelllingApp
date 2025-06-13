@@ -1,12 +1,12 @@
 //making a class constructor for all the methods
 //bringing enpoints urls from .env
-//
+
 import axios from "axios";
 import { conf } from "../conf.js";
 
 const { signupUrl, loginUrl, googleAuth } = conf;
 export class AuthServices {
-  constructor(data = "", token = " ") {
+  constructor(data = "", token = "") {
     this.data = data;
     this.token = token;
   }
@@ -57,3 +57,4 @@ export class AuthServices {
 const authService = new AuthServices();
 
 export default authService;
+

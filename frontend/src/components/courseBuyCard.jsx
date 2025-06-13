@@ -1,0 +1,75 @@
+import { Play, Clock, Users, Calendar, BarChart3 } from "lucide-react";
+
+export default function CourseBuyCard() {
+  return (
+    <div className="w-full max-w-sm mx-auto md:max-w-none max-[640px]:max-w-none sm:max-w-none lg:max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white rounded-lg border border-gray-200 ">
+      {/* Thumbnail Section */}
+      <div className="relative group cursor-pointer">
+        <img
+          src="/placeholder.svg?height=200&width=400"
+          alt="CSS Flexbox Course Thumbnail"
+          className="w-full h-48 object-cover"
+        />
+        {/* Play Button Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center group-hover:bg-opacity-30 transition-all duration-300">
+          <div className="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-4 transform group-hover:scale-110 transition-all duration-300 shadow-lg">
+            <Play className="w-8 h-8 text-gray-800 ml-1" fill="currentColor" />
+          </div>
+        </div>
+        {/* Course Category Badge */}
+        <span className="absolute top-3 left-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
+          Web Design
+        </span>
+      </div>
+
+      <div className="p-6">
+        {/* Course Title */}
+        <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors duration-200">
+          CSS Flexbox Part-10
+        </h3>
+
+        {/* Subtitle */}
+        <p className="text-sm text-gray-600 mb-4">
+          Bangla Tutorial by Tech Vander
+        </p>
+
+        {/* Price Section */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl font-bold text-gray-900">$100.00</span>
+          </div>
+        </div>
+
+        {/* Add to Cart Button */}
+        <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02] shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+          Add to Cart
+        </button>
+
+        {/* Meta Information */}
+        <div className="mt-6 pt-4 border-t border-gray-100">
+          <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+            {/* Difficulty & Enrolled */}
+            <div className="flex items-center space-x-2">
+              <BarChart3 className="w-4 h-4 text-orange-500" />
+              <span>Intermediate</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Users className="w-4 h-4 text-green-500" />
+              <span>1 student</span>
+            </div>
+
+            {/* Duration & Last Updated */}
+            <div className="flex items-center space-x-2">
+              <Clock className="w-4 h-4 text-blue-500" />
+              <span>50 minutes</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Calendar className="w-4 h-4 text-purple-500" />
+              <span className="text-xs">May 3, 2025</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

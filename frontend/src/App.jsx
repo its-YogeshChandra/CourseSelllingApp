@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 
 function App() {
   return (
-    <div className="w-screen h-screen">
+    <div className="w-screen h-full">
       <Outlet />
     </div>
   );

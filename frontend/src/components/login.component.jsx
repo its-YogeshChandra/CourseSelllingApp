@@ -2,60 +2,101 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import logpage from "../assets/askin.png";
 import GoogleLogin from "./googleSignin.jsx";
+import { Link } from "react-router";
+import authService from "../services/auth.js";
 
 function Login() {
   const {
     register,
     handleSubmit,
-    formState: { error },
+    formState: { errors },
   } = useForm();
-  const Login = (data) => {};
+
+  const Login = (data) => {
+      
+  };
 
   return (
-    <div className="w-screen h-screen bg-[#19171E] flex flex-wrap justify-center">
-      <div className="w-[80%] h-[80%] bg-[#1e1d2a] my-auto flex flex-wrap flex-row">
-        {/*input section */}
-        <div className="w-[40%] h-auto min-h-20 text-white px-10 font-inter ">
-          <p className="text-3xl mt-5 font-inter font-bold ">Log In</p>
-          <form
-            onSubmit={handleSubmit(Login)}
-            className="w-full h-auto max-h-full mt-7 flex flex-wrap flex-col gap-y-5 text-white"
-          >
-            <input
-              type="text"
-              placeholder="Username"
-              {...register("username/email", {
-                required: true,
-              })}
-              className="w-full h-auto border-2 border-[#fd3556] pl-2 py-1 rounded-3xl"
-            />
+    <div className="min-h-screen w-full bg-[#19171E] flex items-center justify-center p-4">
+      <div className="w-full max-w-6xl bg-[#1e1d2a] rounded-lg overflow-hidden shadow-2xl">
+        <div className="flex flex-col lg:flex-row min-h-[600px]">
+          {/* Input section */}
+          <div className="w-full lg:w-2/5 p-6 sm:p-8 lg:p-10 text-white font-inter flex flex-col justify-center">
+            <div className="max-w-md mx-auto w-full">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-8 text-center lg:text-left">
+                Log In
+              </h1>
 
-            <input
-              type="password"
-              placeholder="Password"
-              {...register("firstPassword", {
-                required: true,
-              })}
-              className="w-full h-auto border-2 border-[#fd3556] pl-2 py-1 rounded-3xl"
-            />
+              <form onSubmit={handleSubmit(Login)} className="space-y-6">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Username or Email"
+                    {...register("username/email", {
+                      required: "Username or email is required",
+                    })}
+                    className="w-full h-12 border-2 border-[#fd3556] bg-transparent text-white placeholder-gray-300 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:border-transparent transition-all"
+                  />
+                  {errors["username/email"] && (
+                    <p className="text-red-400 text-sm mt-1 px-4">
+                      {errors["username/email"].message}
+                    </p>
+                  )}
+                </div>
 
-            <button className="w-full h-auto text-[18px] py-1 rounded-3xl font-semibold bg-[#fd3556]">
-              Log In
-            </button>
-          </form>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    {...register("firstPassword", {
+                      required: "Password is required",
+                    })}
+                    className="w-full h-12 border-2 border-[#fd3556] bg-transparent text-white placeholder-gray-300 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:border-transparent transition-all"
+                  />
+                  {errors.firstPassword && (
+                    <p className="text-red-400 text-sm mt-1 px-4">
+                      {errors.firstPassword.message}
+                    </p>
+                  )}
+                </div>
 
-          <p className="mt-10 text-[18px] flex justify-center ">
-            {" "}
-            Or Sign In with{" "}
-          </p>
-          <div className="mt-5">
-            <GoogleLogin />
+                <button
+                  type="submit"
+                  className="w-full h-12 text-lg font-semibold bg-[#fd3556] text-white rounded-full hover:bg-[#e52e4a] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:ring-offset-2 focus:ring-offset-[#1e1d2a]"
+                >
+                  Log In
+                </button>
+              </form>
+
+              <div className="mt-8">
+                <p className="text-center text-lg mb-4">Or Sign In with</p>
+                <div className="flex justify-center">
+                  <GoogleLogin />
+                </div>
+              </div>
+
+              <div className="mt-8 text-center">
+                <p className="inline text-gray-300">Don't have an account? </p>
+                <Link
+                  to="/app/auth/signup"
+                  className="text-[#fd3556] hover:text-[#e52e4a] transition-colors font-medium"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* illustration section */}
-        <div className="w-[60%] h-full flex justify-center py-5 ">
-          <img src={logpage} alt="" />
+          {/* Illustration section */}
+          <div className="w-full lg:w-3/5 bg-gradient-to-br from-[#2a2831] to-[#1e1d2a] flex items-center justify-center p-6 lg:p-8">
+            <div className="max-w-lg w-full">
+              <img
+                src={logpage}
+                alt="Login illustration"
+                className="w-full h-auto object-contain"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

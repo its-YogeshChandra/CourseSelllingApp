@@ -30,9 +30,14 @@ export default function GoogleLogin() {
     };
   }, []);
 
-  const handleCredentialResponse = (response) => {
-    console.log("JWT ID Token:", response.credentials);
+  const handleCredentialResponse = async (response) => {
+    console.log("JWT ID Token:", );
     // You can decode it or send it to your backend
+    await axios.post(api / v1 / users / GoogleLogin, 
+      {
+        data: response
+      }
+    )
   };
 
   return <div id="google-button"></div>;
