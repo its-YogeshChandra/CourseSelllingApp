@@ -15,7 +15,7 @@ export default function CourseSectionCard() {
           </div>
         </div>
         <div className="absolute bottom-2 left-4 flex gap-2">
-          <span className="bg-[#151522] text-white px-2 py-1 rounded-full text-sm">
+          <span className="bg-[#151522] text-white px-2 py-1 rounded-full text-sm ">
             Business & Finance
           </span>
           <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm">

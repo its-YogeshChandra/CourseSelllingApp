@@ -91,30 +91,42 @@ export default function Navbar() {
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
-    document.body.style.overflow = sidebarOpen ? "hidden" : "auto";
+    if (sidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [sidebarOpen]);
 
   return (
-    <nav className=" max-w-[1200px] bg-white shadow-md relative z-50 overflow-x-hidden font-inter">
+    <nav className="w-full max-w-full bg-white shadow-md relative z-50 overflow-hidden font-inter">
       {/* Top Navbar */}
-      <div className="flex justify-between items-center px-4 py-3 lg:px-10">
+      <div className="flex justify-between items-center px-4 py-3 lg:px-10 w-full">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
           <p className="text-xl lg:text-2xl font-semibold">Luminate</p>
         </div>
 
         {/* Desktop Nav Links */}
-        <div className="hidden lg:flex gap-8 text-base font-medium">
+        <div className="hidden lg:flex gap-8 text-base font-medium flex-shrink-0">
           {navLinks.map((link, idx) => (
-            <button key={idx} className="hover:text-purple-600 transition">
+            <button
+              key={idx}
+              className="hover:text-purple-600 transition whitespace-nowrap"
+            >
               {link}
             </button>
           ))}
         </div>
 
         {/* Right Icons */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0">
           <i className="bx bx-search text-2xl"></i>
           <i className="bx bx-cart text-2xl"></i>
           <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full" />
@@ -133,13 +145,14 @@ export default function Navbar() {
             : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setSidebarOpen(false)}
-      ></div>
+      />
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixed the width issue */}
       <div
-        className={`fixed top-0 right-0 h-full bg-white w-[90vw] max-w-[400px] z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full bg-white w-80 sm:w-96 z-50 shadow-lg transform transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ maxWidth: "90%" }} // Fallback for very small screens
       >
         <NavSidebar clickHandler={setSidebarOpen} />
       </div>

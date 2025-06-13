@@ -9,6 +9,7 @@ import CourseDisplay from "../pages/coursedisplay.jsx";
 import CoursePlayer from "../pages/courseplayer.jsx";
 import AbouUs from "../pages/about.jsx";
 import CourseCategory from "../pages/courseCategory.jsx";
+import Cart from "../pages/cart.jsx";
 
 const Routing = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ const Routing = createBrowserRouter([
               {
                 path: "course_category",
                 Component: CourseCategory  
+              },
+              {
+                path: "cart",
+                Component:Cart
               }
             ],
           },
