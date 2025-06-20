@@ -1,6 +1,11 @@
-import { useEffect } from "react";
+ import { useState, useEffect } from "react";
+import authService from "../services/auth.js";
+import { useNavigate } from "react-router";
 
 export default function GoogleLogin() {
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Load the Google script
     const script = document.createElement("script");
@@ -31,13 +36,20 @@ export default function GoogleLogin() {
   }, []);
 
   const handleCredentialResponse = async (response) => {
-    console.log("JWT ID Token:", );
+ 
     // You can decode it or send it to your backend
-    await axios.post(api / v1 / users / GoogleLogin, 
-      {
-        data: response
+    try {
+      const val = await authService.googleAuth(response.credential);
+      console.log(val)
+      if (val) {
+        navigate({
+          pathname: "/app/home",
+        });
       }
-    )
+    } catch (error) {
+      throw error;
+    } 
+    
   };
 
   return <div id="google-button"></div>;

@@ -1,20 +1,34 @@
 import mongoose, { Schema } from "mongoose";
 
-const courseSchema = new Schema({
+const courseSchema = new Schema(
+  {
     courseName: {
-        type:String
+      type: String,
+      require: true,
     },
-    instructor: [{
+    instructor: [
+      {
+        // type: Schema.Types.ObjectId,
+        // ref: "Instructor",
+        type: String,
+        require: true,
+      },
+    ],
+    students: [
+      {
         type: Schema.Types.ObjectId,
-        ref: "Instructor"
-    }],
-    students: [{
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    }],
-    courseData: {
-        type: String
-    }  
-})
+        ref: "User",
+      },
+    ],
+    category: {
+      type: String,
+      require: true,
+    },
+    thumbnail: {
+      type: String,
+    },
+  },
+  { timestamps: true }
+);
 
-export const Course = mongoose.model("Course", courseSchema)
+export const Course = mongoose.model("Course", courseSchema);

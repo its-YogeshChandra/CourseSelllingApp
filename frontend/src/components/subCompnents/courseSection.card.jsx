@@ -2,7 +2,7 @@ import React from "react";
 
 export default function CourseSectionCard() {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden font-inter">
       <div className="relative h-48 bg-gradient-to-r from-red-900 to-red-700">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">

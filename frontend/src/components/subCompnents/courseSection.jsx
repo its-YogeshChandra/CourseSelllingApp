@@ -10,7 +10,7 @@ export default function CourseSection() {
   const cardArr = [1, 2, 3, 4, 5, 6];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 mt-4">
+    <div className="max-w-7xl mx-auto px-4 py-8 mt-4 font-inter">
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">

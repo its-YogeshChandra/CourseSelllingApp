@@ -3,6 +3,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
 import { OAuth2Client } from "google-auth-library";
+import { json } from "zod/v4";
 
 //for registering user
 const signupUser = asyncHandler(async (req, res) => {
@@ -22,8 +23,10 @@ const signupUser = asyncHandler(async (req, res) => {
     password: password,
   });
 
+
+
   const Dbuser = await User.findById(createUser._id).select(
-    "-password -refreshToken"
+    "-refreshToken"
   );
 
   if (!Dbuser) {
@@ -32,14 +35,15 @@ const signupUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, Dbuser, "User successfully registered"));
+    .json(new ApiResponse(200, "User successfully registered", Dbuser));
 });
+
 
 // login user
 const loginUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
-
-  if (!(username && email)) {
+  const { username, email, password } = req.body.data;
+  
+  if (!(username || email)) {
     throw new ApiError(400, "Email or username is missing");
   }
 
@@ -62,7 +66,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const loggedUser = await User.findByIdAndUpdate(Dbuser._id, {
     refreshToken,
-  }).select("-password -refreshtoken");
+  }).select("-password -refreshToken");
 
   const options = {
     httpOnly: true,
@@ -71,8 +75,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .cookie(accessToken, options)
-    .cookie(accessToken, options)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(new ApiResponse(200, "User successfully logged In", loggedUser));
 });
 
@@ -85,25 +89,51 @@ const googleLogin = asyncHandler(async (req, res) => {
   //make a query in database
   //create access and refresh token
   //return user
+
   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-  const { credential } = req.body;
+  const Token = req.body.data;
 
   const ticket = await client.verifyIdToken({
-    idToken: credential,
+    idToken: Token,
     audience: process.env.GOOGLE_CLIENT_ID,
   });
+
 
   const { email, given_name } = ticket.payload;
 
   const alreadyDbuser = await User.findOne({
-    $or: [{ email }, { given_name }],
+    email,
   });
 
+  //if user already exists....
   if (alreadyDbuser) {
-    throw new ApiResponse(200, "User already exists", alreadyDbuser);
+    const option = {
+      httpOnly: true,
+      secured: true,
+    };
+
+    const access_Token = alreadyDbuser.generateAccessToken;
+    const refresh_Token = alreadyDbuser.generateRefreshToken;
+
+    alreadyDbuser.refreshToken = refresh_Token;
+    await alreadyDbuser.save({ validateBeforeSave: false });
+
+    const googleLoggedUser = await User.findById(alreadyDbuser._id).select(
+      "-password -refreshToken"
+    );
+    
+
+    res
+      .status(200)
+      .cookie("accessToken", access_Token, option)
+      .cookie("refreshToken", refresh_Token, option)
+      .json( new ApiResponse (200,"User already exists", googleLoggedUser));
+  
+    return
   }
 
-  const newDbuser = User.create({
+  //if user doesn't exists....
+  const newDbuser = await User.create({
     username: given_name,
     email: email,
   });
@@ -118,7 +148,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   newDbuser.refreshToken = refresh_Token;
   await newDbuser.save({ validateBeforeSave: false });
 
-  const googleLoggedUser = User.findById(newDbuser._id).select(
+  const googleLoggedUser = await User.findById(newDbuser._id).select(
     "-password -refreshToken"
   );
   if (googleLoggedUser) {
@@ -136,7 +166,8 @@ const googleLogin = asyncHandler(async (req, res) => {
           "user successfully created and loggedIn",
           googleLoggedUser
         )
-      );
+    );
+    return
   }
 });
 

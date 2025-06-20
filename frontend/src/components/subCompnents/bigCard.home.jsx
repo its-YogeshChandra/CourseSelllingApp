@@ -19,7 +19,7 @@ export default function BigCardHome() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <div className="relative min-h-screen w-full overflow-hidden font-inter">
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -64,11 +64,11 @@ export default function BigCardHome() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
-              className="flex-1 border-0 bg-transparent px-6 py-4 text-lg text-white placeholder:text-white/70 focus:ring-0 focus-visible:ring-0"
+              className="flex-1 border-0 bg-transparent px-6 py-6 text-lg text-white placeholder:text-white/70 focus:ring-0 focus-visible:ring-0"
             />
             <Button
               onClick={handleSearch}
-              className="bg-red-500 px-8 py-4 text-lg font-medium text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
+              className="bg-red-500 px-8 py-4 text-lg h-full font-medium text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
             >
               <Search className="mr-2 h-5 w-5" />
               Search

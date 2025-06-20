@@ -11,13 +11,13 @@ import AbouUs from "../pages/about.jsx";
 import CourseCategory from "../pages/courseCategory.jsx";
 import Cart from "../pages/cart.jsx";
 import UserProfile from "../components/userprofile.jsx";
-
+import InstructorDashboard from "../pages/instructor.jsx"; 
+  
 const Routing = createBrowserRouter([
   {
     path: "/",
     Component: App,
     children: [
-    
       {
         path: "app",
         Component: Layout,
@@ -33,7 +33,9 @@ const Routing = createBrowserRouter([
                 path: "login",
                 Component: LoginPage,
               },
-            ],
+            ]
+          },
+          {
             path: "",
             Component: BaseLayout,
             children: [
@@ -51,22 +53,31 @@ const Routing = createBrowserRouter([
               },
               {
                 path: "about_us",
-                Component:AbouUs
+                Component: AbouUs
               },
               {
                 path: "course_category",
-                Component: CourseCategory  
+                Component: CourseCategory
               },
               {
                 path: "cart",
-                Component:Cart
+                Component: Cart
               },
               {
                 path: "userprofile",
                 Component: UserProfile
-              }
+              }, 
+
+
             ],
           },
+          {
+            path: "instructor",
+            children: [{
+              path: "dashboard",
+              Component: InstructorDashboard  
+           }]  
+          }
         ],
       },
     ],

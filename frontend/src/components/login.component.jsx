@@ -1,19 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import logpage from "../assets/askin.png";
 import GoogleLogin from "./googleSignin.jsx";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import authService from "../services/auth.js";
+import validator from "validator";
 
 function Login() {
+  const [logsendData, setLogSendData] = useState(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const Login = (data) => {
-      
+  const navigate = useNavigate();
+  {
+    /* Login logic , navigation, user data parsing */
+  }
+
+  const Login = async (data) => {
+    console.log(data.usernameORemail);
+
+    const isEmail = validator.isEmail(data.usernameORemail);
+    if (isEmail) {
+      setLogSendData({
+        username: null,
+        email: data.usernameORemail,
+        password: data.password,
+      });
+    } else {
+      setLogSendData({
+        username: data.usernameORemail,
+        email: null,
+        password: data.password,
+      });
+    }
+
+    const loginVal = await authService.login(logsendData);
+    cEonsole.log(loginVal);
+    if (loginVal) {
+      navigate({
+        pathname: "/app/home",
+      });
+    }
   };
 
   return (
@@ -32,7 +62,7 @@ function Login() {
                   <input
                     type="text"
                     placeholder="Username or Email"
-                    {...register("username/email", {
+                    {...register("usernameORemail", {
                       required: "Username or email is required",
                     })}
                     className="w-full h-12 border-2 border-[#fd3556] bg-transparent text-white placeholder-gray-300 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:border-transparent transition-all"
@@ -48,7 +78,7 @@ function Login() {
                   <input
                     type="password"
                     placeholder="Password"
-                    {...register("firstPassword", {
+                    {...register("password", {
                       required: "Password is required",
                     })}
                     className="w-full h-12 border-2 border-[#fd3556] bg-transparent text-white placeholder-gray-300 px-4 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:border-transparent transition-all"
