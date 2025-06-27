@@ -45,7 +45,6 @@ function Signup() {
   const navigate = useNavigate();
 
   const signup = async (data) => {
-    console.log(data);
     try {
       const val = await authService.signup(data);
       if (val.success) {

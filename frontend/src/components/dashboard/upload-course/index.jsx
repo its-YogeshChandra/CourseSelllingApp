@@ -2,46 +2,51 @@
 
 import React, { useState } from "react";
 import { CourseForm } from "./course-form";
-import LessonManager from "./lesson-manager.jsx";
+import { LessonManager } from "./lesson-manager";
+import { PublishCourse } from "./publish-course.jsx";
 import { ProgressIndicator } from "./progress-indicator";
 import { toast } from "sonner";
 
 export function UploadNewCourse() {
   const [step, setStep] = useState("course");
   const [course, setCourse] = useState({
-    title: "",
-    description: "",
-    category: "",
-    lessons: [],
+    title: null,
+    description: null,
+    category: null,
+    lessons: []
   });
 
   const handleCourseSubmit = (courseData) => {
+    console.log(courseData);
     if (!courseData.title || !courseData.description || !courseData.category) {
-      toast.error("Missing Information", {
-        description: "Please fill in all required course details.",
-        
-      });
+      toast.error("course Data is missing", { description: "Missing data" });
       return;
     }
-
     setCourse((prev) => ({ ...prev, ...courseData }));
     setStep("lessons");
-    toast("Course Created", {
+    toast.success("Course Created", {
       description: "Now you can start adding lessons to your course.",
     });
   };
 
-  const handlePublishCourse = () => {
+  const handleLessonsComplete = () => {
     if (course.lessons.length === 0) {
-      toast.error("No Lessons", {
-        description: "Please add at least one lesson before publishing.",
+      toast.error("No lesson", {
+        description: "please add atleast one course",
       });
       return;
     }
-
-    toast.success("Course Published!", {
-      description: `"${course.title}" has been successfully published and is now live.`,
+    setStep("publish");
+    toast("Lessons Ready", {
+      description: "Your lessons are ready. You can now publish your course.",
     });
+  };
+
+  const handlePublishCourse = () => {
+    // toast
+    setTimeout(() => {
+      resetForm();
+    }, 2000);
   };
 
   const resetForm = () => {
@@ -52,26 +57,39 @@ export function UploadNewCourse() {
       lessons: [],
     });
     setStep("course");
-    toast("Form Reset", {
-      description: "Course form has been reset.",
-    });
+    toast;
+  };
+
+  const goBackToStep = (targetStep) => {
+    setStep(targetStep);
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <ProgressIndicator step={step} hasLessons={course.lessons.length > 0} />
 
-      {step === "course" ? (
+      {step === "course" && (
         <CourseForm
           course={course}
           onSubmit={handleCourseSubmit}
           onReset={resetForm}
         />
-      ) : (
+      )}
+
+      {step === "lessons" && (
         <LessonManager
           course={course}
           setCourse={setCourse}
-          onBackToCourse={() => setStep("course")}
+          onBackToCourse={() => goBackToStep("course")}
+          onContinueToPublish={handleLessonsComplete}
+        />
+      )}
+
+      {step === "publish" && (
+        <PublishCourse
+          course={course}
+          onBackToLessons={() => goBackToStep("lessons")}
+          onBackToCourse={() => goBackToStep("course")}
           onPublish={handlePublishCourse}
         />
       )}

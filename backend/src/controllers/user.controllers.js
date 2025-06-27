@@ -23,11 +23,7 @@ const signupUser = asyncHandler(async (req, res) => {
     password: password,
   });
 
-
-
-  const Dbuser = await User.findById(createUser._id).select(
-    "-refreshToken"
-  );
+  const Dbuser = await User.findById(createUser._id).select("-refreshToken");
 
   if (!Dbuser) {
     throw new ApiError(500, "Error occured during creating user");
@@ -38,11 +34,10 @@ const signupUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully registered", Dbuser));
 });
 
-
 // login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body.data;
-  
+
   if (!(username || email)) {
     throw new ApiError(400, "Email or username is missing");
   }
@@ -80,7 +75,6 @@ const loginUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully logged In", loggedUser));
 });
 
-
 //google Login user
 const googleLogin = asyncHandler(async (req, res) => {
   //setting up client
@@ -97,7 +91,6 @@ const googleLogin = asyncHandler(async (req, res) => {
     idToken: Token,
     audience: process.env.GOOGLE_CLIENT_ID,
   });
-
 
   const { email, given_name } = ticket.payload;
 
@@ -121,15 +114,14 @@ const googleLogin = asyncHandler(async (req, res) => {
     const googleLoggedUser = await User.findById(alreadyDbuser._id).select(
       "-password -refreshToken"
     );
-    
 
     res
       .status(200)
       .cookie("accessToken", access_Token, option)
       .cookie("refreshToken", refresh_Token, option)
-      .json( new ApiResponse (200,"User already exists", googleLoggedUser));
-  
-    return
+      .json(new ApiResponse(200, "User already exists", googleLoggedUser));
+
+    return;
   }
 
   //if user doesn't exists....
@@ -166,9 +158,35 @@ const googleLogin = asyncHandler(async (req, res) => {
           "user successfully created and loggedIn",
           googleLoggedUser
         )
-    );
-    return
+      );
+    return;
   }
 });
 
-export { signupUser, loginUser, googleLogin };
+const logoutUser = asyncHandler(async (req, res) => {
+  //get data from req.user
+  //find user with data in db
+  //clear refresh token form db
+  //clear refresh token from cookies
+  // send back response to the user
+
+  const data = req.user
+  
+  const mongoUser = User.findById(data._id)
+  if (!mongoUser) {
+    throw new ApiError(500, "Error while finding user")
+  }
+  mongoUser.refreshToken = ""
+  await mongoUser.save({ validateBeforeSave: false })
+  
+  const option = {
+    httpOnly: true,
+    secured: true
+  }
+ res.status(200).clearCookie("accessToken",option).clearCookie("refreshToken",option).json(new ApiResponse(200,"User successfully logout"))
+
+})
+
+
+
+export { signupUser, loginUser, googleLogin, logoutUser };

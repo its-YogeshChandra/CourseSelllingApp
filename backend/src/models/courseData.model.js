@@ -7,7 +7,7 @@ const LessonSchema = new Schema(
     },
     courseRef: {
       type: Schema.Types.ObjectId,
-      ref: "Course"
+      ref: "Course",
     },
     video: [
       {
@@ -21,12 +21,22 @@ const LessonSchema = new Schema(
     ],
     image: [
       {
-        type: String,
+        title: {
+          type: String,
+        },
+        url: {
+          type: String,
+        },
       },
     ],
     notes: [
       {
-        type: String,
+        title: {
+          type: String,
+        },
+        url: {
+          type: String,
+        },
       },
     ],
   },
