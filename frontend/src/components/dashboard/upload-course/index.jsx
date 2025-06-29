@@ -6,6 +6,8 @@ import { LessonManager } from "./lesson-manager";
 import { PublishCourse } from "./publish-course.jsx";
 import { ProgressIndicator } from "./progress-indicator";
 import { toast } from "sonner";
+import { funcObj } from "../../../services/indexed.db/db.js";
+
 
 export function UploadNewCourse() {
   const [step, setStep] = useState("course");
@@ -13,7 +15,7 @@ export function UploadNewCourse() {
     title: null,
     description: null,
     category: null,
-    lessons: []
+    lessons: [],
   });
 
   const handleCourseSubmit = (courseData) => {

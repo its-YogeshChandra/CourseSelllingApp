@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 
@@ -16,9 +16,13 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://localhost:8080",
-        changeOrigin: true
-      }
-    }
-  }
-
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    rollupOptions: {
+      external: ["lightningcss"],
+    },
+  },
 });

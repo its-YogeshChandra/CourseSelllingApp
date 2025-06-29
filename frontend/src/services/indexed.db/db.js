@@ -1,3 +1,5 @@
+import { resolveConfig } from "vite";
+
 const request = indexedDB.open("instructorDashboardDb", 1);
 
 request.onupgradeneeded = (event) => {
@@ -14,36 +16,73 @@ request.onupgradeneeded = (event) => {
   console.log("Object store created");
 };
 
+const funcObj = {}
 request.onsuccess = (e) => {
   const db = e.target.result;
   if (db) {
     return "Database opened successfully";
   }
 
-  if (db) {
-    //creating crud methods of db
+  //creating crud methods of db
 
-    //#1 addData
-    const addData = (data) => {
-      const tx = db.transaction("courses", "readwrite");
-      const addtoStore = tx.objectStore("users");
-      addtoStore.add(data);
-     }
-    
+  //#1 addData
+ const addData = (data) => {
+    const tx = db.transaction("courses", "readwrite");
+    const addtoStore = tx.objectStore("users");
+    addtoStore.add(data);
+    checkSucessandError(addData);
+  };
 
-    //#2 deletingData
-    const deleteData = () => {
-      const tx = db.transaction("courses", "readwrite");
-      const deletefromStore = tx.objectStore("users");
-      deletefromStore.delete(id);
-    }
-  
-    //#3 updating data 
-    
+  //#2 deletingData
+  const deleteData = (id) => {
+    const tx = db.transaction("courses", "readwrite");
+    const deletefromStore = tx.objectStore("users");
+    deletefromStore.delete(id);
+    checkSucessandError(deleteData);
+  };
 
-  }
+  //#3 updating data
+
+
+  funcObj.addData = addData;
+  funcObj.deleteData = deleteData;
 };
 
-request.onerror = (error) => {
-  return error;
+
+const checkSucessandError = (crudHandler) => {
+  return new Promise((resolve, reject) => {
+    const request = crudHandler();
+    request.onsuccess = (e) => {
+      const result = e.target.result;
+      if (result) {
+        switch (crudHandler.name) {
+          case "addData":
+            resolve("data successfully added ");
+            break;
+          case "deleteData":
+            resolve("data successfully deleted ");
+            break;
+          default:
+            break;
+        }
+      }
+    };
+    request.onerror = (e) => {
+      const error = e.target.error;
+      if (error) {
+        switch (crudHandler.name) {
+          case "addData":
+            reject("data additon unsucessfull");
+            break;
+          case "deleteData":
+            reject("data deletion unsccessfull");
+            break;
+          default:
+            break;
+        }
+      }
+    };
+  });
 };
+
+export { funcObj };
