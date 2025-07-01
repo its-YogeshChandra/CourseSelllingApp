@@ -38,7 +38,6 @@ import { useForm, Controller } from "react-hook-form";
 
 export function LessonManager({
   course,
-  setCourse,
   onBackToCourse,
   onContinueToPublish,
 }) {
@@ -60,14 +59,15 @@ export function LessonManager({
   } = useForm();
 
   const addtheLesson = (data) => {
-    console.log(data);
-    setCourse({
-      ...course,
-      lessons: [...data],
-    });
+ 
+    onContinueToPublish(data);
     setIsLessonModalOpen(false);
-    onContinueToPublish();
+  
   };
+
+
+
+
 
   const handleAddLesson = () => {
     if (!newLesson.title) {
@@ -160,16 +160,16 @@ export function LessonManager({
     });
   };
 
-  const handleDeleteLesson = (lessonId) => {
-    const lesson = course.lessons.find((l) => l.id === lessonId);
-    setCourse({
-      ...course,
-      lessons: course.lessons.filter((l) => l.id !== lessonId),
-    });
-    toast(`"${lesson?.title}" has been removed from your course.`, {
-      description: "Lesson Deleted",
-    });
-  };
+  // const handleDeleteLesson = (lessonId) => {
+  //   const lesson = course.lessons.find((l) => l.id === lessonId);
+  //   setCourse({
+  //     ...course,
+  //     lessons: course.lessons.filter((l) => l.id !== lessonId),
+  //   });
+  //   toast(`"${lesson?.title}" has been removed from your course.`, {
+  //     description: "Lesson Deleted",
+  //   });
+  // };
 
   const handleDragStart = (e, lessonId) => {
     setDraggedLesson(lessonId);

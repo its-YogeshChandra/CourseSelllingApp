@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from "react";
 import { CourseForm } from "./course-form";
 import { LessonManager } from "./lesson-manager";
@@ -16,39 +14,58 @@ import { nanoid } from "@reduxjs/toolkit";
 export function UploadNewCourse() {
   const [step, setStep] = useState("course");
   const [course, setCourse] = useState({
+    item: "center",
+    lessons: [],
   });
+ 
+console.log(course)
 
   const handleCourseSubmit = (courseData) => {
-    console.log(courseData);
     if (!courseData.title || !courseData.description || !courseData.category) {
       toast.error("course Data is missing", { description: "Missing data" });
       return;
     }
+    debugger
     setCourse((prev) => ({ ...prev, ...courseData }));
+    // console.log(course)
     setStep("lessons");
     toast.success("Course Created", {
       description: "Now you can start adding lessons to your course.",
     });
   };
 
-  const handleLessonsComplete = async () => {
+  const handleLessonsComplete = async (data) => {
+    console.log(data);
+     
     if (course.lessons.length === 0) {
       toast.error("No lesson", {
         description: "please add atleast one course",
       });
-      console.log(course)
-      course.id = nanoid();
 
-      const dbrequest = await addData(course);
-      console.log(dbrequest);
+      console.log(` lessons are : ${data}`);
+      debugger;
+      if (data) {
+        course.id = nanoid();
+        setCourse((prev) => (
+          {
+          ...prev,
+          lessons: [...prev.lessons, data],
+        }));
+
+
+        const dbrequest = await addData(course);
+        console.log(dbrequest);
+
+        const courdata = await getData(course.id);
+        console.log(courdata);
+        setStep("publish");
+
+        toast("Lessons Ready", {
+          description:
+            "Your lessons are ready. You can now publish your course.",
+        });
+      }
     }
-    const data = getData()
-    console.log(data)
-    setStep("publish");
-
-    toast("Lessons Ready", {
-      description: "Your lessons are ready. You can now publish your course.",
-    });
   };
 
   const handlePublishCourse = () => {
@@ -88,7 +105,6 @@ export function UploadNewCourse() {
       {step === "lessons" && (
         <LessonManager
           course={course}
-          setCourse={setCourse}
           onBackToCourse={() => goBackToStep("course")}
           onContinueToPublish={handleLessonsComplete}
         />

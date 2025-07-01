@@ -39,7 +39,6 @@ export function CourseForm({ course, onSubmit, onReset }) {
   ];
 
   const dataSubmit = (data) => {
-    console.log(data)
    return onSubmit(data);
   };
 
