@@ -6,16 +6,16 @@ import { LessonManager } from "./lesson-manager";
 import { PublishCourse } from "./publish-course.jsx";
 import { ProgressIndicator } from "./progress-indicator";
 import { toast } from "sonner";
-import { funcObj } from "../../../services/indexed.db/db.js";
-
+import {
+  addData,
+  deleteData,
+  getData,
+} from "../../../services/indexed.db/db.js";
+import { nanoid } from "@reduxjs/toolkit";
 
 export function UploadNewCourse() {
   const [step, setStep] = useState("course");
   const [course, setCourse] = useState({
-    title: null,
-    description: null,
-    category: null,
-    lessons: [],
   });
 
   const handleCourseSubmit = (courseData) => {
@@ -31,14 +31,21 @@ export function UploadNewCourse() {
     });
   };
 
-  const handleLessonsComplete = () => {
+  const handleLessonsComplete = async () => {
     if (course.lessons.length === 0) {
       toast.error("No lesson", {
         description: "please add atleast one course",
       });
-      return;
+      console.log(course)
+      course.id = nanoid();
+
+      const dbrequest = await addData(course);
+      console.log(dbrequest);
     }
+    const data = getData()
+    console.log(data)
     setStep("publish");
+
     toast("Lessons Ready", {
       description: "Your lessons are ready. You can now publish your course.",
     });

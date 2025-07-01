@@ -1,9 +1,8 @@
-import { resolveConfig } from "vite";
-
 const request = indexedDB.open("instructorDashboardDb", 1);
+let db;
 
 request.onupgradeneeded = (event) => {
-  const db = event.target.result;
+  db = event.target.result;
 
   // creating a object store
   const objectStore = db.createObjectStore("courses", {
@@ -16,73 +15,88 @@ request.onupgradeneeded = (event) => {
   console.log("Object store created");
 };
 
-const funcObj = {}
-request.onsuccess = (e) => {
-  const db = e.target.result;
-  if (db) {
-    return "Database opened successfully";
+const dbinitialzed = new Promise((resolve, reject) => {
+  request.onsuccess = (e) => {
+    db = e.target.result;
+    resolve(db);
+    return;
+  };
+  request.onerror = (e) => {
+    if (e.target.error) {
+      reject("unsuccessfull");
+    }
+  };
+});
+
+//creating crud methods of db
+
+//#1 addData
+const addData = async (data) => {
+  const isDb = await dbinitialzed;
+  if (isDb) {
+    const tx = db.transaction("courses", "readwrite");
+    const addtoStore = tx.objectStore("courses");
+    const request = addtoStore.add(data);
+    return checkSucessandError(request, "addData");
   }
-
-  //creating crud methods of db
-
-  //#1 addData
- const addData = (data) => {
-    const tx = db.transaction("courses", "readwrite");
-    const addtoStore = tx.objectStore("users");
-    addtoStore.add(data);
-    checkSucessandError(addData);
-  };
-
-  //#2 deletingData
-  const deleteData = (id) => {
-    const tx = db.transaction("courses", "readwrite");
-    const deletefromStore = tx.objectStore("users");
-    deletefromStore.delete(id);
-    checkSucessandError(deleteData);
-  };
-
-  //#3 updating data
-
-
-  funcObj.addData = addData;
-  funcObj.deleteData = deleteData;
 };
 
+//#2 deletingData
+const deleteData = (id) => {
+  const tx = db.transaction("courses", "readwrite");
+  const deletefromStore = tx.objectStore("courses");
+  const request = deletefromStore.delete(id);
+  checkSucessandError(request, "deleteData");
+};
 
-const checkSucessandError = (crudHandler) => {
+//#3 get data
+const getData = (id) => {
+  if (!db) {
+    throw new Error("db initialization unsuccessfull");
+  }
   return new Promise((resolve, reject) => {
-    const request = crudHandler();
-    request.onsuccess = (e) => {
-      const result = e.target.result;
-      if (result) {
-        switch (crudHandler.name) {
-          case "addData":
-            resolve("data successfully added ");
-            break;
-          case "deleteData":
-            resolve("data successfully deleted ");
-            break;
-          default:
-            break;
-        }
+    const tx = db.transaction("courses", "readonly");
+    const store = tx.objectStore("courses");
+    const result = id ? store.get(id) : store.getAll();
+
+    result.onsuccess = () => {
+      resolve(result.result);
+    };
+
+    result.onerror = () => {
+      reject("error while getting data");
+    };
+  });
+};
+
+const checkSucessandError = (request, action) => {
+  return new Promise((resolve, reject) => {
+    request.onsuccess = () => {
+      switch (action) {
+        case "addData":
+          resolve("data successfully added ");
+          break;
+        case "deleteData":
+          resolve("data successfully deleted ");
+          break;
+        default:
+          break;
       }
     };
-    request.onerror = (e) => {
-      const error = e.target.error;
-      if (error) {
-        switch (crudHandler.name) {
-          case "addData":
-            reject("data additon unsucessfull");
-            break;
-          case "deleteData":
-            reject("data deletion unsccessfull");
-            break;
-          default:
-            break;
-        }
+
+    request.onerror = () => {
+      switch (action) {
+        case "addData":
+          reject("data additon unsucessfull");
+          break;
+        case "deleteData":
+          reject("data deletion unsccessfull");
+          break;
+        default:
+          break;
       }
     };
   });
 };
 
-export { funcObj };
+export { addData, deleteData, getData };

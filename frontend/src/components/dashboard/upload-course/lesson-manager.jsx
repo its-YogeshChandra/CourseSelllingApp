@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import {
   Edit,
@@ -62,8 +61,12 @@ export function LessonManager({
 
   const addtheLesson = (data) => {
     console.log(data);
-    setCourse({ ...course, lessons: [...course.lessons, data] });
+    setCourse({
+      ...course,
+      lessons: [...data],
+    });
     setIsLessonModalOpen(false);
+    onContinueToPublish();
   };
 
   const handleAddLesson = () => {
