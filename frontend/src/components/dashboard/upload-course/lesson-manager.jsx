@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Edit,
   FileText,
@@ -35,13 +35,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
+import { getData } from "../../../services/indexed.db/db.js";
+import { nanoid } from "@reduxjs/toolkit";
 
-export function LessonManager({
-  course,
-  onBackToCourse,
-  onContinueToPublish,
-}) {
+export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+  const [lessonData, setLessonData] = useState();
+  const [lessonNeeded, setlessonNeeded] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
   const [draggedLesson, setDraggedLesson] = useState(null);
   const [newLesson, setNewLesson] = useState({
@@ -59,15 +59,20 @@ export function LessonManager({
   } = useForm();
 
   const addtheLesson = (data) => {
- 
+    data.id = nanoid();
     onContinueToPublish(data);
     setIsLessonModalOpen(false);
-  
   };
-
-
-
-
+  useEffect(() => {
+    async () => {
+      const data = await getData(id);
+      console.log(data);
+      const neededVal = data.lessons;
+      if (data) {
+        setLessonData(neededVal);
+      }
+    };
+  }, [lessonNeeded]);
 
   const handleAddLesson = () => {
     if (!newLesson.title) {
@@ -85,18 +90,17 @@ export function LessonManager({
     }
 
     const lesson = {
-      id: Date.now().toString(),
-      title: newLesson.title,
-      description: newLesson.description,
-      videoType: newLesson.videoType,
-      videoFile: newLesson.videoFile,
-      videoLink: newLesson.videoLink,
-      notesFile: newLesson.notesFile,
-      imageFiles: newLesson.imageFiles,
-      duration: "5:30",
+      // id: Date.now().toString(),
+      // title: newLesson.title,
+      // description: newLesson.description,
+      // videoType: newLesson.videoType,
+      // videoFile: newLesson.videoFile,
+      // videoLink: newLesson.videoLink,
+      // notesFile: newLesson.notesFile,
+      // imageFiles: newLesson.imageFiles,
+      // duration: "5:30",
       order: course.lessons.length,
     };
-    console.log(lesson);
 
     setNewLesson({
       title: "",
@@ -125,41 +129,7 @@ export function LessonManager({
     setIsLessonModalOpen(true);
   };
 
-  const handleUpdateLesson = () => {
-    if (!editingLesson || !newLesson.title) return;
-
-    setCourse({
-      ...course,
-      lessons: course.lessons.map((lesson) =>
-        lesson.id === editingLesson.id
-          ? {
-              ...lesson,
-              title: newLesson.title,
-              description: newLesson.description,
-              videoType: newLesson.videoType,
-              videoLink: newLesson.videoLink,
-              notesFile: newLesson.notesFile,
-              imageFiles: newLesson.imageFiles,
-            }
-          : lesson
-      ),
-    });
-
-    setEditingLesson(null);
-    setNewLesson({
-      title: "",
-      description: "",
-      videoType: "upload",
-      videoLink: "",
-      notesFile: undefined,
-      imageFiles: [],
-    });
-    setIsLessonModalOpen(false);
-    toast.success("Lesson has been successfully updated.", {
-      description: "Lesson Updated",
-    });
-  };
-
+  const updateLesson = () => {};
   // const handleDeleteLesson = (lessonId) => {
   //   const lesson = course.lessons.find((l) => l.id === lessonId);
   //   setCourse({
@@ -299,72 +269,70 @@ export function LessonManager({
             </div>
           ) : (
             <div className="space-y-4">
-              {course.lessons
-                .sort((a, b) => a.order - b.order)
-                .map((lesson, index) => {
-                  const attachments = getLessonAttachments(lesson);
-                  return (
-                    <div
-                      key={lesson.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, lesson.id)}
-                      onDragOver={handleDragOver}
-                      onDrop={(e) => handleDrop(e, lesson.id)}
-                      className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-move transition-colors"
-                    >
-                      <GripVertical className="h-5 w-5 text-gray-400" />
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-sm font-medium text-blue-600 dark:text-blue-300">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                          {lesson.title}
-                        </h4>
-                        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                          <span className="flex items-center">
-                            {lesson.videoType === "upload" ? (
-                              <FileVideo className="mr-1 h-4 w-4" />
-                            ) : (
-                              <Link className="mr-1 h-4 w-4" />
-                            )}
-                            {lesson.videoType === "upload"
-                              ? "Video Upload"
-                              : "Video Link"}
-                          </span>
-                          {lesson.duration && <span>{lesson.duration}</span>}
-                          {attachments.length > 0 && (
-                            <span className="flex items-center">
-                              <Upload className="mr-1 h-3 w-3" />
-                              {attachments.join(", ")}
-                            </span>
+              {lessonData.map((e) => {
+                const attachments = getLessonAttachments(lesson);
+                return (
+                  <div
+                    key={lesson.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, lesson.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, lesson.id)}
+                    className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-move transition-colors"
+                  >
+                    <GripVertical className="h-5 w-5 text-gray-400" />
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center text-sm font-medium text-blue-600 dark:text-blue-300">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {lesson.title}
+                      </h4>
+                      <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                        <span className="flex items-center">
+                          {lesson.videoType === "upload" ? (
+                            <FileVideo className="mr-1 h-4 w-4" />
+                          ) : (
+                            <Link className="mr-1 h-4 w-4" />
                           )}
-                        </div>
-                        {lesson.description && (
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
-                            {lesson.description}
-                          </p>
+                          {lesson.videoType === "upload"
+                            ? "Video Upload"
+                            : "Video Link"}
+                        </span>
+                        {lesson.duration && <span>{lesson.duration}</span>}
+                        {attachments.length > 0 && (
+                          <span className="flex items-center">
+                            <Upload className="mr-1 h-3 w-3" />
+                            {attachments.join(", ")}
+                          </span>
                         )}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditLesson(lesson)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteLesson(lesson.id)}
-                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      {lesson.description && (
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
+                          {lesson.description}
+                        </p>
+                      )}
                     </div>
-                  );
-                })}
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditLesson(lesson)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteLesson(lesson.id)}
+                        className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>

@@ -8,6 +8,8 @@ import {
   addData,
   deleteData,
   getData,
+  addlesson,
+  updatelesson
 } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 
@@ -17,55 +19,51 @@ export function UploadNewCourse() {
     item: "center",
     lessons: [],
   });
- 
-console.log(course)
 
-  const handleCourseSubmit = (courseData) => {
+  console.log(course);
+
+  const handleCourseSubmit = async (courseData) => {
     if (!courseData.title || !courseData.description || !courseData.category) {
       toast.error("course Data is missing", { description: "Missing data" });
       return;
     }
-    debugger
-    setCourse((prev) => ({ ...prev, ...courseData }));
-    // console.log(course)
-    setStep("lessons");
-    toast.success("Course Created", {
-      description: "Now you can start adding lessons to your course.",
-    });
+
+    //add data to course model in indexedDb
+    const addData = await addData(courseData);
+    console.log(addData);
+    const collectedData = await getData(courseData.id);
+    console.log(collectedData);
+    if (getData) {
+      setCourse((prev) => ({
+        ...prev,
+        collectedData,
+      }));
+    }
+    //check for data and send toast success or error
+    if (course.keys.length > 0) {
+      setStep("lessons");
+      toast.success("Course Created", {
+        description: "Now you can start adding lessons to your course.",
+      });
+    } else {
+      toast.error("error", {
+        description: "course creating failed.",
+      });
+    }
   };
+
 
   const handleLessonsComplete = async (data) => {
     console.log(data);
-     
-    if (course.lessons.length === 0) {
+  //checking for data has lessons
+    if (!data) {
       toast.error("No lesson", {
         description: "please add atleast one course",
       });
-
-      console.log(` lessons are : ${data}`);
-      debugger;
-      if (data) {
-        course.id = nanoid();
-        setCourse((prev) => (
-          {
-          ...prev,
-          lessons: [...prev.lessons, data],
-        }));
-
-
-        const dbrequest = await addData(course);
-        console.log(dbrequest);
-
-        const courdata = await getData(course.id);
-        console.log(courdata);
-        setStep("publish");
-
-        toast("Lessons Ready", {
-          description:
-            "Your lessons are ready. You can now publish your course.",
-        });
-      }
     }
+   //addlesson and update the courseobject id 
+    const addlesson = await addlesson(data, course.id)
+    console.log(addlesson);
   };
 
   const handlePublishCourse = () => {

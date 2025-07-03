@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm, Controller } from "react-hook-form";
+import { nanoid } from "@reduxjs/toolkit";
 
 export function CourseForm({ course, onSubmit, onReset }) {
   const {
@@ -37,8 +38,10 @@ export function CourseForm({ course, onSubmit, onReset }) {
     "Health & Fitness",
     "Language Learning",
   ];
-
+ 
+    
   const dataSubmit = (data) => {
+    data.id = nanoid()
    return onSubmit(data);
   };
 

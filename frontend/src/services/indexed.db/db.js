@@ -69,6 +69,57 @@ const getData = (id) => {
   });
 };
 
+//updateCourse : {contains 2 seperate functions}
+
+//for adding lessons
+const addlesson = (courseId, lessonData) => {
+  if (!db) {
+    throw new Error("db initialization unsuccessfull");
+  }
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("courses", "readwrite");
+    const getfromStore = tx.objectStore("courses");
+    const request = getfromStore.get(courseId);
+    request.onsuccess = (e) => {
+      const course = e.target.result;
+
+      course.lesson = [...course.lesson, lessonData];
+      //can use course.lesson.concat(lessonData);
+      const updatetheStore = getfromStore.update(course);
+      updatetheStore.onsuccess = () => {
+        resolve("lesson sucessfully added ");
+      };
+    };
+    request.onerror = () => {
+      reject("error occured while adding lesson");
+    };
+  });
+};
+
+//for updating lessons
+const updatelesson = (courseId, lessonId, lessonData) => {
+  if (!db) {
+    throw new Error("db initialization unsuccessfull");
+  }
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("courses", "readwrite");
+    const getfromStore = tx.objectStore("courses");
+    const request = getfromStore.get(courseId);
+    request.onsuccess = (e) => {
+      const course = e.target.result;
+      course.lessons = course.lessons.filter((e) => e.id !== lessonId);
+      course.lessons = [...course.lessons, lessonData];
+      const updatetheStore = getfromStore.update(course);
+      updatetheStore.onsuccess = (e) => {
+        resolve("lesson successfully updated");
+      };
+    };
+    request.onerror = () => {
+      reject("error while updating the lesson");
+    };
+  });
+};
+
 const checkSucessandError = (request, action) => {
   return new Promise((resolve, reject) => {
     request.onsuccess = () => {
@@ -99,4 +150,4 @@ const checkSucessandError = (request, action) => {
   });
 };
 
-export { addData, deleteData, getData };
+export { addData, deleteData, getData, addlesson, updatelesson };
