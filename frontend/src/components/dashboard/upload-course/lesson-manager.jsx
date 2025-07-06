@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import { getData } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
+import localStorageService from "../../../services/localStorage.js";
 
 export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
@@ -60,19 +61,22 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
 
   const addtheLesson = (data) => {
     data.id = nanoid();
-    onContinueToPublish(data);
+    const courseVal = localStorageService.getfromStorage("courseData")[0];
+    console.log(courseVal);
+
+    onContinueToPublish(data, courseVal.id);
     setIsLessonModalOpen(false);
   };
-  useEffect(() => {
-    async () => {
-      const data = await getData(id);
-      console.log(data);
-      const neededVal = data.lessons;
-      if (data) {
-        setLessonData(neededVal);
-      }
-    };
-  }, [lessonNeeded]);
+  // useEffect(() => {
+  //   async () => {
+  //     const data = await getData(id);
+  //     console.log(data);
+  //     const neededVal = data.lessons;
+  //     if (data) {
+  //       setLessonData(neededVal);
+  //     }
+  //   };
+  // }, [lessonNeeded]);
 
   const handleAddLesson = () => {
     if (!newLesson.title) {
@@ -180,11 +184,6 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
     setNewLesson({ ...newLesson, notesFile: file });
   };
 
-  const handleImageFilesChange = (e) => {
-    const files = Array.from(e.target.files || []);
-    setNewLesson({ ...newLesson, imageFiles: files });
-  };
-
   const closeModal = () => {
     setIsLessonModalOpen(false);
     setEditingLesson(null);
@@ -269,15 +268,11 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
             </div>
           ) : (
             <div className="space-y-4">
-              {lessonData.map((e) => {
+              {course.lessons.map((e, index) => {
                 const attachments = getLessonAttachments(lesson);
                 return (
                   <div
-                    key={lesson.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, lesson.id)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, lesson.id)}
+                    key={e.id}
                     className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-move transition-colors"
                   >
                     <GripVertical className="h-5 w-5 text-gray-400" />
@@ -286,7 +281,7 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {lesson.title}
+                        {e.title}
                       </h4>
                       <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                         <span className="flex items-center">
@@ -532,7 +527,6 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
                           onChange={(e) => {
                             e.preventDefault();
                             field.onChange([...e.target.files]);
-                            handleImageFilesChange(e.target.files);
                           }}
                         />
                       );

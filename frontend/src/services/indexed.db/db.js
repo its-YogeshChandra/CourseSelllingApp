@@ -1,3 +1,5 @@
+import { object } from "zod";
+
 const request = indexedDB.open("instructorDashboardDb", 1);
 let db;
 
@@ -7,12 +9,15 @@ request.onupgradeneeded = (event) => {
   // creating a object store
   const objectStore = db.createObjectStore("courses", {
     keyPath: "id",
-    autoIncrement: true,
   });
 
-  // creating an index
-  objectStore.createIndex("id", "id", { unique: true });
-  console.log("Object store created");
+  objectStore.onsuccess = () => {
+    return "store successfully created ";
+  };
+
+  objectStore.onerror = () => {
+    return "store creation failed  ";
+  };
 };
 
 const dbinitialzed = new Promise((resolve, reject) => {
@@ -34,6 +39,7 @@ const dbinitialzed = new Promise((resolve, reject) => {
 const addData = async (data) => {
   const isDb = await dbinitialzed;
   if (isDb) {
+    console.log(data);
     const tx = db.transaction("courses", "readwrite");
     const addtoStore = tx.objectStore("courses");
     const request = addtoStore.add(data);
@@ -50,14 +56,14 @@ const deleteData = (id) => {
 };
 
 //#3 get data
-const getData = (id) => {
+const getData = () => {
   if (!db) {
     throw new Error("db initialization unsuccessfull");
   }
   return new Promise((resolve, reject) => {
     const tx = db.transaction("courses", "readonly");
     const store = tx.objectStore("courses");
-    const result = id ? store.get(id) : store.getAll();
+    const result = store.getAll();
 
     result.onsuccess = () => {
       resolve(result.result);
@@ -72,20 +78,23 @@ const getData = (id) => {
 //updateCourse : {contains 2 seperate functions}
 
 //for adding lessons
-const addlesson = (courseId, lessonData) => {
+const addlesson = (lessonData, courseId) => {
   if (!db) {
     throw new Error("db initialization unsuccessfull");
   }
   return new Promise((resolve, reject) => {
     const tx = db.transaction("courses", "readwrite");
     const getfromStore = tx.objectStore("courses");
-    const request = getfromStore.get(courseId);
+    const request = getfromStore.getAll();
     request.onsuccess = (e) => {
-      const course = e.target.result;
-
-      course.lesson = [...course.lesson, lessonData];
+      console.log(courseId);
+      const val = e.target.result.filter((e) => e.id === courseId);
+      console.log(val);
+      const course = val[0];
+      console.log(course);
+      course.lessons = [...course.lessons, lessonData];
       //can use course.lesson.concat(lessonData);
-      const updatetheStore = getfromStore.update(course);
+      const updatetheStore = getfromStore.put(course);
       updatetheStore.onsuccess = () => {
         resolve("lesson sucessfully added ");
       };
@@ -104,9 +113,11 @@ const updatelesson = (courseId, lessonId, lessonData) => {
   return new Promise((resolve, reject) => {
     const tx = db.transaction("courses", "readwrite");
     const getfromStore = tx.objectStore("courses");
-    const request = getfromStore.get(courseId);
+    const request = getfromStore.getAll();
     request.onsuccess = (e) => {
-      const course = e.target.result;
+      const val = e.target.result.filter((e) => e.id === courseId);
+      const course = val[0];
+      console.log(course);
       course.lessons = course.lessons.filter((e) => e.id !== lessonId);
       course.lessons = [...course.lessons, lessonData];
       const updatetheStore = getfromStore.update(course);

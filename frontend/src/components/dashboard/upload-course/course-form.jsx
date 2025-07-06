@@ -42,6 +42,7 @@ export function CourseForm({ course, onSubmit, onReset }) {
     
   const dataSubmit = (data) => {
     data.id = nanoid()
+    data.lessons = []
    return onSubmit(data);
   };
 

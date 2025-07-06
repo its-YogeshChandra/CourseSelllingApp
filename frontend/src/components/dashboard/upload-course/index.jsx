@@ -9,18 +9,20 @@ import {
   deleteData,
   getData,
   addlesson,
-  updatelesson
+  updatelesson,
 } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
+import { object } from "zod";
+import localStorageService from "../../../services/localStorage.js";
 
 export function UploadNewCourse() {
   const [step, setStep] = useState("course");
   const [course, setCourse] = useState({
-    item: "center",
     lessons: [],
   });
 
   console.log(course);
+  console.log(course.lessons.length);
 
   const handleCourseSubmit = async (courseData) => {
     if (!courseData.title || !courseData.description || !courseData.category) {
@@ -29,18 +31,22 @@ export function UploadNewCourse() {
     }
 
     //add data to course model in indexedDb
-    const addData = await addData(courseData);
-    console.log(addData);
-    const collectedData = await getData(courseData.id);
-    console.log(collectedData);
-    if (getData) {
-      setCourse((prev) => ({
-        ...prev,
-        collectedData,
-      }));
+    if (Object.keys(course).length < 3) {
+      toast.error("course Data is missing", { description: "Missing data" });
+    }
+    const dataval = { ...courseData };
+    const addcourseData = await addData(dataval);
+    const collectedData = await getData();
+
+    if (collectedData) {
+      const reqCourse = collectedData.filter((e) => e.id === courseData.id);
+      setCourse(reqCourse[0]);
+      //set course in localStorage
+      localStorageService.setinStorage("courseData", reqCourse);
     }
     //check for data and send toast success or error
-    if (course.keys.length > 0) {
+    if (Object.keys(course).length > 0) {
+      //setting step
       setStep("lessons");
       toast.success("Course Created", {
         description: "Now you can start adding lessons to your course.",
@@ -52,18 +58,23 @@ export function UploadNewCourse() {
     }
   };
 
-
-  const handleLessonsComplete = async (data) => {
+  //for adding lessons
+  const handleLessonsComplete = async (data, courseId) => {
     console.log(data);
-  //checking for data has lessons
+    //checking for data has lessons
     if (!data) {
       toast.error("No lesson", {
         description: "please add atleast one course",
       });
     }
-   //addlesson and update the courseobject id 
-    const addlesson = await addlesson(data, course.id)
-    console.log(addlesson);
+    //addlesson and update the courseobject id
+    const addthelesson = await addlesson(data, courseId);
+    console.log(addthelesson);
+    //get course and update the course state
+    const valfromdb = await getData();
+    const neededVal = valfromdb.filter(e => e.id === courseId)
+    console.log(neededVal)
+    setCourse(neededVal[0])
   };
 
   const handlePublishCourse = () => {
