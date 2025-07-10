@@ -89,9 +89,7 @@ const addlesson = (lessonData, courseId) => {
     request.onsuccess = (e) => {
       console.log(courseId);
       const val = e.target.result.filter((e) => e.id === courseId);
-      console.log(val);
       const course = val[0];
-      console.log(course);
       course.lessons = [...course.lessons, lessonData];
       //can use course.lesson.concat(lessonData);
       const updatetheStore = getfromStore.put(course);
@@ -120,7 +118,30 @@ const updatelesson = (courseId, lessonId, lessonData) => {
       console.log(course);
       course.lessons = course.lessons.filter((e) => e.id !== lessonId);
       course.lessons = [...course.lessons, lessonData];
-      const updatetheStore = getfromStore.update(course);
+      const updatetheStore = getfromStore.put(course);
+      updatetheStore.onsuccess = (e) => {
+        resolve("lesson successfully updated");
+      };
+    };
+    request.onerror = () => {
+      reject("error while updating the lesson");
+    };
+  });
+};
+const deleteLesson = (courseId, lessonId) => {
+  if (!db) {
+    throw new Error("db initialization unsuccessfull");
+  }
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("courses", "readwrite");
+    const getfromStore = tx.objectStore("courses");
+    const request = getfromStore.getAll();
+    request.onsuccess = (e) => {
+      const val = e.target.result.filter((e) => e.id === courseId);
+      const course = val[0];
+      console.log(course);
+      course.lessons = course.lessons.filter((e) => e.id !== lessonId);
+      const updatetheStore = getfromStore.put(course);
       updatetheStore.onsuccess = (e) => {
         resolve("lesson successfully updated");
       };
@@ -161,4 +182,4 @@ const checkSucessandError = (request, action) => {
   });
 };
 
-export { addData, deleteData, getData, addlesson, updatelesson };
+export { addData, deleteData, getData, addlesson, updatelesson, deleteLesson};

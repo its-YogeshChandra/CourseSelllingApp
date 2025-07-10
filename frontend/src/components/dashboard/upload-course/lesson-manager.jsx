@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import {
   Edit,
@@ -39,7 +38,12 @@ import { getData } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 import localStorageService from "../../../services/localStorage.js";
 
-export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
+export function LessonManager({
+  course,
+  onBackToCourse,
+  onContinueToPublish,
+  onDeletingLesson,
+}) {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   const [lessonData, setLessonData] = useState();
   const [lessonNeeded, setlessonNeeded] = useState(false);
@@ -57,13 +61,21 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm();
+  } = useForm({});
 
   const addtheLesson = (data) => {
     data.id = nanoid();
+    data.images.map((e)=>{
+   e.id = nanoid()
+    })
+    data.videos.map((e)=>{
+   e.id = nanoid()
+    })
+    data.notes.map((e)=>{
+   e.id = nanoid()
+    })
     const courseVal = localStorageService.getfromStorage("courseData")[0];
     console.log(courseVal);
-
     onContinueToPublish(data, courseVal.id);
     setIsLessonModalOpen(false);
   };
@@ -93,18 +105,18 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
       return;
     }
 
-    const lesson = {
-      // id: Date.now().toString(),
-      // title: newLesson.title,
-      // description: newLesson.description,
-      // videoType: newLesson.videoType,
-      // videoFile: newLesson.videoFile,
-      // videoLink: newLesson.videoLink,
-      // notesFile: newLesson.notesFile,
-      // imageFiles: newLesson.imageFiles,
-      // duration: "5:30",
-      order: course.lessons.length,
-    };
+    // const lesson = {
+    //   // id: Date.now().toString(),
+    //   // title: newLesson.title,
+    //   // description: newLesson.description,
+    //   // videoType: newLesson.videoType,
+    //   // videoFile: newLesson.videoFile,
+    //   // videoLink: newLesson.videoLink,
+    //   // notesFile: newLesson.notesFile,
+    //   // imageFiles: newLesson.imageFiles,
+    //   // duration: "5:30",
+    //   order: course.lessons.length,
+    // };
 
     setNewLesson({
       title: "",
@@ -155,28 +167,13 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = (e, targetLessonId) => {
-    e.preventDefault();
-    if (!draggedLesson || draggedLesson === targetLessonId) return;
+  const updatetheLesson = (data) => {};
 
-    const draggedIndex = course.lessons.findIndex(
-      (l) => l.id === draggedLesson
-    );
-    const targetIndex = course.lessons.findIndex(
-      (l) => l.id === targetLessonId
-    );
-    const newLessons = [...course.lessons];
-    const [draggedItem] = newLessons.splice(draggedIndex, 1);
-    newLessons.splice(targetIndex, 0, draggedItem);
-    const updatedLessons = newLessons.map((lesson, index) => ({
-      ...lesson,
-      order: index,
-    }));
-    setCourse({ ...course, lessons: updatedLessons });
-    setDraggedLesson(null);
-    toast.success("Lesson order has been updated.", {
-      description: "Lessons Reordered",
-    });
+  const controlLessonUpdate = (lessonId) => {
+    //getting data from local storage
+    const courseVal = localStorageService.getfromStorage("courseData")[0];
+    const lessonVal = courseVal.lessons.filter((e) => e.id === lessonId)[0];
+    //updating the components through reset
   };
 
   const handleNotesFileChange = (e) => {
@@ -269,7 +266,6 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
           ) : (
             <div className="space-y-4">
               {course.lessons.map((e, index) => {
-                const attachments = getLessonAttachments(lesson);
                 return (
                   <div
                     key={e.id}
@@ -283,43 +279,22 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white truncate">
                         {e.title}
                       </h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="flex items-center">
-                          {lesson.videoType === "upload" ? (
-                            <FileVideo className="mr-1 h-4 w-4" />
-                          ) : (
-                            <Link className="mr-1 h-4 w-4" />
-                          )}
-                          {lesson.videoType === "upload"
-                            ? "Video Upload"
-                            : "Video Link"}
-                        </span>
-                        {lesson.duration && <span>{lesson.duration}</span>}
-                        {attachments.length > 0 && (
-                          <span className="flex items-center">
-                            <Upload className="mr-1 h-3 w-3" />
-                            {attachments.join(", ")}
-                          </span>
-                        )}
-                      </div>
-                      {lesson.description && (
+                      {e.description && (
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 truncate">
-                          {lesson.description}
+                          {e.description}
                         </p>
                       )}
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditLesson(lesson)}
-                      >
+                      <Button variant="ghost" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDeleteLesson(lesson.id)}
+                        onClick={() => {
+                          onDeletingLesson(course.id, e.id);
+                        }}
                         className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -341,7 +316,9 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
               Back to Course Details
             </Button>
             <Button
-              onClick={onContinueToPublish}
+              onClick={() => {
+                onContinueToPublish;
+              }}
               disabled={course.lessons.length === 0}
               className="bg-blue-600 hover:bg-blue-700"
             >
@@ -421,9 +398,7 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
                 <div className="flex space-x-2">
                   <Button
                     type="button"
-                    variant={
-                      newLesson.videoType === "upload" ? "default" : "outline"
-                    }
+                    variant={"default"}
                     size="sm"
                     onClick={() =>
                       setNewLesson((prev) => ({ ...prev, videoType: "upload" }))
@@ -435,7 +410,7 @@ export function LessonManager({ course, onBackToCourse, onContinueToPublish }) {
                 </div>
                 <div>
                   <Controller
-                    name="videofile"
+                    name="videos"
                     control={control}
                     rules={{ required: true }}
                     render={({ field }) => {

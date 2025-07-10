@@ -10,6 +10,7 @@ import {
   getData,
   addlesson,
   updatelesson,
+  deleteLesson
 } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 import { object } from "zod";
@@ -77,6 +78,25 @@ export function UploadNewCourse() {
     setCourse(neededVal[0])
   };
 
+ //delete lessons
+const delLesson = async (courseId, lessonId) => {
+    //checking for data has lessons
+    if (!courseId || !lessonId) {
+      toast.error("missing data", {
+        description: "Internal service error",
+      });
+    }
+    //addlesson and update the courseobject id
+    const deletetheLesson = await deleteLesson(courseId, lessonId);
+    console.log(deletetheLesson);
+    //get course and update the course state
+    const valfromdb = await getData();
+    const neededVal = valfromdb.filter(e => e.id === courseId)
+    console.log(neededVal)
+    setCourse(neededVal[0])
+  };
+
+
   const handlePublishCourse = () => {
     // toast
     setTimeout(() => {
@@ -116,6 +136,7 @@ export function UploadNewCourse() {
           course={course}
           onBackToCourse={() => goBackToStep("course")}
           onContinueToPublish={handleLessonsComplete}
+          onDeletingLesson = {delLesson}
         />
       )}
 
