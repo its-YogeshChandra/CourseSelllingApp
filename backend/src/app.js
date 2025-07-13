@@ -27,11 +27,11 @@ app.use(
 app.use(express.static("./public/temp"));
 
 // for cookies
-app.use(cookieParser())
+app.use(cookieParser());
 
-//for user routes 
-app.use("/api/v1/users", router)
+//for user routes
+app.use("/api/v1/users", router);
 
 // for course routes
-app.use("/api/v1/course" , courseRouter)
+app.use("/api/v1/course", courseRouter);
 export { app };

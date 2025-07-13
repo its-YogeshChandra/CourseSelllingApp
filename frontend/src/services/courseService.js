@@ -26,11 +26,14 @@ export class courseAction {
 
       //#4 updating lessondata with courseid and send data to backend(lessonhandler)
       const courseId = val.data._id;
-      console.log(lessons);
       const dataArr = [];
       const totalData = lessons.map(async (e) => {
         e.courseId = courseId;
-        const lessonResponse = await axios.post(lessonUrl, e);
+        const form = new FormData();
+
+        const lessonResponse = await axios.post(lessonUrl, e, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
         if (lessonResponse.data) {
           dataArr.push(lessonResponse.data);
         }

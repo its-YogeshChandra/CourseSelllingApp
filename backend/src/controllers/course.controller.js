@@ -50,10 +50,8 @@ const uploadlessons = asyncHandler(async (req, res) => {
   //sending data back to the user/client
   console.log(req.body);
 
-  //iterating req.body
-
   const { title, courseRef } = req.body;
-
+  console.log(req.files);
   const { videos, images, notes } = req.files;
 
   const videosPath = pathfinder(videos);

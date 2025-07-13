@@ -15,19 +15,18 @@ const uploadMiddleware = upload.fields([
   {
     name: "thumbnail",
     maxCount: 1,
-  
   },
   {
     name: "videos",
-    maxCount: 4,
+    maxCount: 10,
   },
   {
     name: "images",
-    maxCount: 4,
+    maxCount: 10,
   },
   {
     name: "notes",
-    maxCount: 3,
+    maxCount: 10,
   },
 ]);
 
