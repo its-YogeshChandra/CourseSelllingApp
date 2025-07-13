@@ -7,15 +7,12 @@ import { pathfinder } from "../utils/path.finder.js";
 import { Lesson } from "../models/courseData.model.js";
 
 const createcourse = asyncHandler(async (req, res) => {
-  const { courseName, category, instructor, description, price  } = req.body;
+  const { courseName, category, instructor, description, price } = req.body;
 
   const files = req.files.thumbnail;
- console.log(files[0])
-
   const { path } = files[0];
- 
-  // upload data on cloudinary
 
+  // upload data on cloudinary
   const data = await uploadonCloudinary(path);
   const { url } = data;
 
@@ -51,8 +48,10 @@ const uploadlessons = asyncHandler(async (req, res) => {
   //creating data in the db
   //checking for edge cases
   //sending data back to the user/client
-  console.log(req.body)
-  
+  console.log(req.body);
+
+  //iterating req.body
+
   const { title, courseRef } = req.body;
 
   const { videos, images, notes } = req.files;
@@ -70,7 +69,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
   });
 
   const gainedValue = await Promise.all(uploadedData.flat());
- 
+
   const videosArr = [];
   const imagesArr = [];
   const notesArr = [];
@@ -87,8 +86,8 @@ const uploadlessons = asyncHandler(async (req, res) => {
       case "image":
         const obj = {
           title: "",
-          url: ""
-        }
+          url: "",
+        };
         if (["jpg", "png", "jpeg"].includes(e.format)) {
           obj.title = e.original_filename;
           obj.url = e.secure_url;
@@ -104,27 +103,22 @@ const uploadlessons = asyncHandler(async (req, res) => {
     }
   });
 
-
   const createLesson = await Lesson.create({
     title,
     courseRef,
     video: videosArr,
     image: imagesArr,
-    notes: notesArr
+    notes: notesArr,
   });
   if (!createLesson) {
-   throw new ApiError(500, "Error while creating database document")
+    throw new ApiError(500, "Error while creating database document");
   }
- 
-  res.status(200).json(new ApiResponse(200, "lesson successfully created", createLesson))
 
+  res
+    .status(200)
+    .json(new ApiResponse(200, "lesson successfully created", createLesson));
 });
 
-const updatelessons = asyncHandler(async (req, res) => {
-  
-})
+const updatelessons = asyncHandler(async (req, res) => {});
 
-
-
-
-export { createcourse, uploadlessons,updatelessons };
+export { createcourse, uploadlessons, updatelessons };

@@ -7,8 +7,6 @@ export class courseAction {
   async uploadCourse(course) {
     //changes in data
     //#1 seperating course object
-    console.log(course);
-    debugger;
     const lessons = course.lessons;
     delete course.lessons;
 
@@ -27,17 +25,20 @@ export class courseAction {
       const val = await courseadd();
 
       //#4 updating lessondata with courseid and send data to backend(lessonhandler)
-      const id = val.data._id;
-      lessons.courseId = id
-      const lessonResponse = await axios.post(lessonUrl, lessons, {
-        headers: {
-          "Content-Type": "multipart/form-data"
+      const courseId = val.data._id;
+      console.log(lessons);
+      const dataArr = [];
+      const totalData = lessons.map(async (e) => {
+        e.courseId = courseId;
+        const lessonResponse = await axios.post(lessonUrl, e);
+        if (lessonResponse.data) {
+          dataArr.push(lessonResponse.data);
         }
-      })
-      console.log(lessonResponse)
-      debugger
-     return lessonResponse
-
+      });
+      const totalval = await Promise.all(totalData);
+      if (totalval) {
+        console.log(dataArr);
+      }
     } catch (error) {
       throw error;
     }
