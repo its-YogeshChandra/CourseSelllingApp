@@ -10,76 +10,78 @@ import { Badge } from "@/components/ui/badge";
 import { useEffect } from "react";
 import localStorageService from "../../../../services/localStorage";
 import { nanoid } from "@reduxjs/toolkit";
+import { getData, updatelesson } from "../../../../services/indexed.db/db";
 
-const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
-  // Sample existing data - replace with your actual data
-
+const UpdateLessonWithPreview = ({
+  courseId,
+  lessonId,
+  setupdateModelOpen,
+}) => {
   const [prevData, setprevData] = useState(null);
-  const { handleSubmit, control } = useForm();
+  const [title, setTitle] = useState();
+  const [description, setDescription] = useState();
+
   useEffect(() => {
-    const data = localStorageService.getfromStorage("courseData")[0];
-    const lessonData = data.lessons.filter((e) => e.id == lessonId)[0];
-    setprevData(lessonData);
-  }, [lessonId]);
+    const fetchData = async () => {
+      const data = await getData();
+      const neededVal = data.filter((e) => e.id === courseId)[0];
+      console.log(neededVal);
+      const lessonData = neededVal.lessons.filter((e) => e.id == lessonId)[0];
+      setprevData(lessonData);
+      setTitle(lessonData.title);
+      setDescription(lessonData.description);
+    };
+    fetchData();
+  }, [lessonId, courseId]);
 
-  const titleChange = (data) => {
-    setprevData((prev) => ({ ...prev, title: data }));
-  };
-  const descriptionChange = (data) => {
-    setprevData((prev) => ({ ...prev, description: data }));
-  };
+  useEffect(() => {
+    const changeinTitle = setTimeout(() => {
+      setprevData((prev) => ({ ...prev, title: title }));
+    }, 3000);
+    return () => clearTimeout(changeinTitle);
+  }, [title]);
 
-  const imgfileChange = (imagefiledata, func) => {
-    switch (func) {
-      case "add":
-        imagefiledata.id = nanoid();
+  useEffect(() => {
+    const changeinDescription = setTimeout(() => {
+      setprevData((prev) => ({ ...prev, description: description }));
+    }, 6000);
+    return () => clearTimeout(changeinDescription);
+  }, [description]);
+
+  console.log(prevData);
+
+  const modifier = (data, func) => {
+    if (func == "add") {
+      data.map((e) => {
+        let key = "";
+        if (e.type == "application/pdf") {
+          key = "notes";
+        } else {
+          key = e.type.split("/")[0] + "s";
+        }
+        const obj = {
+          id: nanoid(),
+          files: e,
+        };
         setprevData((prev) => ({
           ...prev,
-          images: [{ ...prev.images, imagefiledata }],
+          [key]: [...prev[key], obj],
         }));
-        break;
-      case "del":
-        const data = prev.images.filter((e) => e.name !== imagefiledata.id);
-        setprevData((prev) => ({ ...prev, images: data }));
-        break;
-      default:
-        break;
-    }
-  };
-
-  const vidfileChange = (filedata, func) => {
-    switch (func) {
-      case "add":
-        filedata.id = nanoid();
-        setprevData((prev) => ({
-          ...prev,
-          videos: [{ ...prev.videos, filedata }],
-        }));
-        break;
-      case "del":
-        const data = prev.videos.filter((e) => e.name !== filedata.name);
-        setprevData((prev) => ({ ...prev, videos: data }));
-        break;
-      default:
-        break;
-    }
-  };
-
-  const notesfileChange = (notesData, func) => {
-    switch (func) {
-      case "add":
-        notesData.id = nanoid();
-        setprevData((prev) => ({
-          ...prev,
-          notes: [{ ...prev.notes, notesData }],
-        }));
-        break;
-      case "del":
-        const data = prev.notes.filter((e) => e.name !== notesData.id);
-        setprevData((prev) => ({ ...prev, notes: data }));
-        break;
-      default:
-        break;
+      });
+    } else {
+      const modData = data[0];
+      let key = "";
+      if (modData.files.type === "application/pdf") {
+        key = "notes";
+      } else {
+        key = modData.files.type.split("/")[0] + "s";
+      }
+      const array = prevData[key].filter((val) => val.id !== modData.id);
+      setprevData((prev) => ({
+        ...prev,
+        [key]: array,
+      }));
+      return "data deleted";
     }
   };
 
@@ -135,15 +137,22 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
     );
   };
 
-  const onSubmit = (data) => {
-    //check on the prevData(for full data is present)
-    console.log(prevData);
-    // Handle form submission here
+  const onSubmit = async (data) => {
+    // function on form submission
+    if (data) {
+      const course = localStorageService.getfromStorage("courseData")[0];
+      const updateVal = await updatelesson(course.id, prevData.id, prevData);
+      if (updateVal) {
+        const getcourseData = await getData();
+        const neededVal = getcourseData.filter((e) => e.id === prevData.id);
+        localStorageService.setinStorage("courseData", neededVal);
+        setupdateModelOpen(false);
+      }
+    }
   };
-
-  if (prevData) {
+  if (prevData != null) {
     return (
-      <div className="max-w-6xl mx-auto p-6 space-y-6">
+      <div className="max-w-6xl mx-auto p-6 space-y-6 ">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-2">Update Content</h1>
           <p className="text-gray-600">
@@ -151,7 +160,7 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-6">
           {/* Title and Description Section */}
           <Card>
             <CardHeader>
@@ -163,42 +172,25 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
             <CardContent className="space-y-4">
               <div>
                 <Label htmlFor="title">Title *</Label>
-                <Controller
-                  name="title"
-                  control={control}
-                  rules={{ required: "Title is required" }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      id="title"
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        titleChange(e.target.value);
-                      }}
-                      placeholder="Enter title"
-                      className="mt-1"
-                    />
-                  )}
+                <Input
+                  value={title}
+                  id="title"
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                  }}
+                  placeholder="Enter title"
+                  className="mt-1"
                 />
               </div>
               <div>
                 <Label htmlFor="description">Description</Label>
-                <Controller
-                  name="description"
-                  control={control}
-                  render={({ field }) => (
-                    <Textarea
-                      {...field}
-                      id="description"
-                      placeholder="Enter description"
-                      rows={4}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        descriptionChange(e.target.value);
-                      }}
-                      className="mt-1"
-                    />
-                  )}
+                <Textarea
+                  id="description"
+                  vlaue={description}
+                  placeholder="Enter description"
+                  rows={4}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="mt-1"
                 />
               </div>
             </CardContent>
@@ -229,23 +221,25 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                         <div className="p-3 bg-gray-50 border-b">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium truncate">
-                              {image.name}
+                              {image.files.name}
                             </span>
                             <Button
                               type="button"
                               variant="ghost"
                               size="sm"
-                              onClick={() => imgfileChange(image, "del")}
+                              onClick={() => modifier([image], "del")}
                               className="h-6 w-6 p-0 hover:bg-red-100"
                             >
                               <X className="w-4 h-4 text-red-500" />
                             </Button>
                           </div>
                           <p className="text-xs text-gray-500">
-                            {formatFileSize(image.size || 0)}
+                            {formatFileSize(image.files.size || 0)}
                           </p>
                         </div>
-                        <div className="p-3">{renderFilePrevie(image)}</div>
+                        <div className="p-3">
+                          {renderFilePreview(image.files)}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -262,7 +256,6 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                   <p className="text-sm text-gray-600 mb-3">
                     Upload new images
                   </p>
-                  <Controller />
                   <Input
                     type="file"
                     accept="image/*"
@@ -270,7 +263,7 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                     onChange={(e) =>
                       !e.target.files
                         ? null
-                        : imgfileChange(e.target.file, "add")
+                        : modifier([...e.target.files], "add")
                     }
                     className="max-w-xs mx-auto"
                   />
@@ -296,31 +289,33 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                     <Badge variant="secondary">{prevData.videos.length}</Badge>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {prevData.videos.map((video) => (
+                    {prevData.videos.map((item) => (
                       <div
-                        key={video.id}
+                        key={item.id}
                         className="border rounded-lg overflow-hidden"
                       >
                         <div className="p-3 bg-gray-50 border-b">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium truncate">
-                              {video.name}
+                              {item.files.name}
                             </span>
                             <Button
                               type="button"
                               variant="ghost"
                               size="sm"
-                              onClick={() => vidfileChange(video, "del")}
+                              onClick={() => modifier([item], "del")}
                               className="h-6 w-6 p-0 hover:bg-red-100"
                             >
                               <X className="w-4 h-4 text-red-500" />
                             </Button>
                           </div>
                           <p className="text-xs text-gray-500">
-                            {formatFileSize(video.size || 0)}
+                            {formatFileSize(item.files.size || 0)}
                           </p>
                         </div>
-                        <div className="p-3">{renderFilePreview(video)}</div>
+                        <div className="p-3">
+                          {renderFilePreview(item.files)}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -342,7 +337,9 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                     accept="video/*"
                     multiple
                     onChange={(e) =>
-                      e.target.files && vidfileChange(e.target.files, "videos")
+                      !e.target.files
+                        ? null
+                        : modifier([...e.target.files], "add")
                     }
                     className="max-w-xs mx-auto"
                   />
@@ -368,7 +365,7 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                     <Badge variant="secondary">{prevData.notes.length}</Badge>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {existingData.notes.map((note) => (
+                    {prevData.notes.map((note) => (
                       <div
                         key={note.id}
                         className="border rounded-lg overflow-hidden"
@@ -376,23 +373,25 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                         <div className="p-3 bg-gray-50 border-b">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-medium truncate">
-                              {note.name}
+                              {note.files.name}
                             </span>
                             <Button
                               type="button"
                               variant="ghost"
                               size="sm"
-                              onClick={() => notesfileChange(note, "del")}
+                              onClick={() => modifier([note], "del")}
                               className="h-6 w-6 p-0 hover:bg-red-100"
                             >
                               <X className="w-4 h-4 text-red-500" />
                             </Button>
                           </div>
                           <p className="text-xs text-gray-500">
-                            {formatFileSize(note.size || 0)}
+                            {formatFileSize(note.files.size || 0)}
                           </p>
                         </div>
-                        <div className="p-3">{renderFilePreview(note)}</div>
+                        <div className="p-3">
+                          {renderFilePreview(note.files)}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -401,16 +400,7 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
 
               {/* Add New Notes */}
               <div>
-                <h4
-                  className="font-medium <
-    FormData >
-    {
-      defaultValues: {
-        title: existingData.title,
-        description: existingData.description,
-      },
-    };mb-3 flex items-center gap-2"
-                >
+                <h4 className="font-medium mb-3 flex items-center gap-2">
                   Add New Notes
                 </h4>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -423,7 +413,9 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
                     accept=".pdf,.doc,.docx,.txt"
                     multiple
                     onChange={(e) =>
-                      e.target.files && notesfileChange(e.target.files, "add")
+                      !e.target.files
+                        ? null
+                        : modifier([...e.target.files], "add")
                     }
                     className="max-w-xs mx-auto"
                   />
@@ -437,15 +429,15 @@ const UpdateFormWithPreview = ({ lessonId, isupdateModelopen }) => {
             <Button type="button" variant="outline">
               Cancel
             </Button>
-            <Button type="submit">
+            <Button onClick={() => {onSubmit(true)}}>
               <Save className="w-4 h-4 mr-2" />
               Update Content
             </Button>
           </div>
-        </form>
+        </div>
       </div>
     );
   }
 };
 
-export default UpdateFormWithPreview;
+export default UpdateLessonWithPreview;

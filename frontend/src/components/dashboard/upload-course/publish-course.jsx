@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import {
   AlertCircle,
@@ -27,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import localStorageService from "../../../services/localStorage";
+import { getData } from "../../../services/indexed.db/db";
 
 export function PublishCourse({
   course,
@@ -34,13 +35,13 @@ export function PublishCourse({
   onBackToCourse,
   onPublish,
 }) {
-  const [publishSettings, setPublishSettings] = useState({
+  const [price, setPrice] = useState({
     price: "",
-    currency: "USD",
-    publishType: "public",
+    currency: "",
     tags: "",
   });
 
+  const publishCourse = () => {};
   const totalDuration = course.lessons.reduce((total, lesson) => {
     return total + 5.5; // Dummy value for each lesson
   }, 0);
@@ -49,6 +50,23 @@ export function PublishCourse({
     const hours = Math.floor(minutes / 60);
     const mins = Math.floor(minutes % 60);
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+  };
+
+  const courseSubmit = async () => {
+    //get data from localStorage
+    const val = localStorageService.getfromStorage("couseData")[0];
+    if (val) {
+      //query on indexedDB
+      const wholeData = await getData();
+      const courseData = wholeData.filter((e) => eid == val.id)[0];
+      //change courseData
+      courseData.price = {
+        price: price.price,
+        currency: price.currency,
+      };
+      courseData.tags = price.tags;
+      //calling backend api
+    }
   };
 
   return (
@@ -129,9 +147,9 @@ export function PublishCourse({
               <Label htmlFor="price">Course Price</Label>
               <div className="flex space-x-2">
                 <Select
-                  value={publishSettings.currency}
+                  value={price.currency}
                   onValueChange={(value) =>
-                    setPublishSettings((prev) => ({ ...prev, currency: value }))
+                    setPrice((prev) => ({ ...prev, currency: value }))
                   }
                 >
                   <SelectTrigger className="w-20">
@@ -141,18 +159,16 @@ export function PublishCourse({
                     <SelectItem value="USD">USD</SelectItem>
                     <SelectItem value="EUR">EUR</SelectItem>
                     <SelectItem value="GBP">GBP</SelectItem>
+                    <SelectItem value="INR">INR</SelectItem>
                   </SelectContent>
                 </Select>
                 <Input
                   id="price"
                   type="number"
                   placeholder="0.00"
-                  value={publishSettings.price}
+                  value={price.price}
                   onChange={(e) =>
-                    setPublishSettings((prev) => ({
-                      ...prev,
-                      price: e.target.value,
-                    }))
+                    setPrice((prev) => ({ ...prev, price: e.target.value }))
                   }
                   className="flex-1"
                 />
@@ -161,34 +177,6 @@ export function PublishCourse({
                 Leave empty for free course
               </p>
             </div>
-
-            <div>
-              <Label htmlFor="publish-type">Visibility</Label>
-              <Select
-                value={publishSettings.publishType}
-                onValueChange={(value) =>
-                  setPublishSettings((prev) => ({
-                    ...prev,
-                    publishType: value,
-                  }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="public">
-                    Public - Anyone can find and enroll
-                  </SelectItem>
-                  <SelectItem value="unlisted">
-                    Unlisted - Only with direct link
-                  </SelectItem>
-                  <SelectItem value="private">
-                    Private - Invitation only
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
           <div>
@@ -196,9 +184,9 @@ export function PublishCourse({
             <Input
               id="tags"
               placeholder="Enter tags separated by commas (e.g., javascript, react, frontend)"
-              value={publishSettings.tags}
+              value={price.tags}
               onChange={(e) =>
-                setPublishSettings((prev) => ({
+                setPrice((prev) => ({
                   ...prev,
                   tags: e.target.value,
                 }))

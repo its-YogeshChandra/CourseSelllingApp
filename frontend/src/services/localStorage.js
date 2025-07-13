@@ -11,11 +11,11 @@ export class LocalStorageClass {
   }
 
   removefromStorage(name) {
-      localStorage.removeItem("myCat");
+      localStorage.removeItem(name);
       console.log("item successfully removed")
   }
 
-  cleartheStorage(name) {
+  cleartheStorage() {
       localStorage.clear();
       console.log("data successfully cleared")
   }

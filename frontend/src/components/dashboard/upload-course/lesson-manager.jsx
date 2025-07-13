@@ -37,14 +37,19 @@ import { useForm, Controller } from "react-hook-form";
 import { getData } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 import localStorageService from "../../../services/localStorage.js";
+import UpdateLessonWithPreview from "./lessonManagerComp/upload.lesson.jsx";
+import { modifiedObject } from "../../../services/impfunctions.js";
 
 export function LessonManager({
   course,
   onBackToCourse,
   onContinueToPublish,
   onDeletingLesson,
+  onClosingPage
 }) {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+  const [updateModelOpen, setupdateModelOpen] = useState(false);
+  const [updLessonid, setupdLessonid] = useState(null);
   const [lessonData, setLessonData] = useState();
   const [lessonNeeded, setlessonNeeded] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
@@ -65,20 +70,22 @@ export function LessonManager({
 
   const addtheLesson = (data) => {
     data.id = nanoid();
-    data.images.map((e)=>{
-   e.id = nanoid()
-    })
-    data.videos.map((e)=>{
-   e.id = nanoid()
-    })
-    data.notes.map((e)=>{
-   e.id = nanoid()
-    })
+    const lessonObj = modifiedObject(data, ["images", "videos", "notes"]);
+    console.log(lessonObj);
     const courseVal = localStorageService.getfromStorage("courseData")[0];
-    console.log(courseVal);
-    onContinueToPublish(data, courseVal.id);
+    onContinueToPublish(lessonObj, courseVal.id);
     setIsLessonModalOpen(false);
   };
+
+  const editlesson = (lessonid) => {
+    console.log(lessonid);
+    //collect data from parameter and add it into state
+    if (lessonid !== "") {
+      setupdLessonid(lessonid);
+      setupdateModelOpen((prev) => !prev);
+    }
+  };
+
   // useEffect(() => {
   //   async () => {
   //     const data = await getData(id);
@@ -145,7 +152,6 @@ export function LessonManager({
     setIsLessonModalOpen(true);
   };
 
-  const updateLesson = () => {};
   // const handleDeleteLesson = (lessonId) => {
   //   const lesson = course.lessons.find((l) => l.id === lessonId);
   //   setCourse({
@@ -157,29 +163,27 @@ export function LessonManager({
   //   });
   // };
 
-  const handleDragStart = (e, lessonId) => {
-    setDraggedLesson(lessonId);
-    e.dataTransfer.effectAllowed = "move";
-  };
+  // const handleDragStart = (e, lessonId) => {
+  //   setDraggedLesson(lessonId);
+  //   e.dataTransfer.effectAllowed = "move";
+  // };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-  };
+  // const handleDragOver = (e) => {
+  //   e.preventDefault();
+  //   e.dataTransfer.dropEffect = "move";
+  // };
 
-  const updatetheLesson = (data) => {};
+  // const controlLessonUpdate = (lessonId) => {
+  //   //getting data from local storage
+  //   const courseVal = localStorageService.getfromStorage("courseData")[0];
+  //   const lessonVal = courseVal.lessons.filter((e) => e.id === lessonId)[0];
+  //   //updating the components through reset
+  // };
 
-  const controlLessonUpdate = (lessonId) => {
-    //getting data from local storage
-    const courseVal = localStorageService.getfromStorage("courseData")[0];
-    const lessonVal = courseVal.lessons.filter((e) => e.id === lessonId)[0];
-    //updating the components through reset
-  };
-
-  const handleNotesFileChange = (e) => {
-    const file = e.target.files?.[0];
-    setNewLesson({ ...newLesson, notesFile: file });
-  };
+  // const handleNotesFileChange = (e) => {
+  //   const file = e.target.files?.[0];
+  //   setNewLesson({ ...newLesson, notesFile: file });
+  // };
 
   const closeModal = () => {
     setIsLessonModalOpen(false);
@@ -286,7 +290,11 @@ export function LessonManager({
                       )}
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => editlesson(e.id)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <Button
@@ -317,7 +325,7 @@ export function LessonManager({
             </Button>
             <Button
               onClick={() => {
-                onContinueToPublish;
+                onClosingPage()
               }}
               disabled={course.lessons.length === 0}
               className="bg-blue-600 hover:bg-blue-700"
@@ -547,6 +555,20 @@ export function LessonManager({
           </form>
         </DialogContent>
       </Dialog>
+
+      {updateModelOpen && updLessonid && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/40 backdrop-blur-sm">
+          <div className="min-h-screen flex items-center justify-center p-4">
+            <div className="relative z-60 w-full max-w-3xl bg-white p-6 rounded-lg shadow-xl">
+              <UpdateLessonWithPreview
+                setupdateModelOpen={setupdateModelOpen}
+                lessonId={updLessonid}
+                courseId={course.id}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

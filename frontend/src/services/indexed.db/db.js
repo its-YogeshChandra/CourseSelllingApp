@@ -87,7 +87,7 @@ const addlesson = (lessonData, courseId) => {
     const getfromStore = tx.objectStore("courses");
     const request = getfromStore.getAll();
     request.onsuccess = (e) => {
-      console.log(courseId);
+      console.log(lessonData);
       const val = e.target.result.filter((e) => e.id === courseId);
       const course = val[0];
       course.lessons = [...course.lessons, lessonData];
@@ -115,7 +115,6 @@ const updatelesson = (courseId, lessonId, lessonData) => {
     request.onsuccess = (e) => {
       const val = e.target.result.filter((e) => e.id === courseId);
       const course = val[0];
-      console.log(course);
       course.lessons = course.lessons.filter((e) => e.id !== lessonId);
       course.lessons = [...course.lessons, lessonData];
       const updatetheStore = getfromStore.put(course);

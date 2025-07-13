@@ -10,7 +10,7 @@ import {
   getData,
   addlesson,
   updatelesson,
-  deleteLesson
+  deleteLesson,
 } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 import { object } from "zod";
@@ -70,38 +70,40 @@ export function UploadNewCourse() {
     }
     //addlesson and update the courseobject id
     const addthelesson = await addlesson(data, courseId);
-    console.log(addthelesson);
     //get course and update the course state
     const valfromdb = await getData();
-    const neededVal = valfromdb.filter(e => e.id === courseId)
-    console.log(neededVal)
-    setCourse(neededVal[0])
+    const neededVal = valfromdb.filter((e) => e.id === courseId);
+    console.log(neededVal[0]);
+    setCourse(neededVal[0]);
   };
 
- //delete lessons
-const delLesson = async (courseId, lessonId) => {
+  //delete lessons
+  const delLesson = async (courseId, lessonId) => {
     //checking for data has lessons
     if (!courseId || !lessonId) {
       toast.error("missing data", {
         description: "Internal service error",
       });
     }
-    //addlesson and update the courseobject id
+    //deletelesson and update the courseobject id
     const deletetheLesson = await deleteLesson(courseId, lessonId);
     console.log(deletetheLesson);
     //get course and update the course state
     const valfromdb = await getData();
-    const neededVal = valfromdb.filter(e => e.id === courseId)
-    console.log(neededVal)
-    setCourse(neededVal[0])
+    const neededVal = valfromdb.filter((e) => e.id === courseId);
+    console.log(neededVal);
+    localStorageService.setinStorage("courseData", neededVal[0]);
+    setCourse(neededVal[0]);
   };
-
 
   const handlePublishCourse = () => {
     // toast
-    setTimeout(() => {
-      resetForm();
-    }, 2000);
+    
+
+    
+    // setTimeout(() => {
+    //   resetForm();
+    // }, 2000);
   };
 
   const resetForm = () => {
@@ -118,6 +120,9 @@ const delLesson = async (courseId, lessonId) => {
   const goBackToStep = (targetStep) => {
     setStep(targetStep);
   };
+ const onPageClose = ()=>{
+  setStep("publish")
+ }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -136,7 +141,8 @@ const delLesson = async (courseId, lessonId) => {
           course={course}
           onBackToCourse={() => goBackToStep("course")}
           onContinueToPublish={handleLessonsComplete}
-          onDeletingLesson = {delLesson}
+          onDeletingLesson={delLesson}
+          onClosingPage = {onPageClose}
         />
       )}
 
