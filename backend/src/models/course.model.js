@@ -20,12 +20,26 @@ const courseSchema = new Schema(
         ref: "User",
       },
     ],
+    courseDescription: {
+      type: String,
+    },
     category: {
       type: String,
       require: true,
     },
     thumbnail: {
       type: String,
+    },
+    tags: {
+      type: String,
+    },
+    price: {
+      price: {
+        type: Number,
+      },
+      currency: {
+        type: String,
+      },
     },
   },
   { timestamps: true }

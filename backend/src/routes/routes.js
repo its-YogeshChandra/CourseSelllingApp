@@ -40,7 +40,7 @@ router.route("/logout").post(jwtVerify, logoutUser);
 courseRouter.route("/createcourse").post(uploadMiddleware, createcourse);
 
 //#2 for uploading lessons
-courseRouter.route("/uploadlessons").post(uploadMiddleware, uploadlessons);
+courseRouter.route("/uploadlessons").post( uploadlessons);
 
 //routes for instructor
 // #1 for registering instructor

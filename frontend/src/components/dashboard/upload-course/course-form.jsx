@@ -38,12 +38,11 @@ export function CourseForm({ course, onSubmit, onReset }) {
     "Health & Fitness",
     "Language Learning",
   ];
- 
-    
+
   const dataSubmit = (data) => {
-    data.id = nanoid()
-    data.lessons = []
-   return onSubmit(data);
+    data.id = nanoid();
+    data.lessons = [];
+    return onSubmit(data);
   };
 
   return (
@@ -65,9 +64,16 @@ export function CourseForm({ course, onSubmit, onReset }) {
               <Controller
                 name={"title"}
                 control={control}
-                defaultValue={"web development"}
+                rules={{ required: true }}
                 render={({ field }) => {
-                  return <Input {...field} id="title" className="mt-2" />;
+                  return (
+                    <Input
+                      {...field}
+                      id="title"
+                      placeholder={"web development"}
+                      className="mt-2"
+                    />
+                  );
                 }}
               />
             </div>
@@ -78,6 +84,7 @@ export function CourseForm({ course, onSubmit, onReset }) {
               <Controller
                 name="description"
                 control={control}
+                rules={{ required: true }}
                 render={({ field }) => (
                   <Textarea
                     {...field}
@@ -96,6 +103,7 @@ export function CourseForm({ course, onSubmit, onReset }) {
               <Controller
                 name="category"
                 control={control}
+                rules={{ required: true }}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger className="mt-1">
@@ -121,19 +129,20 @@ export function CourseForm({ course, onSubmit, onReset }) {
               <Controller
                 name="thumbnail"
                 control={control}
+                rules={{ required: true }}
                 render={({ field }) => {
                   return (
                     <Input
-                      {...field}
-                      id="thumbnail"
+                      onChange={(e) => {
+                        field.onChange(...e.target.files);
+                      }}
                       type="file"
                       accept="image/*"
-                      className="mt-1"
+                      multiple
                     />
                   );
                 }}
               />
-
               <p className="text-sm text-gray-500 mt-1">
                 Upload an image that represents your course (recommended:
                 1280x720px)

@@ -4,4 +4,8 @@ const conf = {
   googleAuth: import.meta.env.VITE_GOOGLE_USER,
 };
 
-export { conf };
+const courseConf = {
+  courseUrl : import.meta.env.VITE_COURSE_URL,
+  lessonUrl : import.meta.env.VITE_LESSON_URL,
+}
+export { conf, courseConf };

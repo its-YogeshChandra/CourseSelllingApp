@@ -8,8 +8,6 @@ const { signupUrl, loginUrl, googleAuth } = conf;
 
 export class AuthServices {
   async signup(data) {
-    console.log(data);
-
     const newVal = Object.fromEntries(
       Object.entries(data).filter((e) => {
         return e[0] !== "firstPassword" && e[0] !== "confirmPassword";
@@ -33,7 +31,6 @@ export class AuthServices {
       const response = await axios.post(loginUrl, {
         data: data,
       });
-      console.log(response);
       return response.data;
     } catch (error) {
       if (error instanceof Error) {

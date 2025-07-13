@@ -7,11 +7,13 @@ import { pathfinder } from "../utils/path.finder.js";
 import { Lesson } from "../models/courseData.model.js";
 
 const createcourse = asyncHandler(async (req, res) => {
-  const { courseName, category, instructor } = req.body;
-  const files = req.files;
-  console.log(files);
-  const { path } = files.thumbnail[0];
+  const { courseName, category, instructor, description, price  } = req.body;
 
+  const files = req.files.thumbnail;
+ console.log(files[0])
+
+  const { path } = files[0];
+ 
   // upload data on cloudinary
 
   const data = await uploadonCloudinary(path);
@@ -22,6 +24,8 @@ const createcourse = asyncHandler(async (req, res) => {
     courseName,
     category,
     instructor,
+    description,
+    price,
     thumbnail: url,
   });
 
@@ -47,6 +51,8 @@ const uploadlessons = asyncHandler(async (req, res) => {
   //creating data in the db
   //checking for edge cases
   //sending data back to the user/client
+  console.log(req.body)
+  
   const { title, courseRef } = req.body;
 
   const { videos, images, notes } = req.files;
@@ -121,4 +127,4 @@ const updatelessons = asyncHandler(async (req, res) => {
 
 
 
-export { createcourse, uploadlessons, updatelesson,updatelessons };
+export { createcourse, uploadlessons,updatelessons };
