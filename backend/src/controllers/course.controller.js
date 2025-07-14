@@ -5,6 +5,7 @@ import { Course } from "../models/course.model.js";
 import { uploadonCloudinary } from "../utils/cloudinary.js";
 import { pathfinder } from "../utils/path.finder.js";
 import { Lesson } from "../models/courseData.model.js";
+import { deleteAllFilesInFolder } from "../utils/clearFolder.js";
 
 const createcourse = asyncHandler(async (req, res) => {
   const { courseName, category, instructor, description, price } = req.body;
@@ -48,10 +49,8 @@ const uploadlessons = asyncHandler(async (req, res) => {
   //creating data in the db
   //checking for edge cases
   //sending data back to the user/client
-  console.log(req.body);
 
-  const { title, courseRef } = req.body;
-  console.log(req.files);
+  const { title, courseRef, description } = req.body;
   const { videos, images, notes } = req.files;
 
   const videosPath = pathfinder(videos);
@@ -100,10 +99,14 @@ const uploadlessons = asyncHandler(async (req, res) => {
         break;
     }
   });
+ //clear out the public => temp folder
+deleteAllFilesInFolder("./public/temp")
+
 
   const createLesson = await Lesson.create({
     title,
     courseRef,
+    description,
     video: videosArr,
     image: imagesArr,
     notes: notesArr,

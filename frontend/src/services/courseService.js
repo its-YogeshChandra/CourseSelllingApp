@@ -7,10 +7,22 @@ export class courseAction {
   async uploadCourse(course) {
     //changes in data
     //#1 seperating course object
-    const lessons = course.lessons;
+    const { lessons } = course;
     delete course.lessons;
 
-    //#2 sending data to backend
+    const key = ["images", "videos", "notes"];
+    lessons.map((lesson) => {
+      key.forEach((key) => {
+        if (Array.isArray(lesson[key])) {
+          lesson[key] = lesson[key].map((e) => {
+            console.log(e.files);
+            return e.files;
+          });
+        }
+      });
+    });
+
+    //#2 sending course data to backend
     try {
       const courseadd = async () => {
         const response = await axios.post(courseUrl, course, {
@@ -24,24 +36,37 @@ export class courseAction {
       //#3 receiving data from backend
       const val = await courseadd();
 
-      //#4 updating lessondata with courseid and send data to backend(lessonhandler)
+      //#4 updating lessondata with courseid and send data to backend(lessonhandler) :
       const courseId = val.data._id;
-      const dataArr = [];
-      const totalData = lessons.map(async (e) => {
-        e.courseId = courseId;
-        const form = new FormData();
+      const values = lessons.map(async (lesson) => {
 
-        const lessonResponse = await axios.post(lessonUrl, e, {
+        //creating formData (#way to send nested multipart data into backend )
+        const formData = new FormData();
+        lesson.courseRef = courseId;
+        for (let keypart in lesson) {
+          if (
+            keypart === "images" ||
+            keypart === "videos" ||
+            keypart === "notes"
+          ) {
+            lesson[keypart].map((file) => {
+              formData.append(keypart, file);
+            });
+          } else {
+            formData.append(keypart, lesson[keypart]);
+          }
+        }
+
+        //sending data to backend
+        const response = await axios.post(lessonUrl, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        if (lessonResponse.data) {
-          dataArr.push(lessonResponse.data);
-        }
+        return response;
       });
-      const totalval = await Promise.all(totalData);
-      if (totalval) {
-        console.log(dataArr);
-      }
+      //waiting for all responses to collect
+      const finalVal = await Promise.all(values);
+      return finalVal;
+      
     } catch (error) {
       throw error;
     }

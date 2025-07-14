@@ -5,6 +5,9 @@ const LessonSchema = new Schema(
     title: {
       type: String,
     },
+    description: {
+      type: String,
+    },
     courseRef: {
       type: Schema.Types.ObjectId,
       ref: "Course",
