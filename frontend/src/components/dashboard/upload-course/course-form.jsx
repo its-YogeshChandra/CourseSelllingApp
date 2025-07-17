@@ -30,8 +30,8 @@ export function CourseForm({ course, onSubmit, onReset }) {
   } = useForm();
   const categories = [
     "Programming",
-    "Design",
-    "Business",
+    "Art & Design",
+    "Business & Finance",
     "Marketing",
     "Photography",
     "Music",

@@ -1,5 +1,3 @@
-
-
 const pathfinder = (data) => {
   const value = [];
     data.map((e) => {

@@ -45,7 +45,7 @@ export function LessonManager({
   onBackToCourse,
   onContinueToPublish,
   onDeletingLesson,
-  onClosingPage
+  onClosingPage,
 }) {
   const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
   const [updateModelOpen, setupdateModelOpen] = useState(false);
@@ -70,8 +70,18 @@ export function LessonManager({
 
   const addtheLesson = (data) => {
     data.id = nanoid();
-    const lessonObj = modifiedObject(data, ["images", "videos", "notes"]);
-    console.log(lessonObj);
+    const keysArr = [];
+    //clear the non-existent keys and make keysout of array value keys
+    for (let key in data) {
+      if (data[key] == undefined) {
+        delete data[key];
+      } else {
+        if (Array.isArray(data[key])) {
+          keysArr.push(key);
+        }
+      }
+    }
+    const lessonObj = modifiedObject(data, keysArr);
     const courseVal = localStorageService.getfromStorage("courseData")[0];
     onContinueToPublish(lessonObj, courseVal.id);
     setIsLessonModalOpen(false);
@@ -325,7 +335,7 @@ export function LessonManager({
             </Button>
             <Button
               onClick={() => {
-                onClosingPage()
+                onClosingPage();
               }}
               disabled={course.lessons.length === 0}
               className="bg-blue-600 hover:bg-blue-700"

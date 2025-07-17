@@ -96,16 +96,6 @@ export function UploadNewCourse() {
     setCourse(neededVal[0]);
   };
 
-  const handlePublishCourse = () => {
-    // toast
-    
-
-    
-    // setTimeout(() => {
-    //   resetForm();
-    // }, 2000);
-  };
-
   const resetForm = () => {
     setCourse({
       title: "",
@@ -120,9 +110,9 @@ export function UploadNewCourse() {
   const goBackToStep = (targetStep) => {
     setStep(targetStep);
   };
- const onPageClose = ()=>{
-  setStep("publish")
- }
+  const onPageClose = () => {
+    setStep("publish");
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
@@ -142,7 +132,7 @@ export function UploadNewCourse() {
           onBackToCourse={() => goBackToStep("course")}
           onContinueToPublish={handleLessonsComplete}
           onDeletingLesson={delLesson}
-          onClosingPage = {onPageClose}
+          onClosingPage={onPageClose}
         />
       )}
 
@@ -151,7 +141,8 @@ export function UploadNewCourse() {
           course={course}
           onBackToLessons={() => goBackToStep("lessons")}
           onBackToCourse={() => goBackToStep("course")}
-          onPublish={handlePublishCourse}
+          setCourse={setCourse}
+          setStep = {setStep}
         />
       )}
     </div>

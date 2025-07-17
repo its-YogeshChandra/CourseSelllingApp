@@ -51,13 +51,17 @@ const uploadlessons = asyncHandler(async (req, res) => {
   //sending data back to the user/client
 
   const { title, courseRef, description } = req.body;
-  const { videos, images, notes } = req.files;
 
-  const videosPath = pathfinder(videos);
-  const imagesPath = pathfinder(images);
-  const notesPath = pathfinder(notes);
+  //rather destructuring check for key's
+  const keys = ["images", "videos", "notes"];
 
-  const arrayToUpload = [videosPath, imagesPath, notesPath];
+  //iterate keys and punch value of present keys in the object or something
+  const arrayToUpload = [];
+  keys.map((key) => {
+    if (req.files[key]) {
+      arrayToUpload.push(pathfinder(req.files[key]));
+    }
+  });
 
   const uploadedData = arrayToUpload.map((e) => {
     return e.map((e) => {
@@ -99,9 +103,9 @@ const uploadlessons = asyncHandler(async (req, res) => {
         break;
     }
   });
- //clear out the public => temp folder
-deleteAllFilesInFolder("./public/temp")
-
+  
+  //clear out the public => temp folder
+  deleteAllFilesInFolder("./public/temp");
 
   const createLesson = await Lesson.create({
     title,

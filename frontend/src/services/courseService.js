@@ -9,15 +9,16 @@ export class courseAction {
     //#1 seperating course object
     const { lessons } = course;
     delete course.lessons;
-
     const key = ["images", "videos", "notes"];
     lessons.map((lesson) => {
       key.forEach((key) => {
-        if (Array.isArray(lesson[key])) {
-          lesson[key] = lesson[key].map((e) => {
-            console.log(e.files);
-            return e.files;
-          });
+        if (lesson[key]) {
+          if (Array.isArray(lesson[key])) {
+            lesson[key] = lesson[key].map((e) => {
+              console.log(e.files);
+              return e.files;
+            });
+          }
         }
       });
     });
@@ -39,7 +40,6 @@ export class courseAction {
       //#4 updating lessondata with courseid and send data to backend(lessonhandler) :
       const courseId = val.data._id;
       const values = lessons.map(async (lesson) => {
-
         //creating formData (#way to send nested multipart data into backend )
         const formData = new FormData();
         lesson.courseRef = courseId;
@@ -66,7 +66,6 @@ export class courseAction {
       //waiting for all responses to collect
       const finalVal = await Promise.all(values);
       return finalVal;
-      
     } catch (error) {
       throw error;
     }

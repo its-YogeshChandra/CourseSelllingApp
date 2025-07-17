@@ -29,19 +29,22 @@ import {
 import localStorageService from "../../../services/localStorage";
 import { getData } from "../../../services/indexed.db/db";
 import { courseServices } from "../../../services/courseService";
+import { toast } from "sonner";
 
 export function PublishCourse({
   course,
+  setCourse,
   onBackToLessons,
   onBackToCourse,
   onPublish,
+  setStep
 }) {
   const [price, setPrice] = useState({
     price: "",
     currency: "",
     tags: "",
   });
- 
+
   const publishCourse = () => {};
   const totalDuration = course.lessons.reduce((total, lesson) => {
     return total + 5.5; // Dummy value for each lesson
@@ -53,15 +56,11 @@ export function PublishCourse({
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
-
-
-
   const courseSubmit = async () => {
     //get data from localStorage
     const val = localStorageService.getfromStorage("courseData")[0];
-    
-    if (val) {
 
+    if (val) {
       //query on indexedDB
       const wholeData = await getData();
       const courseData = wholeData.filter((e) => e.id == val.id)[0];
@@ -74,7 +73,24 @@ export function PublishCourse({
       courseData.tags = price.tags;
 
       //calling backend api
-      const upload = courseServices.uploadCourse(courseData)
+      const upload = await courseServices.uploadCourse(courseData);
+      console.log(upload);
+      if (upload) {
+        const resetForm = () => {
+          setCourse({
+            title: "",
+            description: "",
+            category: "",
+            lessons: [],
+          });
+          setStep("course");
+          toast;
+        };
+
+        setTimeout(() => {
+          resetForm();
+        }, 2000);
+      }
     }
   };
 
@@ -266,7 +282,7 @@ export function PublishCourse({
               </Button>
             </div>
             <Button
-              onClick={()=>courseSubmit()}
+              onClick={() => courseSubmit()}
               disabled={course.lessons.length === 0}
               className="bg-green-600 hover:bg-green-700"
               size="lg"
