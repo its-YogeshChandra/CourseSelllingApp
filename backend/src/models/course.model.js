@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const courseSchema = new Schema(
   {
-    courseName: {
+    title: {
       type: String,
       require: true,
     },

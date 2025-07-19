@@ -8,7 +8,8 @@ import { Lesson } from "../models/courseData.model.js";
 import { deleteAllFilesInFolder } from "../utils/clearFolder.js";
 
 const createcourse = asyncHandler(async (req, res) => {
-  const { courseName, category, instructor, description, price } = req.body;
+  const { courseName, category, instructor, description, price, title } =
+    req.body;
 
   const files = req.files.thumbnail;
   const { path } = files[0];
@@ -19,10 +20,11 @@ const createcourse = asyncHandler(async (req, res) => {
 
   //inserting data in db
   const insertinDb = await Course.create({
+    title,
     courseName,
     category,
     instructor,
-    description,
+    courseDescription: description,
     price,
     thumbnail: url,
   });
@@ -103,7 +105,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
         break;
     }
   });
-  
+
   //clear out the public => temp folder
   deleteAllFilesInFolder("./public/temp");
 
@@ -126,4 +128,17 @@ const uploadlessons = asyncHandler(async (req, res) => {
 
 const updatelessons = asyncHandler(async (req, res) => {});
 
-export { createcourse, uploadlessons, updatelessons };
+const getCourses = asyncHandler(async (req, res) => {
+  //query hitting from frontend
+  //query coursemodel in db and send all the course data to frontend(will check on the choice though)
+  const data = await Course.find({});
+
+  if (!data) {
+    throw new ApiError(500, "Error while fetching data");
+  }
+  res
+    .status(200)
+    .json(new ApiResponse(200, "data successfully received", data));
+});
+
+export { createcourse, uploadlessons, updatelessons, getCourses };

@@ -1,6 +1,14 @@
+import { useEffect } from "react";
 import CourseSectionCard from "./courseSection.card.jsx";
+import { courseServices } from "../../services/courseService.js";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addCourse,
+  deleteCourse,
+} from "../../services/redux.store/courseData.slice.js";
 
 export default function CourseSection() {
+  const dispatch = useDispatch();
   const filterTabs = [
     { label: "See All", active: true },
     { label: "Data Science", count: "03" },
@@ -8,6 +16,22 @@ export default function CourseSection() {
     { label: "Lifestyle", count: "05" },
   ];
   const cardArr = [1, 2, 3, 4, 5, 6];
+  const courseData = () => {
+    useSelector((state) => {
+      return state.courseData.allcourses;
+    });
+  };
+  //calling api service and getting data
+  useEffect(() => {
+    const handlerfunction = async () => {
+      const response = await courseServices.getCourseData();
+      if (response) {
+        //append data to redux store
+        dispatch(addCourse(response.data));
+      }
+    };
+    handlerfunction();
+  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 mt-4 font-inter">

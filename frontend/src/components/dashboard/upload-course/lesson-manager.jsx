@@ -96,17 +96,6 @@ export function LessonManager({
     }
   };
 
-  // useEffect(() => {
-  //   async () => {
-  //     const data = await getData(id);
-  //     console.log(data);
-  //     const neededVal = data.lessons;
-  //     if (data) {
-  //       setLessonData(neededVal);
-  //     }
-  //   };
-  // }, [lessonNeeded]);
-
   const handleAddLesson = () => {
     if (!newLesson.title) {
       toast.error("Please enter a lesson title.", {
@@ -161,39 +150,6 @@ export function LessonManager({
     });
     setIsLessonModalOpen(true);
   };
-
-  // const handleDeleteLesson = (lessonId) => {
-  //   const lesson = course.lessons.find((l) => l.id === lessonId);
-  //   setCourse({
-  //     ...course,
-  //     lessons: course.lessons.filter((l) => l.id !== lessonId),
-  //   });
-  //   toast(`"${lesson?.title}" has been removed from your course.`, {
-  //     description: "Lesson Deleted",
-  //   });
-  // };
-
-  // const handleDragStart = (e, lessonId) => {
-  //   setDraggedLesson(lessonId);
-  //   e.dataTransfer.effectAllowed = "move";
-  // };
-
-  // const handleDragOver = (e) => {
-  //   e.preventDefault();
-  //   e.dataTransfer.dropEffect = "move";
-  // };
-
-  // const controlLessonUpdate = (lessonId) => {
-  //   //getting data from local storage
-  //   const courseVal = localStorageService.getfromStorage("courseData")[0];
-  //   const lessonVal = courseVal.lessons.filter((e) => e.id === lessonId)[0];
-  //   //updating the components through reset
-  // };
-
-  // const handleNotesFileChange = (e) => {
-  //   const file = e.target.files?.[0];
-  //   setNewLesson({ ...newLesson, notesFile: file });
-  // };
 
   const closeModal = () => {
     setIsLessonModalOpen(false);
@@ -388,9 +344,7 @@ export function LessonManager({
                 </div>
 
                 <div>
-                  <Label htmlFor="lesson-description">
-                    Description (Optional)
-                  </Label>
+                  <Label htmlFor="lesson-description">Description</Label>
                   <Controller
                     name="description"
                     control={control}
@@ -414,32 +368,23 @@ export function LessonManager({
                   Video Content *
                 </h4>
                 <div className="flex space-x-2">
-                  <Button
-                    type="button"
-                    variant={"default"}
-                    size="sm"
-                    onClick={() =>
-                      setNewLesson((prev) => ({ ...prev, videoType: "upload" }))
-                    }
-                  >
-                    <FileVideo className="mr-2 h-4 w-4" />
-                    Upload Video
-                  </Button>
+                  <Label htmlFor="lesson-videos"> Upload Video</Label>
                 </div>
                 <div>
                   <Controller
                     name="videos"
                     control={control}
-                    rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <Input
+                          name={field.name}
                           onChange={(e) => {
                             field.onChange([...e.target.files]);
                           }}
                           type="file"
                           accept="video/*"
                           multiple
+                          id="lesson-videos"
                         />
                       );
                     }}
@@ -461,10 +406,10 @@ export function LessonManager({
                   <Controller
                     name="notes"
                     control={control}
-                    rules={{ required: true }}
                     render={({ field }) => {
                       return (
                         <Input
+                          name={field.name}
                           multiple
                           onChange={(e) => {
                             field.onChange([...e.target.files]);
@@ -482,20 +427,6 @@ export function LessonManager({
                     Upload study materials, PDFs, documents, or text files (Max
                     size: 10MB)
                   </p>
-                  {newLesson.notesFile && (
-                    <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border border-blue-200 dark:border-blue-800">
-                      <div className="flex items-center space-x-2 text-sm">
-                        <FileText className="h-4 w-4 text-blue-600" />
-                        <span className="text-blue-700 dark:text-blue-300">
-                          {newLesson.notesFile.name}
-                        </span>
-                        <span className="text-gray-500">
-                          ({(newLesson.notesFile.size / 1024 / 1024).toFixed(2)}{" "}
-                          MB)
-                        </span>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
@@ -513,12 +444,12 @@ export function LessonManager({
                     render={({ field }) => {
                       return (
                         <Input
+                          name={field.name}
                           id="image-files"
                           type="file"
                           accept="image/*"
                           multiple
                           onChange={(e) => {
-                            e.preventDefault();
                             field.onChange([...e.target.files]);
                           }}
                         />
@@ -530,33 +461,11 @@ export function LessonManager({
                     Upload diagrams, screenshots, or reference images (Max 5
                     files, 5MB each)
                   </p>
-                  {newLesson.imageFiles && newLesson.imageFiles.length > 0 && (
-                    <div className="mt-2 space-y-2">
-                      {newLesson.imageFiles.map((file, index) => (
-                        <div
-                          key={index}
-                          className="p-2 bg-green-50 dark:bg-green-900/20 rounded border border-green-200 dark:border-green-800"
-                        >
-                          <div className="flex items-center space-x-2 text-sm">
-                            <ImageIcon className="h-4 w-4 text-green-600" />
-                            <span className="text-green-700 dark:text-green-300">
-                              {file.name}
-                            </span>
-                            <span className="text-gray-500">
-                              ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={closeModal}>
-                Cancel
-              </Button>
+              {/* <Button variant="outline">Cancel</Button> */}
               <Button type="submit">
                 <Save className="mr-2 h-4 w-4" />
                 {editingLesson ? "Update Lesson" : "Add Lesson"}
