@@ -1,10 +1,9 @@
 import React from "react";
 
 export default function CourseSectionCard({ data }) {
-  console.log(data);
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden font-inter">
-      <div className="relative h-48 bg-gradient-to-r from-red-900 to-red-700">
+      <div className="relative h-50 bg-gradient-to-r from-red-900 to-red-700">
         <img
           src={data.thumbnail}
           alt=""

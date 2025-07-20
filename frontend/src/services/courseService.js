@@ -72,10 +72,10 @@ export class courseAction {
   }
 
   //function for getting course Data
-  async getCourseData(){
-    const response =  await axios.get(getCoursesUrl)
-    if(response.data){
-      return response.data
+  async getCourseData() {
+    const response = await axios.get(getCoursesUrl);
+    if (response.data) {
+      return response.data;
     }
   }
 }
