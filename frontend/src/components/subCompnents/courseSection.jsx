@@ -6,6 +6,7 @@ import {
   addCourse,
   deleteCourse,
 } from "../../services/redux.store/courseData.slice.js";
+import { useRandomCourses } from "../../services/customHooks/useRandomCourse.js";
 
 export default function CourseSection() {
   const dispatch = useDispatch();
@@ -15,12 +16,10 @@ export default function CourseSection() {
     { label: "Marketing", count: "09" },
     { label: "Lifestyle", count: "05" },
   ];
-  const cardArr = [1, 2, 3, 4, 5, 6];
-  const courseData = () => {
-    useSelector((state) => {
-      return state.courseData.allcourses;
-    });
-  };
+  
+ //calling data form redux through custom hook
+  const courseData = useRandomCourses()
+
   //calling api service and getting data
   useEffect(() => {
     const handlerfunction = async () => {
@@ -66,8 +65,8 @@ export default function CourseSection() {
 
       {/* Course Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cardArr.map((e) => {
-          return <CourseSectionCard key={e} />;
+        {courseData.map((e) => {
+          return <CourseSectionCard key={e._id} data={e} />;
         })}
       </div>
     </div>

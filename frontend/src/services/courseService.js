@@ -74,7 +74,6 @@ export class courseAction {
   //function for getting course Data
   async getCourseData(){
     const response =  await axios.get(getCoursesUrl)
-    console.log(response.data)
     if(response.data){
       return response.data
     }
