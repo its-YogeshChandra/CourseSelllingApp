@@ -52,11 +52,11 @@ const Routing = createBrowserRouter([
                 Component: CoursePlayer
               },
               {
-                path: "about_us",
+                path: "aboutus",
                 Component: AbouUs
               },
               {
-                path: "course_category",
+                path: "coursescategory",
                 Component: CourseCategory
               },
               {

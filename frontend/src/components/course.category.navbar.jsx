@@ -73,7 +73,7 @@ export default function CourseFilteringNavbar() {
             )}
           </div>
 
-          <div className="flex border rounded-md overflow-hidden">
+          {/* <div className="flex border rounded-md overflow-hidden">
             <button
               className={`p-2 ${
                 viewMode === "grid" ? "bg-gray-100" : "bg-white"
@@ -92,7 +92,7 @@ export default function CourseFilteringNavbar() {
             >
               <List className="h-5 w-5" />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

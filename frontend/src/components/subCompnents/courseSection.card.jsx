@@ -1,6 +1,19 @@
 import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
 
 export default function CourseSectionCard({ data }) {
+  const navigate = useNavigate();
+  const [isEnrollCourse, setisEnrollCourse] = useState(false);
+
+  useEffect(() => {
+    //send data through id into the coursedisplay section
+    if (isEnrollCourse == true) {
+      navigate(`/app/coursedisplay?id=${data._id}`);
+    }
+  }, [isEnrollCourse]);
+
   return (
     <div className="bg-white rounded-2xl shadow-lg overflow-hidden font-inter">
       <div className="relative h-50 bg-gradient-to-r from-red-900 to-red-700">
@@ -38,7 +51,12 @@ export default function CourseSectionCard({ data }) {
             </span>
           </div>
 
-          <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg">
+          <button
+            className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg"
+            onClick={() => {
+              setisEnrollCourse((prev) => !prev);
+            }}
+          >
             Enroll Course →
           </button>
         </div>

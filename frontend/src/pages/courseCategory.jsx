@@ -1,24 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import CourseFilteringNavbar from "../components/course.category.navbar";
 import CourseSectionCard from "../components/subCompnents/courseSection.card.jsx";
 import TopCategoriesSection from "../components/course.category.top-category.jsx";
-import Footer from "../components/footer.jsx"
+import Footer from "../components/footer.jsx";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { courseServices } from "../services/courseService.js";
+import {
+  addCourse,
+  deleteCourse,
+} from "../services/redux.store/courseData.slice.js";
 
 export default function CourseCategory() {
+  const [courseData, setCourseData] = useState([]);
+  const [dataNeeded, setDataNeeded] = useState(false);
+  const [activeTab, setActiveTab] = useState("All");
+  const dispatch = useDispatch();
   const courseArr = [
-    "Web Development",
-    "Mobile App Development",
-    "Game Development",
-    "Data Science",
-    "Machine Learning / AI",
-    "Cloud Computing (AWS, Azure, GCP)",
-    "Cybersecurity",
-    "DevOps & SRE",
-    "Blockchain & Web3",
-    "IT & Networking",
+    "See All",
+    "Programming",
+    "Art & Design",
+    "Business & Finance",
+    "Health & Fitness",
   ];
 
-  const cardArr = [1, 2, 3, 4, 5, 6];
+  //calling api service and getting data
+  useEffect(() => {
+    const handlerfunction = async () => {
+      const response = await courseServices.getCourseData();
+      if (response) {
+        //append data to redux store
+        dispatch(addCourse(response.data));
+        setTimeout(() => {
+          setDataNeeded((prev) => !prev);
+        }, 200);
+      }
+    };
+    handlerfunction();
+  }, []);
+
+  //for displaying value on every page reload
+  const value = useSelector((state) => {
+    return state.courseData.allcourses;
+  });
+  useEffect(() => {
+    setCourseData(value);
+  }, [dataNeeded]);
+
+  //function for changing courses according to the selection
+  const data = useSelector((state) => {
+    return state.courseData.allcourses;
+  });
+
+  useEffect(() => {
+    if (activeTab === "See All") {
+      setCourseData(value);
+    } else {
+      //update the value of the courseData
+      const meta = activeTab.toLowerCase();
+      const neededval = data.filter((e) => {
+        return e.category === meta;
+      });
+      setCourseData(neededval);
+    }
+  }, [activeTab]);
 
   return (
     <div className="w-full min-h-screen relative font-inter overflow-x-hidden">
@@ -57,8 +102,24 @@ export default function CourseCategory() {
                     key={e}
                     className="flex items-center gap-x-3  text-gray-800"
                   >
-                    <input type="checkbox" className="w-4 h-4" />
-                    <button className="text-left text-md">{e}</button>
+                    {/* <input
+                      type="checkbox"
+                      className="w-4 h-4"
+                      
+                      }}
+                    /> */}
+                    <button
+                    onClick ={()=>{
+                      setActiveTab(e)
+                    }}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        activeTab === e
+                          ? "text-red-500 bg-red-50"
+                          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      }`}
+                    >
+                      {e}
+                    </button>
                   </div>
                 ))}
               </div>
@@ -67,8 +128,8 @@ export default function CourseCategory() {
 
           {/* Course Cards */}
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {cardArr.map((e, i) => (
-              <CourseSectionCard key={e} />
+            {courseData.map((e) => (
+              <CourseSectionCard key={e._id} data={e} />
             ))}
           </div>
         </div>

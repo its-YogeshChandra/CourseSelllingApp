@@ -69,7 +69,7 @@
 //         <div
 //           className={`w-[430px] h-screen max-[550px]:w-[360px] fixed top-0 right-0 bg-black flex items-center align-middle transform transition-transform duration-700 ease-in-out ${
 //             clicked? "translate-x-0": "translate-x-full"
-//           }`} 
+//           }`}
 //         >
 //           <NavSidebar clickHandler={setClicked} />
 //         </div>
@@ -84,10 +84,14 @@ import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import avatar from "../assets/rabbit.png";
 import NavSidebar from "./subCompnents/nav.sidebar.jsx";
+import { useNavigate } from "react-router";
 
 export default function Navbar() {
-  const navLinks = ["Home", "Courses", "About Us", "Contact Us"];
+  const navLinks = ["Home", "Courses", "About Us"];
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  //usenavigate for navigation
+  const navigate = useNavigate();
 
   // Prevent body scroll when sidebar is open
   useEffect(() => {
@@ -96,12 +100,24 @@ export default function Navbar() {
     } else {
       document.body.style.overflow = "auto";
     }
-
     // Cleanup on unmount
     return () => {
       document.body.style.overflow = "auto";
     };
   }, [sidebarOpen]);
+
+  //adding navigation for different section in the website
+  const navigationHandler = (data) => {
+    const elementArr = ["aboutus", "coursescategory", "home"];
+    elementArr.map((e) => {
+      const  n = data.toLowerCase().replace(/\s+/g, "")
+      const value = "/app/" + e
+      console.log(value)
+      if (e.includes(n)) {
+        navigate("/app/" + e);
+      }
+    });
+  };
 
   return (
     <nav className="w-full max-w-full bg-white shadow-md relative z-50 overflow-hidden font-inter ">
@@ -119,6 +135,9 @@ export default function Navbar() {
             <button
               key={idx}
               className="hover:text-purple-600 transition whitespace-nowrap"
+              onClick={() => {
+                navigationHandler(link);
+              }}
             >
               {link}
             </button>

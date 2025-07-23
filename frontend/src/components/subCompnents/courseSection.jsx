@@ -45,15 +45,17 @@ export default function CourseSection() {
   const data = useSelector((state) => {
     return state.courseData.allcourses;
   });
- 
+
   useEffect(() => {
-    if (activeTab !== "All") {
+    if (activeTab === "See All") {
+      setCourseData(value);
+    } else {
       //update the value of the courseData
       const meta = activeTab.toLowerCase();
       const neededval = data.filter((e) => {
-      return  e.category ===  meta;
+        return e.category === meta;
       });
-    setCourseData(neededval)
+      setCourseData(neededval);
     }
   }, [activeTab]);
 
