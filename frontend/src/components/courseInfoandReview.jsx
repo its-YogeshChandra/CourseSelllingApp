@@ -1,14 +1,29 @@
-"use client";
-
+import { useEffect } from "react";
 import { useState } from "react";
 
-export default function CourseInfo() {
+export default function CourseInfo({courseData}) {
   const [activeTab, setActiveTab] = useState("course-info");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); 
+  const [courseDescription, setCourseDescription] = useState("");
+    const dummy = `Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry. Lorem Ipsum has been the industrys standard dummy
+                text ever since the 1500s, when an unknown printer took a galley
+                of type and scrambled it to make a type specimen book. It has
+                survived not only five centuries, but also the leap into
+                electronic typesetting, remaining essentially unchanged. It was
+                popularised in the 1960s with the release of Letraset sheets
+                containing Lorem Ipsum passages, and more recently with desktop
+                publishing software like Aldus PageMaker including versions of
+                Lorem Ipsum` 
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
   };
+  useEffect(()=>{
+   if(courseData != undefined){
+setCourseDescription(courseData.courseDescription)
+   }
+  },[courseData])
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white">
@@ -50,16 +65,9 @@ export default function CourseInfo() {
               }`}
             >
               <p className="mb-4">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged. It was
-                popularised in the 1960s with the release of Letraset sheets
-                containing Lorem Ipsum passages, and more recently with desktop
-                publishing software like Aldus PageMaker including versions of
-                Lorem Ipsum.
+              {
+                courseDescription || dummy
+            }
               </p>
 
               {isExpanded && (

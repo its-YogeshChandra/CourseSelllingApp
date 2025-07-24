@@ -80,10 +80,13 @@ export class courseAction {
   }
 
   //function to get both course and lesson data
-    async getCourseandLessonData() {
-    const response = await axios.get(getCourseandLessonUrl);
-    console.log(response)
-    if (response.data) {
+    async getCourseandLessonData(data) {
+    const response = await axios.get(getCourseandLessonUrl,
+     { params: {
+      id: data
+     }}
+    );
+    if (response) {
       return response.data;
     }
   }

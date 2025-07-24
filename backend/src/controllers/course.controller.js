@@ -143,19 +143,17 @@ const getCourses = asyncHandler(async (req, res) => {
 const getCourseAndLessons = asyncHandler(async (req, res) => {
   //get query data from queries
   const val = JSON.parse(JSON.stringify(req.query));
-  console.log(val);
 
   // check for the valid id  it exists or not
-  if (val["id "]) {
-    const data = await Course.findById(val["id "]);
+  if (val) {
+    const data = await Course.findById(val.id);
 
     if (!data) {
       throw new ApiError(400, "invalid courseId");
     }
 
     //get data from lesson model
-    const dataLessson = await Lesson.find({ courseRef: val["id "] });
-    console.log(dataLessson);
+    const dataLessson = await Lesson.find({ courseRef: val.id });
 
     if (!dataLessson) {
       throw new ApiError(500, "error while fetching lesson data");
