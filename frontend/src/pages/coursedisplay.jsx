@@ -5,6 +5,8 @@ import CourseBuyCard from "../components/courseBuyCard.jsx";
 import CourseInstSection from "../components/courseInstruc.jsx";
 
 export default function CourseDisplay() {
+  //check the id from the query params and use it to fetch the data 
+  
   return (
     <div className="w-screen h-screen gap-y-4">
       <CourseDisplayCard />

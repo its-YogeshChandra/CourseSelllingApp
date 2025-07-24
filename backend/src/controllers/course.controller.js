@@ -129,7 +129,6 @@ const uploadlessons = asyncHandler(async (req, res) => {
 const updatelessons = asyncHandler(async (req, res) => {});
 
 const getCourses = asyncHandler(async (req, res) => {
-  //query hitting from frontend
   //query coursemodel in db and send all the course data to frontend(will check on the choice though)
   const data = await Course.find({});
 
@@ -141,4 +140,44 @@ const getCourses = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "data successfully received", data));
 });
 
-export { createcourse, uploadlessons, updatelessons, getCourses };
+const getCourseAndLessons = asyncHandler(async (req, res) => {
+  //get query data from queries
+  const val = JSON.parse(JSON.stringify(req.query));
+  console.log(val);
+
+  // check for the valid id  it exists or not
+  if (val["id "]) {
+    const data = await Course.findById(val["id "]);
+
+    if (!data) {
+      throw new ApiError(400, "invalid courseId");
+    }
+
+    //get data from lesson model
+    const dataLessson = await Lesson.find({ courseRef: val["id "] });
+    console.log(dataLessson);
+
+    if (!dataLessson) {
+      throw new ApiError(500, "error while fetching lesson data");
+    }
+
+    // make object out of both the data from course and lesson
+    const datatoSend = {
+      course: data,
+      lessons: dataLessson,
+    };
+
+    // sending this data to the frontend
+    res
+      .status(200)
+      .json(new ApiResponse(200, "data successfully received", datatoSend));
+  }
+});
+
+export {
+  createcourse,
+  uploadlessons,
+  updatelessons,
+  getCourses,
+  getCourseAndLessons,
+};

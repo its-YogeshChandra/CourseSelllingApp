@@ -10,6 +10,7 @@ import {
   createcourse,
   getCourses,
   uploadlessons,
+  getCourseAndLessons
 } from "../controllers/course.controller.js";
 import { uploadMiddleware } from "../middlewares/multer.middleware.js";
 import {
@@ -45,6 +46,9 @@ courseRouter.route("/uploadlessons").post(uploadMiddleware, uploadlessons);
 
 //#3 for getting course data
 courseRouter.route("/getCourseData").get(getCourses)
+
+//#4  for getting course and lesson data both
+courseRouter.route("/getCourse&lessonData").get(getCourseAndLessons)
 
 //routes for instructor
 // #1 for registering instructor

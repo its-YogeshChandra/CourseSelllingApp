@@ -1,7 +1,7 @@
 import axios from "axios";
 import { courseConf } from "../conf";
 
-const { courseUrl, lessonUrl, getCoursesUrl } = courseConf;
+const { courseUrl, lessonUrl, getCoursesUrl, getCourseandLessonUrl } = courseConf;
 
 export class courseAction {
   async uploadCourse(course) {
@@ -74,6 +74,15 @@ export class courseAction {
   //function for getting course Data
   async getCourseData() {
     const response = await axios.get(getCoursesUrl);
+    if (response.data) {
+      return response.data;
+    }
+  }
+
+  //function to get both course and lesson data
+    async getCourseandLessonData() {
+    const response = await axios.get(getCourseandLessonUrl);
+    console.log(response)
     if (response.data) {
       return response.data;
     }

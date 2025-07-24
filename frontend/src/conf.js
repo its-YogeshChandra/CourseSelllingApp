@@ -5,9 +5,10 @@ const conf = {
 };
 
 const courseConf = {
-  courseUrl : import.meta.env.VITE_COURSE_URL,
-  lessonUrl : import.meta.env.VITE_LESSON_URL,
-  getCoursesUrl : import.meta.env.VITE_GETCOURSE_URL
-}
+  courseUrl: import.meta.env.VITE_COURSE_URL,
+  lessonUrl: import.meta.env.VITE_LESSON_URL,
+  getCoursesUrl: import.meta.env.VITE_GETCOURSE_URL,
+  getCourseandLessonUrl: import.meta.env.VITE_GETCOURSE_LESSONS_URL,
+};
 
 export { conf, courseConf };
