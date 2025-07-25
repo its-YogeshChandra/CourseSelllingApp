@@ -55,7 +55,7 @@ export default function CourseDisplayCard({ courseData }) {
             </p>
 
             {/* Author Info */}
-            <div className="flex items-center gap-3 sm:gap-4">
+            {/* <div className="flex items-center gap-3 sm:gap-4">
               <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex-shrink-0">
                 <img
                   src="/placeholder.svg?height=64&width=64"
@@ -69,7 +69,7 @@ export default function CourseDisplayCard({ courseData }) {
                 <div className="hidden sm:block w-1 h-1 bg-gray-400 rounded-full"></div>
                 <span className="text-gray-300 text-xs sm:text-sm">June 3, 2025</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -1,12 +1,58 @@
-import { Play, Clock, Users, Calendar, BarChart3 } from "lucide-react";
+import {
+  Play,
+  Clock,
+  Users,
+  Calendar,
+  BarChart3,
+  PoundSterling,
+  DollarSign,
+  IndianRupee,
+  EuroIcon,
+} from "lucide-react";
+import { useEffect } from "react";
+import { useState } from "react";
 
-export default function CourseBuyCard() {
+
+
+
+export default function CourseBuyCard({ courseData }) {
+  const [course, setCourse] = useState({
+    title: "",
+    category: "",
+    thumbnail: "",
+    price: "",
+  });
+
+  useEffect(() => {
+    if (courseData != undefined) {
+      console.log(courseData);
+      const pricekeyArr = [
+        { currency: "GBP", icon: "£" },
+        { currency: "USD", icon: "$" },
+        { currency: "INR", icon: "₹" },
+        { currency: "EUR", icon: "€" },
+      ];
+      pricekeyArr.map((e) => {
+         if(e.currency == courseData.price.currency){
+          const displayPrice = e.icon + courseData.price.price
+          console.log(displayPrice)
+            setCourse(prev => ({
+              ...prev, title: courseData.title,
+               category: courseData.category,
+               thumbnail: courseData.thumbnail,
+               price: displayPrice 
+            }))
+         }
+      });
+    }
+  }, [courseData]);
+
   return (
     <div className="w-full max-w-sm mx-auto md:max-w-none max-[640px]:max-w-none sm:max-w-none lg:max-w-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white rounded-lg border border-gray-200 ">
       {/* Thumbnail Section */}
       <div className="relative group cursor-pointer">
         <img
-          src="/placeholder.svg?height=200&width=400"
+          src={course.thumbnail ||"/placeholder.svg?height=200&width=400"}
           alt="CSS Flexbox Course Thumbnail"
           className="w-full h-48 object-cover"
         />
@@ -18,25 +64,25 @@ export default function CourseBuyCard() {
         </div>
         {/* Course Category Badge */}
         <span className="absolute top-3 left-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
-          Web Design
+         { course.category || "Web Design"}
         </span>
       </div>
 
       <div className="p-6">
         {/* Course Title */}
         <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors duration-200">
-          CSS Flexbox Part-10
+          {course.title || "CSS Flexbox Part-10"}
         </h3>
 
         {/* Subtitle */}
         <p className="text-sm text-gray-600 mb-4">
-          Bangla Tutorial by Tech Vander
+          C++ Tutorial by Tech Vander
         </p>
 
         {/* Price Section */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-gray-900">$100.00</span>
+            <span className="text-2xl font-bold text-gray-900"> {course.price || "$100.00"} </span>
           </div>
         </div>
 
@@ -51,7 +97,7 @@ export default function CourseBuyCard() {
             {/* Difficulty & Enrolled */}
             <div className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4 text-orange-500" />
-              <span>Intermediate</span>
+              <span>Beginner</span>
             </div>
             <div className="flex items-center space-x-2">
               <Users className="w-4 h-4 text-green-500" />

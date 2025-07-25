@@ -187,6 +187,9 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 })
 
-
+const authMe = asyncHandler(async(req,res)=>{
+  //check for the cookies and get the data 
+  //get the 
+})
 
 export { signupUser, loginUser, googleLogin, logoutUser };

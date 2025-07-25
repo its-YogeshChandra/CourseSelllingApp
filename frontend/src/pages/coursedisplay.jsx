@@ -40,12 +40,12 @@ export default function CourseDisplay() {
           <CourseContent lessonData={lessonVal} />
         </div>
         <div className="w-screen h-max px-5 ">
-          <CourseBuyCard />
+          <CourseBuyCard courseData = {courseVal} />
           <CourseInstSection />
         </div>
       </div>
       <div className="mt-12">
-      <Footer/>
+        <Footer />
       </div>
     </div>
   );
