@@ -4,7 +4,7 @@
 import axios from "axios";
 import { conf } from "../conf.js";
 
-const { signupUrl, loginUrl, googleAuth } = conf;
+const { signupUrl, loginUrl, googleAuth, authMe } = conf;
 
 export class AuthServices {
   async signup(data) {
@@ -53,6 +53,18 @@ export class AuthServices {
         throw error;
       }
     }
+  }
+
+
+  //for auth me service
+  async autMehandler(){
+   try {
+     const response = await axios.post(authMe)
+      console.log(response)
+   } catch (error) {
+     console.log(error)
+     return error.response.data
+   }
   }
 }
 

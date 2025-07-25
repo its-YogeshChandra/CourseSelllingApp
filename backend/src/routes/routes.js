@@ -5,6 +5,7 @@ import {
   loginUser,
   googleLogin,
   logoutUser,
+  authMe,
 } from "../controllers/user.controllers.js";
 import {
   createcourse,
@@ -35,6 +36,9 @@ router.route("/googleLogin").post(googleLogin);
 
 //logout user
 router.route("/logout").post(jwtVerify, logoutUser);
+
+//authMe 
+router.route("/authme").post(authMe)
 
 //routes of course
 

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import authService from "../services/auth.js";
 import { AuthServices } from "../services/auth.js";
 import GoogleLogin from "./googleSignin.jsx";
+import { useSearchParams } from "react-router";
 
 const regexCheck = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{5,20}$"
@@ -42,6 +43,10 @@ function Signup() {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
+  const [searchParams] = useSearchParams();
+  const location = searchParams.get("location");
+  console.log(location)
+  
   const navigate = useNavigate();
 
   const signup = async (data) => {

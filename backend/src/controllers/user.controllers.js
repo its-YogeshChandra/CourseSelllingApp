@@ -170,26 +170,47 @@ const logoutUser = asyncHandler(async (req, res) => {
   //clear refresh token from cookies
   // send back response to the user
 
-  const data = req.user
-  
-  const mongoUser = User.findById(data._id)
+  const data = req.user;
+
+  const mongoUser = User.findById(data._id);
   if (!mongoUser) {
-    throw new ApiError(500, "Error while finding user")
+    throw new ApiError(500, "Error while finding user");
   }
-  mongoUser.refreshToken = ""
-  await mongoUser.save({ validateBeforeSave: false })
-  
+  mongoUser.refreshToken = "";
+  await mongoUser.save({ validateBeforeSave: false });
+
   const option = {
     httpOnly: true,
-    secured: true
+    secured: true,
+  };
+  res
+    .status(200)
+    .clearCookie("accessToken", option)
+    .clearCookie("refreshToken", option)
+    .json(new ApiResponse(200, "User successfully logout"));
+});
+
+const authMe = asyncHandler(async (req, res) => {
+  //check for the cookies and get the data
+  //send error if there is no user
+  //send data if there is a user and also remove refresh token and password from that
+
+  const token = req.cookies?.accessToken || req.cookies?.refreshToken;
+  if (!token) {
+    throw new ApiError(400, "Unauthorized request");
   }
- res.status(200).clearCookie("accessToken",option).clearCookie("refreshToken",option).json(new ApiResponse(200,"User successfully logout"))
+  //decode the user out of token
+  const decodedUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  const mongoUser = User.findById(decodedUser._id).select(
+    "-password -refreshToken"
+  );
+  if (!mongoUser) {
+    throw new ApiError(401, "Invalid Access Token");
+  }
+   
+  // send data back to the frontend
+  res.status(200).json(new ApiResponse(200, "User is Authorized", mongoUser))
 
-})
+});
 
-const authMe = asyncHandler(async(req,res)=>{
-  //check for the cookies and get the data 
-  //get the 
-})
-
-export { signupUser, loginUser, googleLogin, logoutUser };
+export { signupUser, loginUser, googleLogin, logoutUser, authMe };
