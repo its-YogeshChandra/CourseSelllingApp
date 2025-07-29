@@ -201,7 +201,6 @@ const authMe = asyncHandler(async (req, res) => {
   const values = JSON.parse(JSON.stringify(req.cookies))
   const token = req.cookies?.accessToken 
 
-  console.log(values)
   
   if (!token) {
     throw new ApiError(400, "Unauthorized request");

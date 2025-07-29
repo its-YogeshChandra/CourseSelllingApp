@@ -65,16 +65,18 @@ function Signup() {
             console.log(path);
             switch (location) {
               case "coursedisplay":
-                navigate(`${path}?id = ${values}`);
+                console.log("inside the case");
+                navigate(`${path}?id=${values}`);
                 break;
               default:
                 navigate(`${path}`);
                 break;
             }
+          } else {
+            navigate({
+              pathname: "/app/home",
+            });
           }
-          navigate({
-            pathname: "/app/home",
-          });
         }
       }
     } catch (error) {
