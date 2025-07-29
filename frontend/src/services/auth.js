@@ -16,22 +16,24 @@ export class AuthServices {
 
     newVal.password = data.firstPassword;
 
+    //signup function call
     try {
-      const response = await axios.post(signupUrl, {
-        data: newVal,
-      });
-      return response.data;
+      const response = await axios.post(signupUrl, newVal);
+      if (response) {
+        return response.data;
+      }
     } catch (error) {
       throw error;
     }
   }
 
+  //login function call inside signup
   async login(data) {
     try {
-      const response = await axios.post(loginUrl, {
-        data: data,
-      });
-      return response.data;
+      const response = await axios.post(loginUrl, data);
+      if (response) {
+        return response.data;
+      }
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -46,8 +48,6 @@ export class AuthServices {
       });
 
       return response.data.data;
-
-
     } catch (error) {
       if (error instanceof Error) {
         throw error;
@@ -55,16 +55,20 @@ export class AuthServices {
     }
   }
 
-
   //for auth me service
-  async autMehandler(){
-   try {
-     const response = await axios.post(authMe)
-      console.log(response)
-   } catch (error) {
-     console.log(error)
-     return error.response.data
-   }
+  async autMehandler() {
+    try {
+      const response = await axios.post(authMe, {
+        withCredentials: true,
+        credentials: "include",
+      });
+      if (response) {
+        console.log(response);
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
   }
 }
 

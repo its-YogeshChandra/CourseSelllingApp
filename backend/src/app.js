@@ -6,6 +6,9 @@ import { errorMiddleware } from "./middlewares/globaError.middleware.js";
 
 const app = express();
 
+// for cookies
+app.use(cookieParser());
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -28,8 +31,6 @@ app.use(
 
 app.use(express.static("./public/temp"));
 
-// for cookies
-app.use(cookieParser());
 
 //for user routes
 app.use("/api/v1/users", router);

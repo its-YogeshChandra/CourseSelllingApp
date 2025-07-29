@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 //for registering user
 const signupUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  console.log(username);
+  
   const dbUser = await User.findOne({
     $or: [{ username }, { email }],
   });
@@ -34,7 +34,8 @@ const signupUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully registered", Dbuser));
 });
 
-// login user
+
+// controller for login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -65,7 +66,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secured: true,
+    secure: false
   };
 
   res
@@ -74,6 +75,8 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("refreshToken", refreshToken, options)
     .json(new ApiResponse(200, "User successfully logged In", loggedUser));
 });
+
+
 
 //google Login user
 const googleLogin = asyncHandler(async (req, res) => {
@@ -102,7 +105,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   if (alreadyDbuser) {
     const option = {
       httpOnly: true,
-      secured: true,
+      secure: false
     };
 
     const access_Token = alreadyDbuser.generateAccessToken;
@@ -146,7 +149,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   if (googleLoggedUser) {
     const option = {
       httpOnly: true,
-      secured: true,
+      secure: false
     };
     res
       .status(200)
@@ -181,7 +184,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const option = {
     httpOnly: true,
-    secured: true,
+    secure: false
   };
   res
     .status(200)
@@ -190,32 +193,29 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully logout"));
 });
 
+//authMe route for checking user auth
 const authMe = asyncHandler(async (req, res) => {
   //check for the cookies and get the data
   //send error if there is no user
   //send data if there is a user and also remove refresh token and password from that
-  const values = req.cookies;
-  console.log(values);
-  const token = req.cookies?.accessToken;
-  console.log(token);
+  const values = JSON.parse(JSON.stringify(req.cookies))
+  const token = req.cookies?.accessToken 
 
+  console.log(values)
+  
   if (!token) {
     throw new ApiError(400, "Unauthorized request");
   }
   //decode the user out of token
   const decodedUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  console.log(decodedUser);
-
-  const mongoUser = User.find({ _id: decodedUser.id }).select(
-    "-password -refreshToken"
-  );
-  console.log(mongoUser);
+ const id = decodedUser.id
+  const mongoUser =  await User.findById(id).select("-password -refreshToken")
   if (!mongoUser) {
     throw new ApiError(401, "Invalid Access Token");
   }
 
   // send data back to the frontend
-  res.status(200).json(new ApiResponse(200, "User is Authorized", mongoUser));
+  res.status(200).json(new ApiResponse(200, "User is authenticated", mongoUser));
 });
 
 export { signupUser, loginUser, googleLogin, logoutUser, authMe };
