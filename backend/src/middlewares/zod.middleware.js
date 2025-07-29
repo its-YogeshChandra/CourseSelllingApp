@@ -21,7 +21,8 @@ const user = z.object({
 });
 
 const zodAuth = asyncHandler(async (req, res, next) => {
-  const data = req.body.data;
+  const data = req.body;
+  console.log(data)
 
   if (data == undefined) {
     throw new ApiError(400, "Invalid value")
@@ -29,6 +30,7 @@ const zodAuth = asyncHandler(async (req, res, next) => {
   const validation = user.safeParse(data);
 
   if (validation.success) {
+    console.log(validation.data)
     req.body = validation.data;
     next();
   } else { 

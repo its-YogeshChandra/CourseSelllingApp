@@ -45,8 +45,8 @@ function Signup() {
 
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
-  console.log(location)
-  
+  const values = searchParams.get("data");
+
   const navigate = useNavigate();
 
   const signup = async (data) => {
@@ -59,6 +59,19 @@ function Signup() {
         const loginVal = await authService.login(newVal.data);
 
         if (loginVal) {
+          //check for navigation options (if courselocation display send id too)
+          if (location) {
+            const path = "/app/" + location;
+            console.log(path);
+            switch (location) {
+              case "coursedisplay":
+                navigate(`${path}?id = ${values}`);
+                break;
+              default:
+                navigate(`${path}`);
+                break;
+            }
+          }
           navigate({
             pathname: "/app/home",
           });
@@ -170,8 +183,10 @@ function Signup() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className= { `w-full h-11 text-lg font-semibold bg-[#fd3556]   text-white rounded-full hover:bg-[#e52e4a] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:ring-offset-2 focus:ring-offset-[#1e1d2a] mt-6 ${checkbox? "bg-red-500" : "bg-red-300" }` }
-                disabled = {!checkbox}
+                  className={`w-full h-11 text-lg font-semibold bg-[#fd3556]   text-white rounded-full hover:bg-[#e52e4a] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#fd3556] focus:ring-offset-2 focus:ring-offset-[#1e1d2a] mt-6 ${
+                    checkbox ? "bg-red-500" : "bg-red-300"
+                  }`}
+                  disabled={!checkbox}
                 >
                   Sign Up
                 </button>

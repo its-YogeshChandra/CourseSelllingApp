@@ -128,8 +128,12 @@ const uploadlessons = asyncHandler(async (req, res) => {
 
 const updatelessons = asyncHandler(async (req, res) => {});
 
+//controller for getting courses
 const getCourses = asyncHandler(async (req, res) => {
   //query coursemodel in db and send all the course data to frontend(will check on the choice though)
+  const token = req.cookies?.accessToken
+ 
+  
   const data = await Course.find({});
 
   if (!data) {
@@ -140,6 +144,8 @@ const getCourses = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "data successfully received", data));
 });
 
+
+//controller for getting both course and lessons
 const getCourseAndLessons = asyncHandler(async (req, res) => {
   //get query data from queries
   const val = JSON.parse(JSON.stringify(req.query));

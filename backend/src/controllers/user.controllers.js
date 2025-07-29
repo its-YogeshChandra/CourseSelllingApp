@@ -3,12 +3,12 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
 import { OAuth2Client } from "google-auth-library";
-import { json } from "zod/v4";
+import jwt from "jsonwebtoken";
 
 //for registering user
 const signupUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-
+  console.log(username);
   const dbUser = await User.findOne({
     $or: [{ username }, { email }],
   });
@@ -36,7 +36,7 @@ const signupUser = asyncHandler(async (req, res) => {
 
 // login user
 const loginUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body.data;
+  const { username, email, password } = req.body;
 
   if (!(username || email)) {
     throw new ApiError(400, "Email or username is missing");
@@ -194,23 +194,28 @@ const authMe = asyncHandler(async (req, res) => {
   //check for the cookies and get the data
   //send error if there is no user
   //send data if there is a user and also remove refresh token and password from that
+  const values = req.cookies;
+  console.log(values);
+  const token = req.cookies?.accessToken;
+  console.log(token);
 
-  const token = req.cookies?.accessToken || req.cookies?.refreshToken;
   if (!token) {
     throw new ApiError(400, "Unauthorized request");
   }
   //decode the user out of token
   const decodedUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const mongoUser = User.findById(decodedUser._id).select(
+  console.log(decodedUser);
+
+  const mongoUser = User.find({ _id: decodedUser.id }).select(
     "-password -refreshToken"
   );
+  console.log(mongoUser);
   if (!mongoUser) {
     throw new ApiError(401, "Invalid Access Token");
   }
-   
-  // send data back to the frontend
-  res.status(200).json(new ApiResponse(200, "User is Authorized", mongoUser))
 
+  // send data back to the frontend
+  res.status(200).json(new ApiResponse(200, "User is Authorized", mongoUser));
 });
 
 export { signupUser, loginUser, googleLogin, logoutUser, authMe };
