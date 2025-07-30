@@ -1,7 +1,13 @@
 import axios from "axios";
 import { courseConf } from "../conf";
 
-const { courseUrl, lessonUrl, getCoursesUrl, getCourseandLessonUrl } = courseConf;
+const {
+  courseUrl,
+  lessonUrl,
+  getCoursesUrl,
+  getCourseandLessonUrl,
+  isPresent,
+} = courseConf;
 
 export class courseAction {
   async uploadCourse(course) {
@@ -80,14 +86,30 @@ export class courseAction {
   }
 
   //function to get both course and lesson data
-    async getCourseandLessonData(data) {
-    const response = await axios.get(getCourseandLessonUrl,
-     { params: {
-      id: data
-     }}
-    );
+  async getCourseandLessonData(data) {
+    const response = await axios.get(getCourseandLessonUrl, {
+      params: {
+        id: data,
+      },
+    });
     if (response) {
       return response.data;
+    }
+  }
+
+  //function to check if student subscribed or not
+  async isSubscribed(courseId, studentId) {
+    try {
+      const response = await axios.post(isPresent, {
+        courseId,
+        studentId,
+      });
+      if (response) {
+        console.log(response);
+        return response.data;
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -178,10 +178,26 @@ const getCourseAndLessons = asyncHandler(async (req, res) => {
   }
 });
 
+const isSubscribed = asyncHandler(async(req, res)=>{
+  //fetch the student id and courseId from the frontend
+  const {studentId, courseId} = req.body
+
+  //query the model and check for the studentId 
+  const isPresent = await Course.find({_id : courseId,
+    student : studentId
+  })
+  if(!isPresent){
+  throw new ApiError(400, "student not found")
+  }
+  console.log(isPresent)
+  //send data to the frontend
+  res.status(200).json(200, "Student is present", isPresent)
+})
 export {
   createcourse,
   uploadlessons,
   updatelessons,
   getCourses,
   getCourseAndLessons,
+  isSubscribed
 };
