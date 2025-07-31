@@ -131,9 +131,8 @@ const updatelessons = asyncHandler(async (req, res) => {});
 //controller for getting courses
 const getCourses = asyncHandler(async (req, res) => {
   //query coursemodel in db and send all the course data to frontend(will check on the choice though)
-  const token = req.cookies?.accessToken
- 
-  
+  const token = req.cookies?.accessToken;
+
   const data = await Course.find({});
 
   if (!data) {
@@ -143,7 +142,6 @@ const getCourses = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, "data successfully received", data));
 });
-
 
 //controller for getting both course and lessons
 const getCourseAndLessons = asyncHandler(async (req, res) => {
@@ -178,28 +176,28 @@ const getCourseAndLessons = asyncHandler(async (req, res) => {
   }
 });
 
-const isSubscribed = asyncHandler(async(req, res)=>{
+const isSubscribed = asyncHandler(async (req, res) => {
   //fetch the student id and courseId from the frontend
-  const {studentId, courseId} = req.body
+  const { studentId, courseId } = req.body;
 
+  //query the model and check for the studentId
+  const isPresent = await Course.findOne({
+    _id: courseId,
+    students: studentId,
+  });
 
-  //query the model and check for the studentId 
-  const isPresent = await Course.findOne({_id: courseId,
-    students: studentId
-  })
-
-  if(!isPresent){
-  throw new ApiError(400, "student not found")
+  if (!isPresent) {
+    throw new ApiError(400, "student not found");
   }
 
   //send data to the frontend
-  res.status(200).json(200, "Student is present", isPresent)
-})
+  res.status(200).json(200, "Student is present", isPresent);
+});
 export {
   createcourse,
   uploadlessons,
   updatelessons,
   getCourses,
   getCourseAndLessons,
-  isSubscribed
+  isSubscribed,
 };
