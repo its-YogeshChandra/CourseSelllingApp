@@ -1,13 +1,10 @@
-import React from "react";
 import illustration from "../assets/illustration.png";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router";
-import { useEffect } from "react";
 import authService from "../services/auth.js";
-import { AuthServices } from "../services/auth.js";
 import GoogleLogin from "./googleSignin.jsx";
 import { useSearchParams } from "react-router";
 
@@ -55,7 +52,6 @@ function Signup() {
       if (val.success) {
         val.data.password = data.firstPassword;
         const newVal = val;
-
         const loginVal = await authService.login(newVal.data);
 
         if (loginVal) {

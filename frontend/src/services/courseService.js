@@ -87,13 +87,17 @@ export class courseAction {
 
   //function to get both course and lesson data
   async getCourseandLessonData(data) {
-    const response = await axios.get(getCourseandLessonUrl, {
-      params: {
-        id: data,
-      },
-    });
-    if (response) {
-      return response.data;
+    try {
+      const response = await axios.get(getCourseandLessonUrl, {
+        params: {
+          id: data,
+        },
+      });
+      if (response) {
+        return response.data;
+      }
+    } catch (error) {
+      throw error
     }
   }
 
@@ -105,12 +109,13 @@ export class courseAction {
         studentId,
       });
       if (response) {
-        console.log(response);
+      console.log(response)
         return response.data;
       }
     } catch (error) {
-      throw error;
-    }
+      console.log(error)
+      return error.response.data
+    } 
   }
 }
 

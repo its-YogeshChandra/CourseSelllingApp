@@ -3,7 +3,7 @@
 
 import axios from "axios";
 import { conf } from "../conf.js";
-const { signupUrl, loginUrl, googleAuth, authMe, isPresent } = conf;
+const { signupUrl, loginUrl, googleAuth, authMe} = conf;
 
 export class AuthServices {
   async signup(data) {
@@ -55,7 +55,7 @@ export class AuthServices {
   }
 
   //for auth me service
-  async autMehandler() {
+  async authMehandler() {
     try {
       const response = await axios.post(authMe, {
         withCredentials: true,
@@ -63,7 +63,7 @@ export class AuthServices {
       });
       if (response) {
         console.log(response)
-        return response
+        return response.data
       }
     } catch (error) {
       console.log(error);

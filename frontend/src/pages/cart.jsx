@@ -1,9 +1,13 @@
-import React from 'react'
 import CheckoutComponent from '../components/cartComponents';
 import Footer from '../components/footer.jsx';
+import { useSearchParams } from 'react-router';
 
 export default function Cart() {
-
+  const [searchParams] = useSearchParams();
+  const location = searchParams.get("location");
+  const values = searchParams.get("data");
+  console.log(location)
+  console.log(values)
     return (
       <div className=" min-h-screen h-auto">
         <CheckoutComponent />

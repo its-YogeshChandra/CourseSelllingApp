@@ -12,7 +12,7 @@ import {
   getCourses,
   uploadlessons,
   getCourseAndLessons,
-  isSubscribed
+  isSubscribed,
 } from "../controllers/course.controller.js";
 import { uploadMiddleware } from "../middlewares/multer.middleware.js";
 import {
@@ -38,8 +38,8 @@ router.route("/googleLogin").post(googleLogin);
 //logout user
 router.route("/logout").post(jwtVerify, logoutUser);
 
-//authMe 
-router.route("/authme").post(authMe)
+//authMe
+router.route("/authme").post(authMe);
 
 //routes of course
 
@@ -50,13 +50,13 @@ courseRouter.route("/createcourse").post(uploadMiddleware, createcourse);
 courseRouter.route("/uploadlessons").post(uploadMiddleware, uploadlessons);
 
 //#3 for getting course data
-courseRouter.route("/getCourseData").get(getCourses)
+courseRouter.route("/getCourseData").get(getCourses);
 
 //#4  for getting course and lesson data both
-courseRouter.route("/getCourse&lessonData").get(getCourseAndLessons)
+courseRouter.route("/getCourse&lessonData").get(getCourseAndLessons);
 
 //for checking student information
-courseRouter.route("/isSubscribed").post(isSubscribed)
+courseRouter.route("/isSubscribed").post(isSubscribed);
 
 //routes for instructor
 // #1 for registering instructor

@@ -1,15 +1,9 @@
-import {
-  Play,
-  Clock,
-  Users,
-  Calendar,
-  BarChart3,
-} from "lucide-react";
+import { Play, Clock, Users, Calendar, BarChart3 } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
 import authService from "../services/auth";
 import { useNavigate } from "react-router";
-
+import { courseServices } from "../services/courseService.js";
 export default function CourseBuyCard({ courseData }) {
   const [course, setCourse] = useState({
     title: "",
@@ -17,12 +11,11 @@ export default function CourseBuyCard({ courseData }) {
     thumbnail: "",
     price: "",
   });
- 
-  const navigate = useNavigate()
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (courseData != undefined) {
-      console.log(courseData);
       const pricekeyArr = [
         { currency: "GBP", icon: "£" },
         { currency: "USD", icon: "$" },
@@ -47,15 +40,29 @@ export default function CourseBuyCard({ courseData }) {
 
   //check for user signup or not
   const checker = async () => {
-    const data = await authService.autMehandler();
-    if (data.success == false) {
-      console.log(data)
+    const data = await authService.authMehandler();
+
+    if (data.success == true) {
+      //check if user has subscribed to the course
+      const studentId = data.data._id;
+      console.log(studentId);
+      const val = await courseServices.isSubscribed(courseData._id, studentId);
+      if (val.success == true) {
+      } else {
+        const meta = {
+          location: "coursedisplay",
+          data: courseData._id || "",
+        };
+        const query = new URLSearchParams(meta).toString();
+        navigate(`/app/cart?${query}`);
+      }
+    } else {
       const meta = {
         location: "coursedisplay",
-        data: courseData._id || ""
-      }
-       const query = new URLSearchParams(meta).toString()
-      navigate(`/app/auth/signup?${query}` )
+        data: courseData._id || "",
+      };
+      const query = new URLSearchParams(meta).toString();
+      navigate(`/app/auth/signup?${query}`);
     }
   };
 

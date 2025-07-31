@@ -1,7 +1,3 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import BigCardHome from "./subCompnents/bigCard.home.jsx";
 import CourseSection from "./subCompnents/courseSection.jsx";
 import CourseCatalogue from "./subCompnents/courseCatalogue.jsx";
