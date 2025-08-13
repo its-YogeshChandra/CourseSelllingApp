@@ -10,7 +10,7 @@ export default function Cart() {
   console.log(values);
   return (
     <div className=" min-h-screen h-auto">
-      <CheckoutComponent />
+      <CheckoutComponent courseId = {values}/>
 
       <div className="w-full h-auto mt-3 font-inter pb-10 bg-gray-200">
         <div className=" py-16 px-4 ">
