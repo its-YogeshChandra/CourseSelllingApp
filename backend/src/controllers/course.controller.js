@@ -193,6 +193,32 @@ const isSubscribed = asyncHandler(async (req, res) => {
   //send data to the frontend
   res.status(200).json(200, "Student is present", isPresent);
 });
+
+// controller for adding student to the course
+ const addStudentToCourse = asyncHandler(async (req, res) => {
+  const { courseId, studentId } = req.body;
+
+  // check if the course exists
+  const course = await Course.findById(courseId);
+
+  if (!course) {
+    throw new ApiError(404, "Course not found");
+  }
+
+  // check if the student is already enrolled
+  if (course.students.includes(studentId)) {
+    throw new ApiError(400, "already enrolled in this course");
+  }
+  // add student to the course
+  course.students.push(studentId);
+  await course.save();
+
+  //send response to the user
+  res.status(200).json(new ApiResponse(200, "Student added to course successfully"))
+
+ } )
+
+
 export {
   createcourse,
   uploadlessons,
@@ -200,4 +226,5 @@ export {
   getCourses,
   getCourseAndLessons,
   isSubscribed,
+  addStudentToCourse,
 };

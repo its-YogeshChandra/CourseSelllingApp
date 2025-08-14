@@ -11,8 +11,8 @@ import AbouUs from "../pages/about.jsx";
 import CourseCategory from "../pages/courseCategory.jsx";
 import Cart from "../pages/cart.jsx";
 import UserProfile from "../components/userprofile.jsx";
-import InstructorDashboard from "../pages/instructor.jsx"; 
-  
+import InstructorDashboard from "../pages/instructor.jsx";
+
 const Routing = createBrowserRouter([
   {
     path: "/",
@@ -33,7 +33,7 @@ const Routing = createBrowserRouter([
                 path: "login",
                 Component: LoginPage,
               },
-            ]
+            ],
           },
           {
             path: "",
@@ -49,35 +49,35 @@ const Routing = createBrowserRouter([
               },
               {
                 path: "courseplayer",
-                Component: CoursePlayer
+                Component: CoursePlayer,
               },
               {
                 path: "aboutus",
-                Component: AbouUs
+                Component: AbouUs,
               },
               {
                 path: "coursescategory",
-                Component: CourseCategory
+                Component: CourseCategory,
               },
               {
                 path: "cart",
-                Component: Cart
+                Component: Cart,
               },
               {
                 path: "userprofile",
-                Component: UserProfile
-              }, 
-
-
+                Component: UserProfile,
+              },
             ],
           },
           {
             path: "instructor",
-            children: [{
-              path: "dashboard",
-              Component: InstructorDashboard  
-           }]  
-          }
+            children: [
+              {
+                path: "dashboard",
+                Component: InstructorDashboard,
+              },
+            ],
+          },
         ],
       },
     ],

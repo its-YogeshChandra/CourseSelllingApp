@@ -7,6 +7,7 @@ const {
   getCoursesUrl,
   getCourseandLessonUrl,
   isPresent,
+  addSubscription
 } = courseConf;
 
 export class courseAction {
@@ -116,6 +117,23 @@ export class courseAction {
       console.log(error)
       return error.response.data
     } 
+  }
+
+  // function to add student to course
+  async addStudentToCourse(courseId, studentId) {
+    try {
+      const response = await axios.post(addSubscription, {
+        courseId,
+        studentId,
+      });
+      if (response) {
+        console.log(response.data);
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
   }
 }
 

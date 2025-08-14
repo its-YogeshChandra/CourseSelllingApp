@@ -52,6 +52,7 @@ export default function CourseBuyCard({ courseData }) {
         const meta = {
           location: "coursedisplay",
           data: courseData._id || "",
+          studentId: studentId || ""
         };
         const query = new URLSearchParams(meta).toString();
         navigate(`/app/cart?${query}`);

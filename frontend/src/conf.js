@@ -10,7 +10,8 @@ const courseConf = {
   lessonUrl: import.meta.env.VITE_LESSON_URL,
   getCoursesUrl: import.meta.env.VITE_GETCOURSE_URL,
   getCourseandLessonUrl: import.meta.env.VITE_GETCOURSE_LESSONS_URL,
-  isPresent: import.meta.env.VITE_ISPRESENT_URL
+  isPresent: import.meta.env.VITE_ISPRESENT_URL,
+  addSubscription: import.meta.env.VITE_ADDSUBSCRIPTION_URL
 };
 
 export { conf, courseConf };

@@ -41,6 +41,9 @@ importers:
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
+      wget:
+        specifier: ^0.0.1
+        version: 0.0.1
       zod:
         specifier: ^3.25.16
         version: 3.25.16
@@ -668,6 +671,10 @@ packages:
     resolution: {integrity: sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==}
     engines: {node: '>=18'}
 
+  tunnel@0.0.2:
+    resolution: {integrity: sha512-PjBRT+4Y/UH3q/lnjXosoaB+hY1yNH2TXWMjPSF1bAIdZmUDAJ2lBPt5s8jTH1e7sgb3nleK889E9vyY4NXpYw==}
+    engines: {node: '>=0.6.11 <=0.7.0 || >=0.7.3'}
+
   type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
@@ -707,6 +714,11 @@ packages:
   webidl-conversions@7.0.0:
     resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
     engines: {node: '>=12'}
+
+  wget@0.0.1:
+    resolution: {integrity: sha512-iKDSrvontU6lAQq89bNn7me3HU/+Cau7NedEYz607TOS4n0AgksloCt2UwU+ZH5Kn0Lq+XbJ6STOpnhpjicvOQ==}
+    engines: {node: '>= 0.6.18'}
+    hasBin: true
 
   whatwg-url@14.2.0:
     resolution: {integrity: sha512-De72GdQZzNTUBBChsXueQUnPKDkg/5A5zp7pFDuQAj5UFoENpiACU0wlCvzpAGnTkj++ihpKwKyYewn/XNUbKw==}
@@ -1389,6 +1401,8 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  tunnel@0.0.2: {}
+
   type-is@1.6.18:
     dependencies:
       media-typer: 0.3.0
@@ -1417,6 +1431,10 @@ snapshots:
   webidl-conversions@3.0.1: {}
 
   webidl-conversions@7.0.0: {}
+
+  wget@0.0.1:
+    dependencies:
+      tunnel: 0.0.2
 
   whatwg-url@14.2.0:
     dependencies:

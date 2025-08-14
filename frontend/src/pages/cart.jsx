@@ -6,11 +6,10 @@ export default function Cart() {
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
   const values = searchParams.get("data");
-  console.log(location);
-  console.log(values);
+  const studentId = searchParams.get("studentId");
   return (
     <div className=" min-h-screen h-auto">
-      <CheckoutComponent courseId = {values}/>
+      <CheckoutComponent courseId={values} studentId={studentId} />
 
       <div className="w-full h-auto mt-3 font-inter pb-10 bg-gray-200">
         <div className=" py-16 px-4 ">

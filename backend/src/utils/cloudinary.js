@@ -23,4 +23,16 @@ const uploadonCloudinary = async (localfilePath) => {
   }
 };
 
-export { uploadonCloudinary };
+//making function from fetching data from cloudinary using public id
+const fetchFromCloudinary = async (path) => {
+  try {
+    const response = await cloudinary.api.resource(path, options);
+    console.log("Response from Cloudinary:", response);
+    return response;
+  } catch (error) {
+    console.error("Error fetching from Cloudinary:", error);
+    return error;
+  }
+};
+
+export { uploadonCloudinary, fetchFromCloudinary };

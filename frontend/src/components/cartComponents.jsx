@@ -11,8 +11,9 @@ import mastercard from "../assets/Mastercard_2019_logo.svg";
 import paypal from "../assets/PayPal_Logo_Icon_2014.svg";
 import { useEffect } from "react";
 import { courseServices } from "../services/courseService";
+import { useNavigate } from "react-router";
 
-export default function CheckoutPage({ courseId }) {
+export default function CheckoutPage({ courseId, studentId }) {
   const [paymentMethod, setPaymentMethod] = useState("debit-credit");
   const [cartItems, setCartItems] = useState([
     {
@@ -29,6 +30,7 @@ export default function CheckoutPage({ courseId }) {
     },
   ]);
   const [cartPrice, setCartPrice] = useState("£30.00");
+  const navigate = useNavigate();
 
   // function to add items to the cart
   useEffect(() => {
@@ -80,6 +82,22 @@ export default function CheckoutPage({ courseId }) {
     //clear the cart price if no items left
     if (cartItems.length === 1) {
       setCartPrice(null);
+    }
+  };
+
+  // Navigate to the coursedisplay page when coursebuyed
+  const handleSubscribe = async () => {
+    // calling the api for course subscription
+    const response = await courseServices.addStudentToCourse(
+      courseId,
+      studentId
+    );
+ 
+    if (response.success) {
+      navigate(`/app/coursedisplay?id=${courseId}`);
+    } else {
+      const slug = cartItems[0].title
+      navigate(`/app/courseplayer?${slug}-${courseId}`);
     }
   };
 
@@ -304,13 +322,14 @@ export default function CheckoutPage({ courseId }) {
                   <Button
                     className="w-full bg-red-400 hover:bg-red-500 text-white py-3 text-base font-medium"
                     onClick={() => {
-                      if (paymentMethod === "paypal") {
-                        alert("Redirecting to PayPal...");
-                        // Here you would integrate with PayPal SDK
-                      } else {
-                        alert("Processing card payment...");
-                        // Here you would process card payment
-                      }
+                      // if (paymentMethod === "paypal") {
+                      //   handleSubscribe();
+
+                      // } else {
+                      //   alert("Processing card payment...");
+
+                      // }
+                      handleSubscribe();
                     }}
                   >
                     {paymentMethod === "paypal" ? "Pay with PayPal" : "Pay now"}
