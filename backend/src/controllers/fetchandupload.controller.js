@@ -6,6 +6,7 @@ import { exec } from "child_process";
 import { generateVideoSegments } from "../utils/ffmpeg.js";
 import { downloadVideo } from "../utils/downloadFunction.js";
 
+
 const fetchAndUpload = asyncHandler(async (req, res) => {
   // Fetch the course by ID
   const course = await Course.find({});
@@ -25,18 +26,16 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
     lessonData.map((lesson) => {
       lesson.video.map(async (e) => {
         try {
-           console.log(e.url)
+          console.log(e.url);
           // wget command to download the video
-          const videoDownloaded = await downloadVideo(
-            e.url,
-           "../../public/temp"
-          );
+          const videoDownloaded = await downloadVideo(e.url);
           console.log(`Video downloaded successfully: ${videoDownloaded}`);
-
-      
         } catch (error) {
           console.error("Error during video processing:", error);
         }
+
+        // fetch file from the root directory
+       
       });
     });
   });
