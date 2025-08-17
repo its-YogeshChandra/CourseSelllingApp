@@ -2,7 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 
 // creating cloudinary configuration
 cloudinary.config({
-  cloud_name: "video-cloudinary",
+  cloud_name: "dp6i6a3xy",
   api_key: process.env.CLOUDINARY_2_API_KEY,
   api_secret: process.env.CLOUDINARY_2_API_SECRET,
 });

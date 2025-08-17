@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { string, url } from "zod/v4";
 
 const LessonSchema = new Schema(
   {
@@ -42,6 +43,7 @@ const LessonSchema = new Schema(
         },
       },
     ],
+    videoChunks: [{ title: String, url: [ String ] }],
   },
   { timestamps: true }
 );

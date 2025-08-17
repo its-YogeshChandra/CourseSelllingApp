@@ -7,8 +7,6 @@ import path from "path";
 import fs from "fs-extra";
 import { videoUploadToCloudinary } from "../utils/video.cloudinary.js";
 
-
-
 const fetchAndUpload = asyncHandler(async (req, res) => {
   const rootDir = process.cwd(); // where you want to download temporarily
   const lessons = await Lesson.find();
@@ -17,6 +15,7 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
     if (!lesson.video || lesson.video.length === 0) continue;
 
     for (let i = 0; i < lesson.video.length; i++) {
+      const videoTitle = lesson.video[i].title;
       const videoUrl = lesson.video[i].url;
 
       // Download only this video into rootDir
@@ -24,11 +23,8 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
 
       // Find newly downloaded video file
       const files = listMp4FilesInDir(rootDir);
-      console.log("Files found:", files);
       const fileName = files[0]; // assuming root is cleaned or only one mp4
-      console.log("filename", fileName);
       const fullPathToVideo = path.join(rootDir, fileName);
-      console.log("Full path to video:", fullPathToVideo);
 
       // Run FFmpeg on that file
       const outputDir =
@@ -40,10 +36,46 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
         .catch((error) => {
           console.error("Conversion failed:", error.message);
         });
-    
-        // list of all the files present in the outputDir
+
+      // list of all the files present in the outputDir
       const filesInOutputDir = fs.readdirSync(outputDir);
-      console.log("Files in output directory:", filesInOutputDir);
+
+      // filter the array and remove the gitkeep and index.m3u8 files
+      const filteredFiles = filesInOutputDir
+        .filter((file) => file !== ".gitkeep" && file !== "index.m3u8")
+        .sort((a, b) => {
+          // Extract number part from "indexX.ts"
+          const numA = parseInt(a.replace(/[^0-9]/g, ""));
+          const numB = parseInt(b.replace(/[^0-9]/g, ""));
+          return numA - numB;
+        });
+
+      const videoChunkArray = [];
+      const videolinks = [];
+      for (let index = 0; index <= filteredFiles.length - 1; index++) {
+        // Upload each file to Cloudinary
+        const filePath = path.join(outputDir, filteredFiles[index]);
+        const uplodedVideo = await videoUploadToCloudinary(filePath);
+        console.log("Uploaded video URL:", uplodedVideo);
+
+        console.log(uplodedVideo);
+        videolinks.push(uplodedVideo.playback_url);
+        fs.unlinkSync(filePath);  // delete the file after uploading
+      }
+
+      // Create videoChunks array
+      videoChunkArray.push({
+        title: videoTitle,
+        url: videolinks,
+      });
+     
+      // Update the lesson with videoChunks
+      await Lesson.findByIdAndUpdate(
+        lesson._id,
+        {
+          videoChunks: videoChunkArray
+        }
+      )
 
       // Optional: delete the downloaded file to avoid interference with next
       await fs.remove(fullPathToVideo);
