@@ -5,7 +5,7 @@ const downloadVideo = (url, downloadfolder) => {
   return new Promise((resolve, reject) => {
     
     // execute the wget command to downlaod the video 
-    exec(`wget -P "${downloadfolder}" "${url}"`, (error, stdout, stderr) => {
+    exec(`wget "${url}"`, (error, stdout, stderr) => {
       if (error) {
         reject(new Error(`Failed to download video: ${stderr}`));
       } else {

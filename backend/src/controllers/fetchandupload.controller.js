@@ -1,61 +1,57 @@
-import { Course } from "../models/course.model.js";
 import { Lesson } from "../models/courseData.model.js";
-import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { generateVideoSegments } from "../utils/ffmpeg.js";
 import { downloadVideo } from "../utils/downloadFunction.js";
 import { listMp4FilesInDir } from "../utils/locatefile.js";
+import { convertToHLS } from "../utils/ffmpeg.js";
 import path from "path";
-import fs from "fs-extra"; // to create temp folders
+import fs from "fs-extra";
+import { videoUploadToCloudinary } from "../utils/video.cloudinary.js";
+
+
 
 const fetchAndUpload = asyncHandler(async (req, res) => {
-  const lessons = await Lesson.find({});
+  const rootDir = process.cwd(); // where you want to download temporarily
+  const lessons = await Lesson.find();
 
-  if (!lessons) {
-    throw new ApiError(404, "No lessons found");
-  }
-
-  // Loop one lesson at a time
   for (const lesson of lessons) {
     if (!lesson.video || lesson.video.length === 0) continue;
 
-    // Each lesson can have multiple video URLs
     for (let i = 0; i < lesson.video.length; i++) {
-      const videoObj = lesson.video[i];
-      const url = videoObj.url;
+      const videoUrl = lesson.video[i].url;
 
-      // Create a temporary folder for THIS video
-      const tempFolder = path.resolve("temp", `${lesson._id}-${i}`);
-      await fs.ensureDir(tempFolder);
+      // Download only this video into rootDir
+      await downloadVideo(videoUrl);
 
-      // Download 1 video into that temp folder
-      await downloadVideo(url, tempFolder);
+      // Find newly downloaded video file
+      const files = listMp4FilesInDir(rootDir);
+      console.log("Files found:", files);
+      const fileName = files[0]; // assuming root is cleaned or only one mp4
+      console.log("filename", fileName);
+      const fullPathToVideo = path.join(rootDir, fileName);
+      console.log("Full path to video:", fullPathToVideo);
 
-      // get that mp4 file name
-      const files = listMp4FilesInDir(tempFolder);
-      const mp4File = files[0];  // should be only one because folder is empty initially
+      // Run FFmpeg on that file
+      const outputDir =
+        "/home/crusty/Documents/fullstack/CourseSelllingApp/backend/public/chunkPlaylist"; // existing folder
+      await convertToHLS(fullPathToVideo, outputDir)
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((error) => {
+          console.error("Conversion failed:", error.message);
+        });
+    
+        // list of all the files present in the outputDir
+      const filesInOutputDir = fs.readdirSync(outputDir);
+      console.log("Files in output directory:", filesInOutputDir);
 
-      const fullFilePath = path.join(tempFolder, mp4File);
-      console.log("Processing file:", fullFilePath);
+      // Optional: delete the downloaded file to avoid interference with next
+      await fs.remove(fullPathToVideo);
 
-      // Output folder for chunks
-      const outputDir = path.resolve("public", "chunkPlaylist", `${lesson._id}-${i}`);
-      await fs.ensureDir(outputDir);
-
-      // Generate segments
-      await generateVideoSegments(fullFilePath, outputDir);
-
-      console.log(`Done processing lesson ${lesson._id}, video index ${i}`);
-
-      // Optional: cleanup temp file
-      await fs.remove(tempFolder);
+      console.log(`Finished processing ${fileName}`);
     }
   }
 
-  res.status(200).json({
-    success: true,
-    message: "Processing completed successfully"
-  });
+  res.json({ success: true, message: "Finished processing all videos." });
 });
-
 export { fetchAndUpload };
