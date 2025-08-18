@@ -14,6 +14,7 @@ import {
   getCourseAndLessons,
   isSubscribed,
   addStudentToCourse,
+  courseDataForPlayer
 } from "../controllers/course.controller.js";
 import { uploadMiddleware } from "../middlewares/multer.middleware.js";
 import {
@@ -67,7 +68,10 @@ courseRouter.route("/isSubscribed").post(isSubscribed);
 courseRouter.route("/addStudentToCourse").post(addStudentToCourse);
 
 // #7 for changes in the server side
-courseRouter.route("/fetchAndUpload").get(fetchAndUpload);
+// courseRouter.route("/fetchAndUpload").get(fetchAndUpload);
+
+// #8 for courseData for the course player
+courseRouter.route("/getDataForPlayer").post(courseDataForPlayer)
 
 
 //routes for instructor

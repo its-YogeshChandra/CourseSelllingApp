@@ -53,6 +53,7 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
       const videoChunkArray = [];
       const videolinks = [];
       for (let index = 0; index <= filteredFiles.length - 1; index++) {
+        
         // Upload each file to Cloudinary
         const filePath = path.join(outputDir, filteredFiles[index]);
         const uplodedVideo = await videoUploadToCloudinary(filePath);
@@ -79,7 +80,6 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
 
       // Optional: delete the downloaded file to avoid interference with next
       await fs.remove(fullPathToVideo);
-
       console.log(`Finished processing ${fileName}`);
     }
   }

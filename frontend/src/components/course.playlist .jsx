@@ -154,11 +154,22 @@ const courseData = {
   ],
 };
 
-export default function CoursePlaylist() {
+export default function CoursePlaylist({coursefullData, lessonData}) {
   // State for expanded chapters
   const [expandedChapters, setExpandedChapters] = useState({
     "chapter-1": true, // First chapter expanded by default
   });
+  
+  console.log(coursefullData)
+  console.log(lessonData)
+
+// state  for course
+const [courseValues, setCourseValues] = useState(coursefullData)
+// state for lesson
+const [lesson, setLesson] = useState(lessonData)
+
+console.log(courseValues)
+console.log(lesson)
 
   // State for completed items
   const [completedItems, setCompletedItems] = useState(
@@ -252,7 +263,7 @@ export default function CoursePlaylist() {
   };
 
   return (
-    <div className="w-full bg-white shadow-md overflow-hidden font-inter ">
+    <div className="w-full bg-white shadow-md overflow-hidden font-inter rounded-2xl">
       {/* Course Header */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
         <h1 className="text-xl font-bold">{courseData.title}</h1>

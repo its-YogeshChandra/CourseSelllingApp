@@ -195,7 +195,7 @@ const isSubscribed = asyncHandler(async (req, res) => {
 });
 
 // controller for adding student to the course
- const addStudentToCourse = asyncHandler(async (req, res) => {
+const addStudentToCourse = asyncHandler(async (req, res) => {
   const { courseId, studentId } = req.body;
 
   // check if the course exists
@@ -214,11 +214,23 @@ const isSubscribed = asyncHandler(async (req, res) => {
   await course.save();
 
   //send response to the user
-  res.status(200).json(new ApiResponse(200, "Student added to course successfully"))
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Student added to course successfully"));
+});
 
- } )
+//controller for getting metadata , saving pubic id and sending data to the frontend
+const courseDataForPlayer = asyncHandler(async (req, res) => {
+  const { courseId } = req.body;
 
+  const courseData = await Course.findById(courseId);
 
+  const lessonData = await Lesson.find({ courseRef: courseId });
+
+  lessonData.map((lesson) => {
+    lesson.video.map();
+  });
+});
 export {
   createcourse,
   uploadlessons,
@@ -227,4 +239,5 @@ export {
   getCourseAndLessons,
   isSubscribed,
   addStudentToCourse,
+  courseDataForPlayer,
 };
