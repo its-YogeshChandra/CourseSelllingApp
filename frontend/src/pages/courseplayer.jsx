@@ -6,22 +6,22 @@ export default function CoursePlayer() {
   const [isVideo, setisVideo] = useState(true);
 
   return (
-    <div className=" w-screen max-w-screen overflow-x-hidden h-max grid grid-cols-[1fr_0.5fr] grid-rows-1 bg-gray-600 max-lg:grid max-lg:grid-cols-1 max-lg:grid-rows-[1fr_1fr]">
+    <div className=" w-screen max-w-screen overflow-x-hidden h-max grid grid-cols-[1fr_0.5fr] grid-rows-1  max-lg:grid max-lg:grid-cols-1 max-lg:grid-rows-[1fr_1fr]">
       {" "}
       {/* change color for better quality*/}
-      <div className=" bg-green-400 flex flex-col py-3 pl-2 max-md:p-1 gap-y-2 ">
+      <div className="  flex flex-col py-3 pl-2 max-md:p-1 gap-y-2 ">
         {" "}
         {/* change color for better quality*/}
-        <div className="w-full h-max ">
+        <div className="w-full h-max pr-[8px] ">
           {" "}
           {/* change color for better quality*/}
           {isVideo ? <CoursePlayerComp /> : null}
         </div>
       </div>
       <div className=" w-full">
-        {" "}
+        
         {/* change color for better quality*/}
-        <div className="w-full h-full bg-red-500 lg:pt-18 ">
+        <div className="w-full h-full  lg:pt-18 pl-[8px] pr-[16px] ">
           <CoursePlaylist />
         </div>
       </div>

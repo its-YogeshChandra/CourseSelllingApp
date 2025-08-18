@@ -50,7 +50,7 @@ function convertToHLS(videoPath, outputDir) {
       .on("end", () => {
         console.log("HLS conversion completed successfully");
         resolve("Data has been successfully transformed");
-      }) 
+      })
       .on("error", (err, stdout, stderr) => {
         console.error("Error during video processing:", err.message);
         console.error("FFmpeg stdout:", stdout);

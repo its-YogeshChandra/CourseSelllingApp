@@ -252,7 +252,7 @@ export default function CoursePlaylist() {
   };
 
   return (
-    <div className="w-full bg-white shadow-md overflow-hidden font-inter">
+    <div className="w-full bg-white shadow-md overflow-hidden font-inter ">
       {/* Course Header */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
         <h1 className="text-xl font-bold">{courseData.title}</h1>
