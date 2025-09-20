@@ -175,10 +175,11 @@ useEffect(()=>{
   }
 },[coursefullData, lessonData])
 
-console.log(courseValues)
-console.log(lessons)
+
+
   // State for completed items
   const [completedItems, setCompletedItems] = useState(
+    // better thinking of using localstorage or indexedDB
     // Initialize with completed items from the data
     courseData.chapters.reduce((acc, chapter) => {
       chapter.subChapters.forEach((subChapter) => {
@@ -271,6 +272,7 @@ console.log(lessons)
   };
  
   if(courseValues && lessons){
+    console.log(Object.entries(lessons[0]))
   return (
     <div className="w-full bg-white shadow-md overflow-hidden font-inter rounded-2xl">
       {/* Course Header */}
@@ -325,11 +327,11 @@ console.log(lessons)
             </button>
 
             {/* Sub-chapters */}
-            {expandedChapters[chapter.id] && (
+            {isExpanded.chapterId && (
               <div className="pl-6 pr-2 pb-2">
-                {chapter.subChapters.map((subChapter) => (
+                {Object.entries(chapter).map((element) => (
                   <div
-                    key={subChapter.id}
+                    key={element._id}
                     className={cn(
                       "flex items-center p-3 rounded-lg mb-1 transition-all",
                       completedItems[subChapter.id] && "bg-gray-50"
@@ -338,7 +340,7 @@ console.log(lessons)
                     <div
                       className={cn(
                         "w-8 h-8 rounded-full flex items-center justify-center mr-3",
-                        subChapter.type === "video"
+                        element === "video"
                           ? "bg-red-100 text-red-500"
                           : "bg-green-100 text-green-500"
                       )}
