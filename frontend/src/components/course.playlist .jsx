@@ -157,8 +157,9 @@ const courseData = {
 
 export default function CoursePlaylist({coursefullData, lessonData}) {
   // State for expanded chapters
-  const [expandedChapters, setExpandedChapters] = useState({
-    "chapter-1": true, // First chapter expanded by default
+  const [isExpanded, setIsExpanded] = useState({
+    expanded: false,
+    chapterId : null
   });
 
 
@@ -174,7 +175,8 @@ useEffect(()=>{
   }
 },[coursefullData, lessonData])
 
-
+console.log(courseValues)
+console.log(lessons)
   // State for completed items
   const [completedItems, setCompletedItems] = useState(
     // Initialize with completed items from the data
@@ -227,9 +229,11 @@ useEffect(()=>{
 
   // Toggle chapter expansion
   const toggleChapter = (chapterId) => {
-    setExpandedChapters((prev) => ({
+    isExpanded((prev) => ({
       ...prev,
-      [chapterId]: !prev[chapterId],
+       expanded : !(prev.expnded),
+       chapterId : chapterId
+      
     }));
   };
 
@@ -265,12 +269,13 @@ useEffect(()=>{
       (subChapter) => completedItems[subChapter.id]
     ).length;
   };
-
+ 
+  if(courseValues && lessons){
   return (
     <div className="w-full bg-white shadow-md overflow-hidden font-inter rounded-2xl">
       {/* Course Header */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
-        <h1 className="text-xl font-bold">{courseData.title}</h1>
+        <h1 className="text-xl font-bold">{courseValues.title}</h1>
         <div className="flex justify-between items-center mt-2 text-sm">
           <div className="flex items-center">
             <Clock className="w-4 h-4 mr-1" /> 
@@ -295,15 +300,15 @@ useEffect(()=>{
 
       {/* Chapters List */}
       <div className="max-h-96 overflow-y-auto">
-        {courseData.chapters.map((chapter) => (
-          <div key={chapter.id} className="border-b border-gray-200">
+        {lessons.map((chapter) => (
+          <div key={chapter._id} className="border-b border-gray-200">
             {/* Chapter Header */}
             <button
-              onClick={() => toggleChapter(chapter.id)}
+              onClick={() => toggleChapter(chapter._id)}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center">
-                {expandedChapters[chapter.id] ? (
+                {isExpanded.chapterId ? (
                   <ChevronDown className="w-5 h-5 text-gray-500 mr-2" />
                 ) : (
                   <ChevronRight className="w-5 h-5 text-gray-500 mr-2" />
@@ -385,6 +390,7 @@ useEffect(()=>{
       </div>
     </div>
   );
+}
 }
 
 
