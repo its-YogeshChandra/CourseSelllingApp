@@ -10,6 +10,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 // Sample course data
 const courseData = {
@@ -159,17 +160,20 @@ export default function CoursePlaylist({coursefullData, lessonData}) {
   const [expandedChapters, setExpandedChapters] = useState({
     "chapter-1": true, // First chapter expanded by default
   });
-  
-  console.log(coursefullData)
-  console.log(lessonData)
+
 
 // state  for course
-const [courseValues, setCourseValues] = useState(coursefullData)
-// state for lesson
-const [lesson, setLesson] = useState(lessonData)
+const [courseValues, setCourseValues] = useState(null)
+const [lessons, setLesson] = useState(null)
 
-console.log(courseValues)
-console.log(lesson)
+// for updating the data with the course and lesson values
+useEffect(()=>{
+  if(coursefullData && lessonData){
+   setCourseValues(coursefullData)
+   setLesson(lessonData)
+  }
+},[coursefullData, lessonData])
+
 
   // State for completed items
   const [completedItems, setCompletedItems] = useState(
@@ -269,8 +273,8 @@ console.log(lesson)
         <h1 className="text-xl font-bold">{courseData.title}</h1>
         <div className="flex justify-between items-center mt-2 text-sm">
           <div className="flex items-center">
-            <Clock className="w-4 h-4 mr-1" />
-            <span>{totalDuration}</span>
+            <Clock className="w-4 h-4 mr-1" /> 
+            <span>200 min</span>
           </div>
           <div>
             {completedCount} of {totalItems} completed
@@ -369,7 +373,7 @@ console.log(lesson)
                           {subChapter.type === "video" ? "Video" : "Note"}
                         </span>
                         <Clock className="w-3 h-3 mr-1" />
-                        <span>{subChapter.duration}</span>
+                        {/* <span>{subChapter.duration}</span> */}
                       </div>
                     </div>
                   </div>
@@ -382,3 +386,7 @@ console.log(lesson)
     </div>
   );
 }
+
+
+
+

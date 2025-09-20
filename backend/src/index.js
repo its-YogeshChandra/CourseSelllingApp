@@ -1,4 +1,3 @@
-import express from "express";
 import { connectDb } from "./db/dbase.js";
 import dotenv from "dotenv";
 import { app } from "./app.js";

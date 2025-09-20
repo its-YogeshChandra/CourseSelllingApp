@@ -25,7 +25,6 @@ export default function CourseBuyCard({ courseData }) {
       pricekeyArr.map((e) => {
         if (e.currency == courseData.price.currency) {
           const displayPrice = e.icon + courseData.price.price;
-          console.log(displayPrice);
           setCourse((prev) => ({
             ...prev,
             title: courseData.title,

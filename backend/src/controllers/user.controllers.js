@@ -38,7 +38,8 @@ const signupUser = asyncHandler(async (req, res) => {
 // controller for login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-
+  console.log("login is accessed")
+  
   if (!(username || email)) {
     throw new ApiError(400, "Email or username is missing");
   }
@@ -198,10 +199,8 @@ const authMe = asyncHandler(async (req, res) => {
   //check for the cookies and get the data
   //send error if there is no user
   //send data if there is a user and also remove refresh token and password from that
-  const values = JSON.parse(JSON.stringify(req.cookies))
   const token = req.cookies?.accessToken 
 
-  
   if (!token) {
     throw new ApiError(400, "Unauthorized request");
   }

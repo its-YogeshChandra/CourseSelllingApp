@@ -112,7 +112,6 @@ export default function Navbar() {
     elementArr.map((e) => {
       const  n = data.toLowerCase().replace(/\s+/g, "")
       const value = "/app/" + e
-      console.log(value)
       if (e.includes(n)) {
         navigate("/app/" + e);
       }
