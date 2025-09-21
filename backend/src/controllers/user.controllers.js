@@ -35,10 +35,10 @@ const signupUser = asyncHandler(async (req, res) => {
 });
 
 
+
 // controller for login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  console.log("login is accessed")
   
   if (!(username || email)) {
     throw new ApiError(400, "Email or username is missing");

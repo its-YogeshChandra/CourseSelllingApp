@@ -155,6 +155,7 @@ const courseData = {
   ],
 };
 
+
 export default function CoursePlaylist({coursefullData, lessonData}) {
   // State for expanded chapters
   const [isExpanded, setIsExpanded] = useState({
@@ -175,7 +176,7 @@ useEffect(()=>{
   }
 },[coursefullData, lessonData])
 
-
+console.log(lessonData)
 
   // State for completed items
   const [completedItems, setCompletedItems] = useState(
@@ -272,7 +273,6 @@ useEffect(()=>{
   };
  
   if(courseValues && lessons){
-    console.log(Object.entries(lessons[0]))
   return (
     <div className="w-full bg-white shadow-md overflow-hidden font-inter rounded-2xl">
       {/* Course Header */}
