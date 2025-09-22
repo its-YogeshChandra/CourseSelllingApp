@@ -73,8 +73,12 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
           console.error("Error reading file:", err);
         }
       }
-
-     const playlistData = await readM3U8File();
+      let playlistData;
+      // call for the async function and update the data 
+      readM3U8File().then((data) => {
+        playlistData = data;
+        fs.unlinkSync(filePath);
+      });
 
       // Create videoChunks array
       videoChunkArray.push({
