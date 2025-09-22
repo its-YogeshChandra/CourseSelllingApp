@@ -12,7 +12,10 @@ const updateCompletion = (courseId, lessonId, datatype, dataTypeId) => {
   const courseCompleted = localStorageService.getfromStorage(
     "CourseCompletionData"
   );
-
+ const finalVal = {
+  courseId : null,
+  completedItems: null
+ }
   // if there is no object at all
   if (!courseCompleted) createCourseCompletionDataObject();
 
@@ -20,20 +23,29 @@ const updateCompletion = (courseId, lessonId, datatype, dataTypeId) => {
 
   // find the data in array
   const neededData = data.filter((element) => element.courseId === courseId)[0];
-
+    
   //if neededData exist then
   if (neededData) {
     // check for the lessonId
     const lessonOperation = (data, lessonId, datatype, dataTypeId) => {
       const lessondata = data.completedItems.filter(
         (element) => element.lessonId === lessonId
-      )[0];
+      );
 
       if (lessondata) {
         //check if datatype and dataTypeId is present
-        const isPresent = lessondata.dataType.filter(
+        const isPresent = lessondata[0].dataType.filter(
           (element) => element === dataTypeId
         );
+       if(isPresent){
+        const val =  lessondata.dataType.filter(
+          (element) => element !== dataTypeId
+        );
+      const newLessonVal =  lessondata.filter
+       }else{
+
+       }
+
       }
       
     };
