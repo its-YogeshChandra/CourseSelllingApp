@@ -43,7 +43,9 @@ const LessonSchema = new Schema(
         },
       },
     ],
-    videoChunks: [{ title: String, url: [ String ] }],
+    videoChunks: [{ title: String, 
+      playlist: String,
+      url: [ String ] }],
   },
   { timestamps: true }
 );

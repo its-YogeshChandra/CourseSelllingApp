@@ -53,7 +53,6 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
       const videoChunkArray = [];
       const videolinks = [];
       for (let index = 0; index <= filteredFiles.length - 1; index++) {
-        
         // Upload each file to Cloudinary
         const filePath = path.join(outputDir, filteredFiles[index]);
         const uplodedVideo = await videoUploadToCloudinary(filePath);
@@ -61,22 +60,33 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
 
         console.log(uplodedVideo);
         videolinks.push(uplodedVideo.playback_url);
-        fs.unlinkSync(filePath);  // delete the file after uploading
+        fs.unlinkSync(filePath); // delete the file after uploading
       }
+      // extracting the the data from m3u8 file
+      const filePath = path.join(outputDir, "index.m3u8");
+      async function readM3U8File() {
+        try {
+          const data = await fs.readFile(filePath, "utf8");
+          console.log("File content:", data);
+          return data;
+        } catch (err) {
+          console.error("Error reading file:", err);
+        }
+      }
+
+     const playlistData = await readM3U8File();
 
       // Create videoChunks array
       videoChunkArray.push({
         title: videoTitle,
+        playlist: playlistData,
         url: videolinks,
       });
-     
+
       // Update the lesson with videoChunks
-      await Lesson.findByIdAndUpdate(
-        lesson._id,
-        {
-          videoChunks: videoChunkArray
-        }
-      )
+      await Lesson.findByIdAndUpdate(lesson._id, {
+        videoChunks: videoChunkArray,
+      });
 
       // Optional: delete the downloaded file to avoid interference with next
       await fs.remove(fullPathToVideo);

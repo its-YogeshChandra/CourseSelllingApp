@@ -41,9 +41,9 @@ const updateCompletion = (courseId, lessonId, datatype, dataTypeId) => {
         const val =  lessondata.dataType.filter(
           (element) => element !== dataTypeId
         );
-      const newLessonVal =  lessondata.filter
+      const newLessonVal =  lessondata.datatype
        }else{
-
+        
        }
 
       }
