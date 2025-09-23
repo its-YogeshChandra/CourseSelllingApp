@@ -1,5 +1,3 @@
-import { object } from "zod";
-
 const request = indexedDB.open("instructorDashboardDb", 1);
 let db;
 
