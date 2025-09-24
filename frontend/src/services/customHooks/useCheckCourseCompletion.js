@@ -5,7 +5,7 @@ request.onupgradeneeded = (event) => {
   db = event.target.result;
 
   // creating a object store
-  const objectStore = db.createObjectStore("lessons", {
+  const objectStore = db.createObjectStore("completionData", {
     keyPath: "id",
   });
 
@@ -34,23 +34,26 @@ const dbinitialzed = new Promise((resolve, reject) => {
 //creating crud methods of db
 
 //#1 addData
-const addData = async (data) => {
+const addData = async (data) =>{
   const isDb = await dbinitialzed;
   if (isDb) {
     console.log(data);
-    const tx = db.transaction("lessons", "readwrite");
-    const addtoStore = tx.objectStore("courses");
+    const tx = db.transaction("completionData", "readwrite");
+    const addtoStore = tx.objectStore("completionData");
     const request = addtoStore.add(data);
-    return checkSucessandError(request, "addData");
+    return checkSucessandError(request, "addData");  
   }
 };
 
 //#2 deletingData
 const deleteData = (id) => {
-  const tx = db.transaction("courses", "readwrite");
-  const deletefromStore = tx.objectStore("courses");
+  return new Promise ((resolve, reject)=>{
+  const tx = db.transaction("completionData", "readwrite");
+  const deletefromStore = tx.objectStore("comletionData");
   const request = deletefromStore.delete(id);
-  checkSucessandError(request, "deleteData");
+ request.onsuccess
+  })
+
 };
 
 //#3 get data
@@ -59,7 +62,7 @@ const getData = () => {
     throw new Error("db initialization unsuccessfull");
   }
   return new Promise((resolve, reject) => {
-    const tx = db.transaction("courses", "readonly");
+    const tx = db.transaction("lessons", "readonly");
     const store = tx.objectStore("courses");
     const result = store.getAll();
 
@@ -179,4 +182,4 @@ const checkSucessandError = (request, action) => {
   });
 };
 
-export { addData, deleteData, getData, addlesson, updatelesson, deleteLesson};
+export { addData, deleteData, getData, addlesson, updatelesson, deleteLesson };
