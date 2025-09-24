@@ -6,6 +6,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { Lesson } from "../models/courseData.model.js";
 import { CompletionData } from "../models/completion.model.js";
+import { th } from "zod/v4/locales";
 
 //for registering user
 const signupUser = asyncHandler(async (req, res) => {
@@ -248,7 +249,7 @@ const findCourseCompletion = asyncHandler(async (req, res) => {
 
     // for in loop to access the data
     for (const key in element) {
-      if ((key = "video" || "image" || "notes")) {
+      if (key === "video" || key === "image" || key === "notes") {
         element[key].map((items) => {
           subData[`${key}`].push(items._id);
         });
@@ -259,7 +260,12 @@ const findCourseCompletion = asyncHandler(async (req, res) => {
   //query the completion data and add the data into sending data
   const dataPresent = [];
   for (const key in isPresent) {
-    if ((key = "video" || "image" || "notes" || "lessonRef")) {
+    if (
+      key === "video" ||
+      key === "image" ||
+      key === "notes" ||
+      key === "lessonRef"
+    ) {
       subData[`${key}`].map((value) => {
         if (isPresent[key].includes(value)) {
           dataPresent.push(value);
@@ -277,8 +283,8 @@ const findCourseCompletion = asyncHandler(async (req, res) => {
 });
 
 const addtoCourseCompletion = asyncHandler(async (req, res) => {
-  //get the userId and courseId from backend 
-  const { courseId, userId } = req.body;
+  //get the userId and courseId from backend
+  const { courseId, userId, subData } = req.body;
 
   // query the db to get the whole data
   const isPresent = await CompletionData.find({
@@ -287,11 +293,42 @@ const addtoCourseCompletion = asyncHandler(async (req, res) => {
   });
 
   // check if the data present or not
-if(isPresent){
+  if (isPresent.length === 0) {
+    console.log("readching here");
+    //if not present then create a new entry
+    const newCompletionData = await CompletionData.create({
+      userRef: userId,
+      courseRef: courseId,
+    });
 
-}
-  // if present then send the data to the frontend then
-  //
+    //add the subdata into the new entry
+    for (const key in subData) {
+      subData[key].map((value) => {
+        newCompletionData[`${key}`].push(value);
+      });
+    }
+    await newCompletionData.save({ validateBeforeSave: false });
+
+    res.status(200).json(new ApiResponse(200, "data successfully added"));
+    return;
+  }
+
+  // if present then update the entry
+  for (const key in subData) {
+    subData[key].map((value) => {
+      if (!isPresent[0][`${key}`].includes(value)) {
+        isPresent[0][`${key}`].push(value);
+      } else {
+        throw new ApiError(400, "data already present");
+      }
+    });
+  }
+
+  // save the data into db
+  await isPresent[0].save({ validateBeforeSave: false });
+
+  // send the response to the user
+  res.status(200).json(new ApiResponse(200, "data successfully added"));
 });
 
 export {

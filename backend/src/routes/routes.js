@@ -6,7 +6,8 @@ import {
   googleLogin,
   logoutUser,
   authMe,
-  findCourseCompletion
+  findCourseCompletion,
+  addtoCourseCompletion,
 } from "../controllers/user.controllers.js";
 import {
   createcourse,
@@ -48,6 +49,9 @@ router.route("/authme").post(authMe);
 
 // completionChecker
 router.route("/completioncheck").post(findCourseCompletion);
+
+// add to completion
+router.route("/addtocompletion").post(addtoCourseCompletion);
 
 //routes of course
 

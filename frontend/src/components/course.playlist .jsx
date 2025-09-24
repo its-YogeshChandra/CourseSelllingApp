@@ -322,7 +322,7 @@ console.log(lessonData)
                   {getChapterCompletionCount(chapter)}/
                   {chapter.subChapters.length}
                 </span>
-                <span>{getChapterDuration(chapter)}</span>
+                {/* <span>{getChapterDuration(chapter)}</span> */}
               </div>
             </button>
 
