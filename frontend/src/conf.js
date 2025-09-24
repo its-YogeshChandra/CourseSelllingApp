@@ -2,7 +2,9 @@ const conf = {
   signupUrl: import.meta.env.VITE_SIGNUP_USER,
   loginUrl: import.meta.env.VITE_LOGIN_USER,
   googleAuth: import.meta.env.VITE_GOOGLE_USER,
-  authMe: import.meta.env.VITE_AUTHME_URL
+  authMe: import.meta.env.VITE_AUTHME_URL,
+  addCompletion: import.meta.env.VITE_COURSE_ADDTOCOMPLETION_URL,
+  checkCompletion: import.meta.env.VITE_COURSE_CHECKCOMPLETION_URL
 };
 
 const courseConf = {

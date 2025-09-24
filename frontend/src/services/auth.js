@@ -3,7 +3,7 @@
 
 import axios from "axios";
 import { conf } from "../conf.js";
-const { signupUrl, loginUrl, googleAuth, authMe} = conf;
+const { signupUrl, loginUrl, googleAuth, authMe } = conf;
 
 export class AuthServices {
   async signup(data) {
@@ -62,8 +62,8 @@ export class AuthServices {
         credentials: "include",
       });
       if (response) {
-        console.log(response)
-        return response.data
+        console.log(response);
+        return response.data;
       }
     } catch (error) {
       console.log(error);

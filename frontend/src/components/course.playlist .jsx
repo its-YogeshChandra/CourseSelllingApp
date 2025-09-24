@@ -235,7 +235,6 @@ console.log(lessonData)
       ...prev,
        expanded : !(prev.expnded),
        chapterId : chapterId
-      
     }));
   };
 
@@ -318,16 +317,16 @@ console.log(lessonData)
                 <span className="font-medium text-left">{chapter.title}</span>
               </div>
               <div className="text-sm text-gray-500 flex items-center">
-                <span className="mr-2">
+                {/* <span className="mr-2">
                   {getChapterCompletionCount(chapter)}/
                   {chapter.subChapters.length}
-                </span>
+                </span> */}
                 {/* <span>{getChapterDuration(chapter)}</span> */}
               </div>
             </button>
 
             {/* Sub-chapters */}
-            {isExpanded.chapterId && (
+            {isExpanded.chapterId === chapter._id && (
               <div className="pl-6 pr-2 pb-2">
                 {Object.entries(chapter).map((element) => (
                   <div

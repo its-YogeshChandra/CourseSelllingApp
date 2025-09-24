@@ -1,5 +1,5 @@
 import axios from "axios";
-import { courseConf } from "../conf";
+import { courseConf, conf } from "../conf";
 
 const {
   courseUrl,
@@ -7,8 +7,10 @@ const {
   getCoursesUrl,
   getCourseandLessonUrl,
   isPresent,
-  addSubscription
+  addSubscription,
 } = courseConf;
+
+const { addCompletion, checkCompletion } = conf;
 
 export class courseAction {
   async uploadCourse(course) {
@@ -98,7 +100,7 @@ export class courseAction {
         return response.data;
       }
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
@@ -110,13 +112,13 @@ export class courseAction {
         studentId,
       });
       if (response) {
-      console.log(response)
+        console.log(response);
         return response.data;
       }
     } catch (error) {
-      console.log(error)
-      return error.response.data
-    } 
+      console.log(error);
+      return error.response.data;
+    }
   }
 
   // function to add student to course
@@ -135,8 +137,41 @@ export class courseAction {
       return error.response.data;
     }
   }
-}
 
+  // function to adccourseCompletion
+  async addcourseCompletion(data) {
+    try {
+      const response = await axios.post(addCompletion, {
+        ...data,
+      });
+
+      if (response) {
+        console.log(response.data);
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
+  }
+
+  // function to check courseCompletion
+  async checkcourseCompletion(data) {
+    try {
+      const response = await axios.post(checkCompletion, {
+        ...data,
+      });
+
+      if (response) {
+        console.log(response.data);
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
+  }
+}
 const courseServices = new courseAction();
 
 export { courseServices };
