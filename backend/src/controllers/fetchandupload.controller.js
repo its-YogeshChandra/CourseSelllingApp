@@ -74,7 +74,7 @@ const fetchAndUpload = asyncHandler(async (req, res) => {
         }
       }
       let playlistData;
-      // call for the async function and update the data 
+      // call for the async function and update the data
       readM3U8File().then((data) => {
         playlistData = data;
         fs.unlinkSync(filePath);

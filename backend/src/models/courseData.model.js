@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { string, url } from "zod/v4";
+
 
 const LessonSchema = new Schema(
   {

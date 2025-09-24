@@ -34,26 +34,25 @@ const dbinitialzed = new Promise((resolve, reject) => {
 //creating crud methods of db
 
 //#1 addData
-const addData = async (data) =>{
+const addData = async (data) => {
   const isDb = await dbinitialzed;
   if (isDb) {
     console.log(data);
     const tx = db.transaction("completionData", "readwrite");
     const addtoStore = tx.objectStore("completionData");
     const request = addtoStore.add(data);
-    return checkSucessandError(request, "addData");  
+    return checkSucessandError(request, "addData");
   }
 };
 
 //#2 deletingData
 const deleteData = (id) => {
-  return new Promise ((resolve, reject)=>{
-  const tx = db.transaction("completionData", "readwrite");
-  const deletefromStore = tx.objectStore("comletionData");
-  const request = deletefromStore.delete(id);
- request.onsuccess
-  })
-
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction("completionData", "readwrite");
+    const deletefromStore = tx.objectStore("comletionData");
+    const request = deletefromStore.delete(id);
+    request.onsuccess;
+  });
 };
 
 //#3 get data
