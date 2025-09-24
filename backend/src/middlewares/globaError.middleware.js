@@ -5,7 +5,6 @@ const errorMiddleware = (err, req, res, next) => {
     success: err.success ?? false,
     message: err.message || "Internal Server Error",
     error: err.error || [],
-    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
     data: err.data || null,
   });
 };

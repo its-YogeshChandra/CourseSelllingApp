@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const LessonSchema = new Schema(
+const CompletionSchema = new Schema(
   {
     userRef: {
       type: Schema.Types.ObjectId,
@@ -20,12 +20,12 @@ const LessonSchema = new Schema(
         completed: Boolean,
       },
     ],
-    video: [{ type: string }],
-    image: [{ type: string }],
-    notes: [{ type: string }],
+    video: [{ type: String }],
+    image: [{ type: String }],
+    notes: [{ type: String }],
   },
 
   { timestamps: true }
 );
 
-export const Lesson = mongoose.model("Lesson", LessonSchema);
+export const CompletionData = mongoose.model("CompletionData", CompletionSchema);

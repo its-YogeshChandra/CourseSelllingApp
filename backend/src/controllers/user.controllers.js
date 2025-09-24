@@ -4,11 +4,13 @@ import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.model.js";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
+import { Lesson } from "../models/courseData.model.js";
+import { CompletionData } from "../models/completion.model.js";
 
 //for registering user
 const signupUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  
+
   const dbUser = await User.findOne({
     $or: [{ username }, { email }],
   });
@@ -34,12 +36,10 @@ const signupUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully registered", Dbuser));
 });
 
-
-
 // controller for login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  
+
   if (!(username || email)) {
     throw new ApiError(400, "Email or username is missing");
   }
@@ -67,7 +67,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: false
+    secure: false,
   };
 
   res
@@ -76,8 +76,6 @@ const loginUser = asyncHandler(async (req, res) => {
     .cookie("refreshToken", refreshToken, options)
     .json(new ApiResponse(200, "User successfully logged In", loggedUser));
 });
-
-
 
 //google Login user
 const googleLogin = asyncHandler(async (req, res) => {
@@ -106,7 +104,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   if (alreadyDbuser) {
     const option = {
       httpOnly: true,
-      secure: false
+      secure: false,
     };
 
     const access_Token = alreadyDbuser.generateAccessToken;
@@ -150,7 +148,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   if (googleLoggedUser) {
     const option = {
       httpOnly: true,
-      secure: false
+      secure: false,
     };
     res
       .status(200)
@@ -185,7 +183,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const option = {
     httpOnly: true,
-    secure: false
+    secure: false,
   };
   res
     .status(200)
@@ -199,21 +197,109 @@ const authMe = asyncHandler(async (req, res) => {
   //check for the cookies and get the data
   //send error if there is no user
   //send data if there is a user and also remove refresh token and password from that
-  const token = req.cookies?.accessToken 
+  const token = req.cookies?.accessToken;
 
   if (!token) {
     throw new ApiError(400, "Unauthorized request");
   }
   //decode the user out of token
   const decodedUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
- const id = decodedUser.id
-  const mongoUser =  await User.findById(id).select("-password -refreshToken")
+  const id = decodedUser.id;
+  const mongoUser = await User.findById(id).select("-password -refreshToken");
   if (!mongoUser) {
     throw new ApiError(401, "Invalid Access Token");
   }
 
   // send data back to the frontend
-  res.status(200).json(new ApiResponse(200, "User is authenticated", mongoUser));
+  res
+    .status(200)
+    .json(new ApiResponse(200, "User is authenticated", mongoUser));
 });
 
-export { signupUser, loginUser, googleLogin, logoutUser, authMe };
+const findCourseCompletion = asyncHandler(async (req, res) => {
+  // userId and  course id from frontend
+  const { userId, courseId } = req.body;
+
+  // query the completoindb to get the whole data
+  const isPresent = await CompletionData.find({
+    userRef: userId,
+    courseRef: courseId,
+  });
+
+  // check on for that data into the completionmodels in db
+  if (!isPresent) {
+    throw new ApiError(400, "no data found");
+  }
+
+  // if present then query the lessonModel for full data
+  const lessonData = await Lesson.find({
+    courseRef: courseId,
+  });
+
+  //query the lessonData and query the completionmodel
+  let subData = {
+    lessonRef: [],
+    video: [],
+    image: [],
+    notes: [],
+  };
+  lessonData.map((element) => {
+    subData.lessonRef.push(element._id);
+
+    // for in loop to access the data
+    for (const key in element) {
+      if ((key = "video" || "image" || "notes")) {
+        element[key].map((items) => {
+          subData[`${key}`].push(items._id);
+        });
+      }
+    }
+  });
+
+  //query the completion data and add the data into sending data
+  const dataPresent = [];
+  for (const key in isPresent) {
+    if ((key = "video" || "image" || "notes" || "lessonRef")) {
+      subData[`${key}`].map((value) => {
+        if (isPresent[key].includes(value)) {
+          dataPresent.push(value);
+        }
+      });
+    }
+  }
+
+  // send data to the frontend
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "completionData extraction successfull", dataPresent)
+    );
+});
+
+const addtoCourseCompletion = asyncHandler(async (req, res) => {
+  //get the userId and courseId from backend 
+  const { courseId, userId } = req.body;
+
+  // query the db to get the whole data
+  const isPresent = await CompletionData.find({
+    userRef: userId,
+    courseRef: courseId,
+  });
+
+  // check if the data present or not
+if(isPresent){
+
+}
+  // if present then send the data to the frontend then
+  //
+});
+
+export {
+  signupUser,
+  loginUser,
+  googleLogin,
+  logoutUser,
+  authMe,
+  findCourseCompletion,
+  addtoCourseCompletion,
+};
