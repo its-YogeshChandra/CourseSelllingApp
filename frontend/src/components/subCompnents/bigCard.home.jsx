@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import bigcardBackground from "../../assets/bigcardBackground.jpg";
 
 export default function BigCardHome() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -19,87 +20,24 @@ export default function BigCardHome() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden font-inter">
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-      </div>
+    <div className="min-h-screen w-full overflow-hidden font-inter p-4 mt-4 relative">
+      <img
+        src={bigcardBackground}
+        alt=""
+        className="object-cover w-full h-full rounded-2xl z-0"
+      />
 
-      {/* Floating Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Course Card 1 */}
-        <div className="absolute top-20 left-10 w-64 h-40 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-xl backdrop-blur-sm border border-white/10 transform rotate-12 opacity-60" />
-
-        {/* Course Card 2 */}
-        <div className="absolute top-40 right-20 w-48 h-32 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl backdrop-blur-sm border border-white/10 transform -rotate-6 opacity-50" />
-
-        {/* Course Card 3 */}
-        <div className="absolute bottom-32 left-20 w-56 h-36 bg-gradient-to-r from-green-500/20 to-teal-500/20 rounded-xl backdrop-blur-sm border border-white/10 transform rotate-6 opacity-40" />
-
-        {/* Course Card 4 */}
-        <div className="absolute bottom-20 right-10 w-52 h-34 bg-gradient-to-r from-pink-500/20 to-red-500/20 rounded-xl backdrop-blur-sm border border-white/10 transform -rotate-12 opacity-50" />
-
-        {/* Course Card 5 */}
-        <div className="absolute top-60 left-1/3 w-44 h-28 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl backdrop-blur-sm border border-white/10 transform rotate-3 opacity-30" />
-
-        {/* Course Card 6 */}
-        <div className="absolute bottom-60 right-1/3 w-60 h-38 bg-gradient-to-r from-indigo-500/20 to-blue-500/20 rounded-xl backdrop-blur-sm border border-white/10 transform -rotate-8 opacity-35" />
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-4xl text-center">
-          {/* Main Heading */}
-          <h1 className="mb-12 text-5xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
-            Experience a learning
-            <br />
-            platform level
-          </h1>
-
-          {/* Search Bar */}
-          <div className="mx-auto mb-8 flex max-w-2xl overflow-hidden rounded-lg bg-white/10 backdrop-blur-md border border-white/20">
-            <Input
-              type="text"
-              placeholder="Find Your Courses"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-1 border-0 bg-transparent px-6 py-6 text-lg text-white placeholder:text-white/70 focus:ring-0 focus-visible:ring-0"
-            />
-            <Button
-              onClick={handleSearch}
-              className="bg-red-500 px-8 py-4 text-lg h-full font-medium text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
-            >
-              <Search className="mr-2 h-5 w-5" />
-              Search
-            </Button>
-          </div>
-
-          {/* Trending Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <span className="text-lg font-medium text-white/90">
-              Trending Tag:
-            </span>
-            <div className="flex flex-wrap gap-3">
-              {trendingTags.map((tag, index) => (
-                <button
-                  key={index}
-                  className="rounded-full border border-white/30 bg-white/10 px-6 py-2 text-sm font-medium text-white backdrop-blur-sm transition-all hover:bg-white/20 hover:border-white/50 hover:scale-105"
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-emerald-500 w-[70%] h-[60%] z-10 p-3 flex gap-x-3">
+        <div className="bg-cyan-300 w-[55%] h-full flex flex-col justify-center gap-y-3">
+          <div className="w-[40%] h-12 bg-gray-500"></div>
+          <>Unlock Your Potential with Online Courses</h2>
+          <p>
+            Reach a global audience and start earning today. Our platform makes
+            course creation and sales simple and effective.
+          </p>
+          <div className="w-[60%] h-12 bg-gray-500"></div>
         </div>
-      </div>
-
-      {/* Additional Decorative Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white/40 rounded-full animate-pulse" />
-        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-white/30 rounded-full animate-pulse delay-1000" />
-        <div className="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse delay-500" />
-        <div className="absolute bottom-1/3 right-1/3 w-1 h-1 bg-white/40 rounded-full animate-pulse delay-700" />
+        <div className="bg-cyan-300 w-[45%] h-full"></div>
       </div>
     </div>
   );
