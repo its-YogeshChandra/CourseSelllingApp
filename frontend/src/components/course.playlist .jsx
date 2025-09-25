@@ -271,6 +271,7 @@ export default function CoursePlaylist({
   };
 
   if (courseValues && lessons) {
+    console.log(lessons);
     return (
       <div className="w-full bg-white  shadow-md overflow-hidden font-inter rounded-2xl">
         {/* Course Header */}
@@ -335,7 +336,15 @@ export default function CoursePlaylist({
                       >
                         <button
                           className=""
-                          onClick={() => setSelectedDataType("video")}
+                          onClick={() =>
+                            setSelectedDataType((prev) => {
+                              return {
+                                dataType: "video",
+                                url: subChapter.url,
+                                id: subChapter._id,
+                              };
+                            })
+                          }
                         >
                           <div className="flex justify-evenly gap-x-2">
                             <Play />
@@ -353,7 +362,11 @@ export default function CoursePlaylist({
                       >
                         <button
                           className=""
-                          onClick={() => setSelectedDataType("image")}
+                          onClick={() =>
+                            setSelectedDataType((prev) => {
+                              return { dataType: "image", url: subChapter.url };
+                            })
+                          }
                         >
                           <div className="flex justify-evenly gap-x-2">
                             <FileImage />
@@ -371,7 +384,11 @@ export default function CoursePlaylist({
                       >
                         <button
                           className=""
-                          onClick={() => setSelectedDataType("image")}
+                          onClick={() =>
+                            setSelectedDataType((prev) => {
+                              return { dataType: "notes", url: subChapter.url };
+                            })
+                          }
                         >
                           <div className="flex justify-evenly gap-x-2">
                             <NotebookText />

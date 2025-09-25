@@ -7,19 +7,23 @@ import { courseServices } from "../services/courseService.js";
 export default function CoursePlayer() {
   const [isVideo, setisVideo] = useState(true);
   const courseId = "68773d54730e38b196734fb3";
-  const [courseData, setCourseData] = useState()
-  const [lessonData, setlessonData] = useState()
-  const [selectedDataType, setSelectedDataType] = useState(null);
+  const [courseData, setCourseData] = useState();
+  const [lessonData, setlessonData] = useState();
+  const [selectedDataType, setSelectedDataType] = useState({
+    dataType: null,
+    url: null,
+    id: null,
+  });
 
   useEffect(() => {
     // downlod the course content with the data
-    const func = async() => {
+    const func = async () => {
       const response = await courseServices.getCourseandLessonData(courseId);
       //set the course and lesson data
-      setCourseData(response.data.course)
-      setlessonData(response.data.lessons)
+      setCourseData(response.data.course);
+      setlessonData(response.data.lessons);
     };
-    func()
+    func();
   }, []);
 
   return (
@@ -31,14 +35,17 @@ export default function CoursePlayer() {
         {/* change color for better quality*/}
         <div className="w-full h-max pr-[8px] ">
           {" "}
-          {/* change color for better quality*/}
-          {isVideo ? <CoursePlayerComp  /> : null}
+          <CoursePlayerComp selectedDataType={selectedDataType} />
         </div>
       </div>
       <div className=" w-full">
         {/* change color for better quality*/}
         <div className="w-full h-full  lg:pt-18 pl-[8px] pr-[16px] ">
-          <CoursePlaylist coursefullData = {courseData}  lessonData = {lessonData} setSelectedDataType={setSelectedDataType}/>
+          <CoursePlaylist
+            coursefullData={courseData}
+            lessonData={lessonData}
+            setSelectedDataType={setSelectedDataType}
+          />
         </div>
       </div>
     </div>
