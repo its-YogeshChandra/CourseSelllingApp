@@ -1,6 +1,5 @@
 import axios from "axios";
 import { courseConf, conf } from "../conf";
-
 const {
   courseUrl,
   lessonUrl,

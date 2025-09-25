@@ -37,6 +37,7 @@ const signupUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully registered", Dbuser));
 });
 
+
 // controller for login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -108,8 +109,8 @@ const googleLogin = asyncHandler(async (req, res) => {
       secure: false,
     };
 
-    const access_Token = alreadyDbuser.generateAccessToken;
-    const refresh_Token = alreadyDbuser.generateRefreshToken;
+    const access_Token = alreadyDbuser.generateAccessToken();
+    const refresh_Token = alreadyDbuser.generateRefreshToken();
 
     alreadyDbuser.refreshToken = refresh_Token;
     await alreadyDbuser.save({ validateBeforeSave: false });

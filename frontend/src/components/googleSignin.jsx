@@ -1,11 +1,14 @@
- import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import authService from "../services/auth.js";
 import { useNavigate } from "react-router";
+import { useSearchParams } from "react-router";
 
 export default function GoogleLogin() {
-
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams();
+  const location = searchParams.get("location");
+  const values = searchParams.get("data");
+  
   useEffect(() => {
     // Load the Google script
     const script = document.createElement("script");
@@ -36,20 +39,28 @@ export default function GoogleLogin() {
   }, []);
 
   const handleCredentialResponse = async (response) => {
- 
     // You can decode it or send it to your backend
     try {
       const val = await authService.googleAuth(response.credential);
-      console.log(val)
+
       if (val) {
+        const path = "/app/" + location;
+        switch (location) {
+          case "coursedisplay":
+            navigate(`${path}?id=${values}`);
+            break;
+          default:
+            navigate(`${path}`);
+            break;
+        }
+      } else {
         navigate({
           pathname: "/app/home",
         });
       }
     } catch (error) {
       throw error;
-    } 
-    
+    }
   };
 
   return <div id="google-button"></div>;

@@ -5,9 +5,13 @@ import GoogleLogin from "./googleSignin.jsx";
 import { Link, useNavigate } from "react-router";
 import authService from "../services/auth.js";
 import validator from "validator";
+import { useSearchParams } from "react-router";
 
 function Login() {
   const [logsendData, setLogSendData] = useState(null);
+  const [searchParams] = useSearchParams();
+  const location = searchParams.get("location");
+  const values = searchParams.get("data");
   const {
     register,
     handleSubmit,
@@ -20,8 +24,6 @@ function Login() {
   }
 
   const Login = async (data) => {
-    console.log(data.usernameORemail);
-
     const isEmail = validator.isEmail(data.usernameORemail);
     if (isEmail) {
       setLogSendData({
@@ -38,11 +40,17 @@ function Login() {
     }
 
     const loginVal = await authService.login(logsendData);
-    cEonsole.log(loginVal);
+
     if (loginVal) {
-      navigate({
-        pathname: "/app/home",
-      });
+      const path = "/app/" + location;
+      switch (location) {
+        case "coursedisplay":
+          navigate(`${path}?id=${values}`);
+          break;
+        default:
+          navigate(`${path}`);
+          break;
+      }
     }
   };
 
