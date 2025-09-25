@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useMemo } from "react";
 import {
   ChevronDown,
@@ -8,6 +6,8 @@ import {
   FileText,
   Clock,
   CheckCircle,
+  FileImage,
+  NotebookText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect } from "react";
@@ -155,28 +155,25 @@ const courseData = {
   ],
 };
 
-
-export default function CoursePlaylist({coursefullData, lessonData}) {
+export default function CoursePlaylist({
+  coursefullData,
+  lessonData,
+  setSelectedDataType,
+}) {
   // State for expanded chapters
-  const [isExpanded, setIsExpanded] = useState({
-    expanded: false,
-    chapterId : null
-  });
+  const [isExpanded, setIsExpanded] = useState([]);
 
+  // state  for course
+  const [courseValues, setCourseValues] = useState(null);
+  const [lessons, setLesson] = useState(null);
 
-// state  for course
-const [courseValues, setCourseValues] = useState(null)
-const [lessons, setLesson] = useState(null)
-
-// for updating the data with the course and lesson values
-useEffect(()=>{
-  if(coursefullData && lessonData){
-   setCourseValues(coursefullData)
-   setLesson(lessonData)
-  }
-},[coursefullData, lessonData])
-
-console.log(lessonData)
+  // for updating the data with the course and lesson values
+  useEffect(() => {
+    if (coursefullData && lessonData) {
+      setCourseValues(coursefullData);
+      setLesson(lessonData);
+    }
+  }, [coursefullData, lessonData]);
 
   // State for completed items
   const [completedItems, setCompletedItems] = useState(
@@ -231,11 +228,13 @@ console.log(lessonData)
 
   // Toggle chapter expansion
   const toggleChapter = (chapterId) => {
-    isExpanded((prev) => ({
-      ...prev,
-       expanded : !(prev.expnded),
-       chapterId : chapterId
-    }));
+    setIsExpanded((prev) => {
+      if (prev.includes(chapterId)) {
+        return prev.filter((id) => id !== chapterId);
+      } else {
+        return [...prev, chapterId];
+      }
+    });
   };
 
   // Toggle completion status
@@ -270,130 +269,123 @@ console.log(lessonData)
       (subChapter) => completedItems[subChapter.id]
     ).length;
   };
- 
-  if(courseValues && lessons){
-  return (
-    <div className="w-full bg-white shadow-md overflow-hidden font-inter rounded-2xl">
-      {/* Course Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
-        <h1 className="text-xl font-bold">{courseValues.title}</h1>
-        <div className="flex justify-between items-center mt-2 text-sm">
-          <div className="flex items-center">
-            <Clock className="w-4 h-4 mr-1" /> 
-            <span>200 min</span>
+
+  if (courseValues && lessons) {
+    return (
+      <div className="w-full bg-white  shadow-md overflow-hidden font-inter rounded-2xl">
+        {/* Course Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
+          <h1 className="text-xl font-bold">{courseValues.title}</h1>
+          <div className="flex justify-between items-center mt-2 text-sm">
+            <div className="flex items-center">
+              <Clock className="w-4 h-4 mr-1" />
+              <span>200 min</span>
+            </div>
+            <div>
+              {completedCount} of {totalItems} completed
+            </div>
           </div>
-          <div>
-            {completedCount} of {totalItems} completed
+
+          {/* Progress Bar */}
+          <div className="mt-3 h-2 bg-white/30 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-300"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
+          </div>
+          <div className="text-right text-xs mt-1">
+            {progressPercentage}% complete
           </div>
         </div>
 
-        {/* Progress Bar */}
-        <div className="mt-3 h-2 bg-white/30 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-300"
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
-        </div>
-        <div className="text-right text-xs mt-1">
-          {progressPercentage}% complete
-        </div>
-      </div>
-
-      {/* Chapters List */}
-      <div className="max-h-96 overflow-y-auto">
-        {lessons.map((chapter) => (
-          <div key={chapter._id} className="border-b border-gray-200">
-            {/* Chapter Header */}
-            <button
-              onClick={() => toggleChapter(chapter._id)}
-              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center">
-                {isExpanded.chapterId ? (
-                  <ChevronDown className="w-5 h-5 text-gray-500 mr-2" />
-                ) : (
-                  <ChevronRight className="w-5 h-5 text-gray-500 mr-2" />
-                )}
-                <span className="font-medium text-left">{chapter.title}</span>
-              </div>
-              <div className="text-sm text-gray-500 flex items-center">
-                {/* <span className="mr-2">
+        {/* Chapters List */}
+        <div className="h-auto overflow-y-auto">
+          {lessons.map((chapter) => (
+            <div key={chapter._id} className="border-b border-gray-200">
+              {/* Chapter Header */}
+              <button
+                onClick={() => toggleChapter(chapter._id)}
+                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center">
+                  {isExpanded.includes(chapter._id) ? (
+                    <ChevronDown className="w-5 h-5 text-gray-500 mr-2" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5 text-gray-500 mr-2" />
+                  )}
+                  <span className="font-medium text-left">{chapter.title}</span>
+                </div>
+                <div className="text-sm text-gray-500 flex items-center">
+                  {/* <span className="mr-2">
                   {getChapterCompletionCount(chapter)}/
                   {chapter.subChapters.length}
                 </span> */}
-                {/* <span>{getChapterDuration(chapter)}</span> */}
-              </div>
-            </button>
+                  {/* <span>{getChapterDuration(chapter)}</span> */}
+                </div>
+              </button>
 
-            {/* Sub-chapters */}
-            {isExpanded.chapterId === chapter._id && (
-              <div className="pl-6 pr-2 pb-2">
-                {Object.entries(chapter).map((element) => (
-                  <div
-                    key={element._id}
-                    className={cn(
-                      "flex items-center p-3 rounded-lg mb-1 transition-all",
-                      completedItems[subChapter.id] && "bg-gray-50"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "w-8 h-8 rounded-full flex items-center justify-center mr-3",
-                        element === "video"
-                          ? "bg-red-100 text-red-500"
-                          : "bg-green-100 text-green-500"
-                      )}
-                    >
-                      {subChapter.type === "video" ? (
-                        <Play className="w-4 h-4" />
-                      ) : (
-                        <FileText className="w-4 h-4" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-sm font-medium">
-                          {subChapter.title}
-                        </h3>
+              {/* Sub-chapters */}
+              {isExpanded.includes(chapter._id) && (
+                <div className="pl-6 pr-2 pb-2">
+                  {chapter.video.length > 0 &&
+                    chapter.video.map((subChapter) => (
+                      <div
+                        key={subChapter._id}
+                        className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg mb-1"
+                      >
                         <button
-                          onClick={() => toggleCompletion(subChapter.id)}
-                          className={cn(
-                            "ml-2 p-1 rounded-full transition-colors",
-                            completedItems[subChapter.id]
-                              ? "text-green-500 hover:bg-green-50"
-                              : "text-gray-300 hover:text-green-500 hover:bg-green-50"
-                          )}
+                          className=""
+                          onClick={() => setSelectedDataType("video")}
                         >
-                          <CheckCircle className="w-5 h-5" />
+                          <div className="flex justify-evenly gap-x-2">
+                            <Play />
+                            <p>{subChapter.title}</p>
+                          </div>
                         </button>
                       </div>
-                      <div className="flex items-center text-xs text-gray-500 mt-1">
-                        <span
-                          className={cn(
-                            "mr-2 px-1.5 py-0.5 rounded text-xs",
-                            subChapter.type === "video"
-                              ? "bg-red-50 text-red-700"
-                              : "bg-green-50 text-green-700"
-                          )}
+                    ))}
+
+                  {chapter.image.length > 0 &&
+                    chapter.image.map((subChapter) => (
+                      <div
+                        key={subChapter._id}
+                        className="flex items-center  justify-between p-2 hover:bg-gray-50 rounded-lg mb-1"
+                      >
+                        <button
+                          className=""
+                          onClick={() => setSelectedDataType("image")}
                         >
-                          {subChapter.type === "video" ? "Video" : "Note"}
-                        </span>
-                        <Clock className="w-3 h-3 mr-1" />
-                        {/* <span>{subChapter.duration}</span> */}
+                          <div className="flex justify-evenly gap-x-2">
+                            <FileImage />
+                            <p>{subChapter.title}</p>
+                          </div>
+                        </button>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+                    ))}
+
+                  {chapter.notes.length > 0 &&
+                    chapter.notes.map((subChapter) => (
+                      <div
+                        key={subChapter._id}
+                        className="flex items-center  justify-between p-2 hover:bg-gray-50 rounded-lg mb-1"
+                      >
+                        <button
+                          className=""
+                          onClick={() => setSelectedDataType("image")}
+                        >
+                          <div className="flex justify-evenly gap-x-2">
+                            <NotebookText />
+                            <p>{subChapter.title}</p>
+                          </div>
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
-}
-
-
-
-
