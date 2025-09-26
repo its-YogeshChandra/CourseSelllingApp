@@ -29,9 +29,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import authService from "../services/auth.js";
+import { useEffect } from "react";
 
 function SubscriptionsSection() {
   const [selectedPlan, setSelectedPlan] = useState("premium");
+   
+  useEffect(() => {
+        
+  }, [])
 
   const plans = [
     {

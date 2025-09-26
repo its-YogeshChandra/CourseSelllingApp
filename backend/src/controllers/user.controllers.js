@@ -6,7 +6,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import { Lesson } from "../models/courseData.model.js";
 import { CompletionData } from "../models/completion.model.js";
-import { th } from "zod/v4/locales";
+import mongoose from "mongoose";
 
 //for registering user
 const signupUser = asyncHandler(async (req, res) => {
@@ -332,6 +332,21 @@ const addtoCourseCompletion = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "data successfully added"));
 });
 
+const findUser = asyncHandler(async (req, res) => {
+   const { userId } = req.body;
+   if(mongoose.isValidObjectId(userId)){
+    const user = await User.findById(userId).select("-password -refreshToken");
+    if(!user){
+      throw new ApiError(404,"No user found");
+    }
+    res.status(200).json(new ApiResponse(200,"User found",user));
+   }
+
+})
+
+
+
+
 export {
   signupUser,
   loginUser,
@@ -340,4 +355,5 @@ export {
   authMe,
   findCourseCompletion,
   addtoCourseCompletion,
+  findUser
 };

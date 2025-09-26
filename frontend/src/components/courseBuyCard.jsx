@@ -44,7 +44,6 @@ export default function CourseBuyCard({ courseData }) {
     if (data.success == true) {
       //check if user has subscribed to the course
       const studentId = data.data._id;
-      console.log(studentId);
       const val = await courseServices.isSubscribed(courseData._id, studentId);
       if (val.success == true) {
       } else {

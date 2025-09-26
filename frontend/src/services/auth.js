@@ -3,7 +3,7 @@
 
 import axios from "axios";
 import { conf } from "../conf.js";
-const { signupUrl, loginUrl, googleAuth, authMe } = conf;
+const { signupUrl, loginUrl, googleAuth, authMe, findUser } = conf;
 
 export class AuthServices {
   async signup(data) {
@@ -62,16 +62,25 @@ export class AuthServices {
         credentials: "include",
       });
       if (response) {
-        console.log(response);
         return response.data;
       }
     } catch (error) {
-      console.log(error);
+      return error.response.data;
+    }
+  }
+
+  // For finding the user
+  async findUserHandler(userId) {
+    try {
+      const response = await axios.post(findUser, { userId });
+      if (response) {
+        return response.data;
+      }
+    } catch (error) {
       return error.response.data;
     }
   }
 }
 
 const authService = new AuthServices();
-
 export default authService;

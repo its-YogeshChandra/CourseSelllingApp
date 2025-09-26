@@ -1,91 +1,9 @@
-// import React, { useState } from "react";
-// import logo from "../assets/logo.png";
-// import avatar from "../assets/rabbit.png";
-// import { NavLink } from "react-router";
-// import NavSidebar from "./subCompnents/nav.sidebar.jsx";
-
-// function Navbar() {
-//   const navArr = ["Home", "Courses", "About Us", "Contact Us"];
-//   const [clicked, setClicked] = useState(false);
-
-//   return (
-//     <div className="w-full max-h-32 min-h-28 grid items-center relative font-inter">
-//       <div className=" w-full min-h-15  flex flex-row flex-wrap justify-between items-center px-5 max-[396px]:px-3 lg:px-10 ">
-//         <div className="  min-w-20 max-[396px]:h-10 h-15 flex flex-row items-center gap-x-2">
-//           <img className="w-[40%] h-[100%] " src={logo} alt="" />
-//           <p className="text-xl max-[396px]:text-lg lg:text-2xl ">Luminate</p>
-//         </div>
-//         <div className="hidden  lg:w-[40%] lg:text-xl  lg:flex lg:flex-row lg:items-center lg:justify-between  ">
-//           {navArr.map((e, key) => {
-//             return (
-//               <button
-//                 key={e}
-//                 onClick={() => {
-//                   switch (e) {
-//                     case "home":
-//                       break;
-//                     case "Courses":
-//                       break;
-//                     case "Contact Us":
-//                       break;
-//                     case "About Us":
-//                       break;
-//                     default:
-//                       break;
-//                   }
-//                 }}
-//               >
-//                 {e}
-//               </button>
-//             );
-//           })}
-//         </div>
-//         <div className=" h-full min-h-15  min-w-20 flex flex-row items-center gap-x-6">
-//           <i className="bx  bx-search-big text-2xl "></i>
-//           <i className="bx  bx-cart text-2xl"></i>
-//           <img src={avatar} className="w-10 h-10" alt="" />
-//           <div className="w-max h-max rounded-sm pt-2 lg:hidden">
-//             <button
-//               onClick={(e) => {
-//                 e.preventDefault;
-//                 setClicked((prev) => !prev);
-//               }}
-//             >
-//               <i className="bx bg-red-300 bx-menu-wide text-4xl"></i>
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* sideBar overlay */}
-//       <div
-//         className={`fixed inset-0 bg-black/50 z-40 flex justify-end transition-opacity duration-300 ${
-//           clicked
-//             ? "opacity-100 pointer-events-auto "
-//             : "opacity-0 pointer-events-none "
-//         }`}
-//         // click on overlay closes sidebar
-//       >
-//         <div
-//           className={`w-[430px] h-screen max-[550px]:w-[360px] fixed top-0 right-0 bg-black flex items-center align-middle transform transition-transform duration-700 ease-in-out ${
-//             clicked? "translate-x-0": "translate-x-full"
-//           }`}
-//         >
-//           <NavSidebar clickHandler={setClicked} />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Navbar;
-
 import React, { useState, useEffect } from "react";
 import logo from "../assets/logo.png";
 import avatar from "../assets/rabbit.png";
 import NavSidebar from "./subCompnents/nav.sidebar.jsx";
 import { useNavigate } from "react-router";
-
+import authService from "../services/auth.js";
 
 export default function Navbar() {
   const navLinks = ["Home", "Courses", "About Us"];
@@ -111,12 +29,32 @@ export default function Navbar() {
   const navigationHandler = (data) => {
     const elementArr = ["aboutus", "coursescategory", "home"];
     elementArr.map((e) => {
-      const  n = data.toLowerCase().replace(/\s+/g, "")
-      const value = "/app/" + e
+      const n = data.toLowerCase().replace(/\s+/g, "");
+      const value = "/app/" + e;
       if (e.includes(n)) {
         navigate("/app/" + e);
       }
     });
+  };
+
+  // navigate to the profile
+  const navigateToProfile = async () => {
+    //  check for the auth me
+    const response = await authService.authMehandler();
+    console.log(response);
+    debugger;
+    if (response.success == true) {
+      const meta = response.data._id;
+      const query = new URLSearchParams(meta).toString();
+      navigate(`/app/userprofile?${query}`);
+    } else {
+      const meta = {
+        location: "coursedisplay",
+        data: courseData._id || "",
+      };
+      const query = new URLSearchParams(meta).toString();
+      navigate(`/app/auth/signup?${query}`);
+    }
   };
 
   return (
@@ -146,10 +84,12 @@ export default function Navbar() {
 
         {/* Right Icons */}
         <div className="flex items-center gap-4 flex-shrink-0">
-          <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full" />
+          <button onClick={navigateToProfile}>
+            <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full" />
+          </button>
           {/* Mobile Menu Button */}
           <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>
-             <i className="bx bx-menu text-3xl"></i>
+            <i className="bx bx-menu text-3xl"></i>
           </button>
         </div>
       </div>

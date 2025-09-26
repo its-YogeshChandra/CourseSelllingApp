@@ -1,28 +1,25 @@
-import { useState, useEffect } from "react"
-
+import { useState, useEffect } from "react";
 
 export default function CourseDisplayCard({ courseData }) {
-
-
   const [data, setData] = useState({
     title: "no value",
     description: "value",
-    thumbnail : ""
-  })
-   useEffect(()=>{ 
-    if(courseData != undefined){
-    const substr = courseData.courseDescription.substr(0, 99)
+    thumbnail: "",
+  });
+  useEffect(() => {
+    if (courseData != undefined) {
+      const substr = courseData.courseDescription.substr(0, 99);
 
-      setData(prev => ({
-   ...prev, title: courseData.title,
-    description: substr,
-    thumbnail: courseData.thumbnail
-    }) )
+      setData((prev) => ({
+        ...prev,
+        title: courseData.title,
+        description: substr,
+        thumbnail: courseData.thumbnail,
+      }));
     }
-    
-   }, [courseData])
+  }, [courseData]);
 
-   return (
+  return (
     <div className="relative h-[400px] sm:h-[458px] md:h-[548px] lg:h-[400px] w-full overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full">
@@ -51,7 +48,7 @@ export default function CourseDisplayCard({ courseData }) {
 
             {/* Description */}
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 leading-relaxed max-w-2xl">
-              { data.description || "random user one"}
+              {data.description || "random user one"}
             </p>
 
             {/* Author Info */}
@@ -74,5 +71,5 @@ export default function CourseDisplayCard({ courseData }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

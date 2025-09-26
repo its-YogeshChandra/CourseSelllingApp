@@ -8,6 +8,7 @@ import {
   authMe,
   findCourseCompletion,
   addtoCourseCompletion,
+  findUser
 } from "../controllers/user.controllers.js";
 import {
   createcourse,
@@ -52,6 +53,11 @@ router.route("/completioncheck").post(findCourseCompletion);
 
 // add to completion
 router.route("/addtocompletion").post(addtoCourseCompletion);
+
+//find the user 
+router.route("/finduser").post(findUser);
+
+
 
 //routes of course
 
