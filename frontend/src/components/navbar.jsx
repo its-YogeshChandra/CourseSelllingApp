@@ -146,12 +146,10 @@ export default function Navbar() {
 
         {/* Right Icons */}
         <div className="flex items-center gap-4 flex-shrink-0">
-          <i className="bx bx-search text-2xl"></i>
-          <i className="bx bx-cart text-2xl"></i>
           <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full" />
           {/* Mobile Menu Button */}
           <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>
-            <i className="bx bx-menu text-3xl"></i>
+             <i className="bx bx-menu text-3xl"></i>
           </button>
         </div>
       </div>

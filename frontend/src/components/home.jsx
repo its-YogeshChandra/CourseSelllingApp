@@ -1,4 +1,4 @@
-import BigCardHome from "./subCompnents/bigCard.home.jsx";
+import CollegeLandingPage from "./subCompnents/bigCard.home.jsx";
 import CourseSection from "./subCompnents/courseSection.jsx";
 import CourseCatalogue from "./subCompnents/courseCatalogue.jsx";
 import EducationSection from "./subCompnents/educationSection.jsx";
@@ -10,7 +10,7 @@ import Footer from "./footer.jsx";
 export default function Home() {
   return (
     <div className="w-screen h-screen">
-      <BigCardHome />
+      <CollegeLandingPage />
       <CourseSection />
       <CourseCatalogue />
       <EducationSection />
