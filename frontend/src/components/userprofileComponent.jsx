@@ -34,10 +34,6 @@ import { useEffect } from "react";
 
 function SubscriptionsSection() {
   const [selectedPlan, setSelectedPlan] = useState("premium");
-   
-  useEffect(() => {
-        
-  }, [])
 
   const plans = [
     {
@@ -423,256 +419,272 @@ export default function UserComponent() {
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 font-inter">
-      {/* Background decorative elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        {/* Clouds */}
-        <div className="absolute top-10 left-10 w-20 h-12 bg-blue-100/30 rounded-full blur-sm"></div>
-        <div className="absolute top-20 right-20 w-16 h-8 bg-blue-100/20 rounded-full blur-sm"></div>
-        <div className="absolute top-40 left-1/4 w-24 h-14 bg-slate-100/40 rounded-full blur-sm"></div>
+  const [userData, setUserData] = useState(null);
 
-        {/* Whale illustration at bottom */}
-        <div className="absolute bottom-10 right-10 w-32 h-20 opacity-10">
-          <svg viewBox="0 0 100 60" className="w-full h-full fill-blue-300">
-            <ellipse cx="30" cy="40" rx="25" ry="15" />
-            <ellipse cx="60" cy="35" rx="35" ry="20" />
-            <path d="M20 35 Q15 30 10 35 Q15 40 20 35" />
-            <circle cx="45" cy="30" r="2" fill="blue" />
-            <path d="M70 20 Q75 15 80 20 Q85 15 90 20 Q85 25 80 20 Q75 25 70 20" />
-          </svg>
+  useEffect(() => {
+    // Fetch user data
+    const datafunction = async () => {
+      const userdata = await authService.findUserHandler();
+      if (userdata && userdata.data.success) {
+        setUserData(userdata.data);
+      }
+    };
+    datafunction();
+  }, []);
+  if (userData !== null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 font-inter">
+        {/* Background decorative elements */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          {/* Clouds */}
+          <div className="absolute top-10 left-10 w-20 h-12 bg-blue-100/30 rounded-full blur-sm"></div>
+          <div className="absolute top-20 right-20 w-16 h-8 bg-blue-100/20 rounded-full blur-sm"></div>
+          <div className="absolute top-40 left-1/4 w-24 h-14 bg-slate-100/40 rounded-full blur-sm"></div>
+
+          {/* Whale illustration at bottom */}
+          <div className="absolute bottom-10 right-10 w-32 h-20 opacity-10">
+            <svg viewBox="0 0 100 60" className="w-full h-full fill-blue-300">
+              <ellipse cx="30" cy="40" rx="25" ry="15" />
+              <ellipse cx="60" cy="35" rx="35" ry="20" />
+              <path d="M20 35 Q15 30 10 35 Q15 40 20 35" />
+              <circle cx="45" cy="30" r="2" fill="blue" />
+              <path d="M70 20 Q75 15 80 20 Q85 15 90 20 Q85 25 80 20 Q75 25 70 20" />
+            </svg>
+          </div>
         </div>
-      </div>
 
-      <SidebarProvider>
-        <Sidebar className="border-r border-blue-100/50 bg-white/80 backdrop-blur-sm">
-          <SidebarHeader className="p-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
-                <User className="w-4 h-4 text-white" />
+        <SidebarProvider>
+          <Sidebar className="border-r border-blue-100/50 bg-white/80 backdrop-blur-sm">
+            <SidebarHeader className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h2 className="font-semibold text-slate-800">Profile</h2>
+                  <p className="text-sm text-slate-500">Manage account</p>
+                </div>
               </div>
-              <div>
-                <h2 className="font-semibold text-slate-800">Profile</h2>
-                <p className="text-sm text-slate-500">Manage account</p>
-              </div>
-            </div>
-          </SidebarHeader>
+            </SidebarHeader>
 
-          <SidebarContent className="px-4">
-            <SidebarMenu>
-              {navigationItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={item.isActive}
-                    onClick={item.onClick}
-                    className="w-full justify-start gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-blue-50 data-[active=true]:bg-blue-100 data-[active=true]:text-blue-700 data-[active=true]:shadow-sm cursor-pointer"
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="font-medium">{item.title}</span>
+            <SidebarContent className="px-4">
+              <SidebarMenu>
+                {navigationItems.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      isActive={item.isActive}
+                      onClick={item.onClick}
+                      className="w-full justify-start gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-blue-50 data-[active=true]:bg-blue-100 data-[active=true]:text-blue-700 data-[active=true]:shadow-sm cursor-pointer"
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span className="font-medium">{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarContent>
+
+            <SidebarFooter className="p-4">
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton className="w-full justify-start gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200">
+                    <LogOut className="w-5 h-5" />
+                    <span className="font-medium">Sign out</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
+              </SidebarMenu>
+            </SidebarFooter>
+          </Sidebar>
 
-          <SidebarFooter className="p-4">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton className="w-full justify-start gap-3 px-4 py-3 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200">
-                  <LogOut className="w-5 h-5" />
-                  <span className="font-medium">Sign out</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
+          <SidebarInset className="flex-1">
+            <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-blue-100/50 bg-white/80 backdrop-blur-sm px-6">
+              <SidebarTrigger className="lg:hidden" />
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold text-slate-800">
+                  {activeSection === "profile"
+                    ? "User Profile"
+                    : "Learning Dashboard"}
+                </h1>
+              </div>
+            </header>
 
-        <SidebarInset className="flex-1">
-          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-blue-100/50 bg-white/80 backdrop-blur-sm px-6">
-            <SidebarTrigger className="lg:hidden" />
-            <div className="flex items-center gap-2">
-              <h1 className="text-lg font-semibold text-slate-800">
-                {activeSection === "profile"
-                  ? "User Profile"
-                  : "Learning Dashboard"}
-              </h1>
-            </div>
-          </header>
+            <main className="flex-1 p-6 lg:p-8 space-y-8">
+              {activeSection === "profile" ? (
+                <>
+                  {/* Header */}
+                  <div className="space-y-2">
+                    <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">
+                      User profile
+                    </h1>
+                    <p className="text-slate-600">
+                      Manage your details, view your tier status and change your
+                      password.
+                    </p>
+                  </div>
 
-          <main className="flex-1 p-6 lg:p-8 space-y-8">
-            {activeSection === "profile" ? (
-              <>
-                {/* Header */}
-                <div className="space-y-2">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">
-                    User profile
-                  </h1>
-                  <p className="text-slate-600">
-                    Manage your details, view your tier status and change your
-                    password.
-                  </p>
-                </div>
-
-                {/* User Info Card */}
-                <Card className="shadow-lg shadow-blue-100/50 border-blue-100/50 bg-white/80 backdrop-blur-sm">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                      <Avatar className="w-16 h-16 ring-4 ring-blue-100">
-                        <AvatarImage
-                          src="/placeholder.svg?height=64&width=64"
-                          alt="User avatar"
-                        />
-                        <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white text-xl font-semibold">
-                          JD
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="space-y-1">
-                        <h3 className="text-xl font-semibold text-slate-800">
-                          John Doe
-                        </h3>
-                        <p className="text-slate-600">+1 (555) 123-4567</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <div className="grid gap-8 lg:grid-cols-2">
-                  {/* General Information */}
+                  {/* User Info Card */}
                   <Card className="shadow-lg shadow-blue-100/50 border-blue-100/50 bg-white/80 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-slate-800">
-                        General Information
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label
-                            htmlFor="firstName"
-                            className="text-slate-700 font-medium"
-                          >
-                            First name
-                          </Label>
-                          <Input
-                            id="firstName"
-                            value={formData.firstName}
-                            onChange={(e) =>
-                              handleInputChange("firstName", e.target.value)
-                            }
-                            className="border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                    <CardContent className="p-6">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <Avatar className="w-16 h-16 ring-4 ring-blue-100">
+                          <AvatarImage
+                            src="/placeholder.svg?height=64&width=64"
+                            alt="User avatar"
                           />
-                        </div>
-                        <div className="space-y-2">
-                          <Label
-                            htmlFor="lastName"
-                            className="text-slate-700 font-medium"
-                          >
-                            Last name
-                          </Label>
-                          <Input
-                            id="lastName"
-                            value={formData.lastName}
-                            onChange={(e) =>
-                              handleInputChange("lastName", e.target.value)
-                            }
-                            className="border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
-                          />
+                          <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white text-xl font-semibold">
+                            JD
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h3 className="text-xl font-semibold text-slate-800">
+                            John Doe
+                          </h3>
+                          <p className="text-slate-600">+1 (555) 123-4567</p>
                         </div>
                       </div>
-                      <Button
-                        disabled
-                        className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:text-slate-500"
-                      >
-                        Update
-                      </Button>
                     </CardContent>
                   </Card>
 
-                  {/* Security */}
-                  <Card className="shadow-lg shadow-blue-100/50 border-blue-100/50 bg-white/80 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-slate-800">Security</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label className="text-slate-700 font-medium">
-                            Email
-                          </Label>
-                          <Input
-                            value="john.doe@example.com"
-                            disabled
-                            className="bg-slate-50 text-slate-600"
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label className="text-slate-700 font-medium">
-                            Password
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              type={showPassword ? "text" : "password"}
-                              value="••••••••••••"
-                              disabled
-                              className="bg-slate-50 text-slate-600 pr-10"
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-                              onClick={() => setShowPassword(!showPassword)}
+                  <div className="grid gap-8 lg:grid-cols-2">
+                    {/* General Information */}
+                    <Card className="shadow-lg shadow-blue-100/50 border-blue-100/50 bg-white/80 backdrop-blur-sm">
+                      <CardHeader>
+                        <CardTitle className="text-slate-800">
+                          General Information
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="firstName"
+                              className="text-slate-700 font-medium"
                             >
-                              {showPassword ? (
-                                <EyeOff className="w-4 h-4 text-slate-400" />
-                              ) : (
-                                <Eye className="w-4 h-4 text-slate-400" />
-                              )}
-                            </Button>
+                              First name
+                            </Label>
+                            <Input
+                              id="firstName"
+                              value={formData.firstName}
+                              onChange={(e) =>
+                                handleInputChange("firstName", e.target.value)
+                              }
+                              className="border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="lastName"
+                              className="text-slate-700 font-medium"
+                            >
+                              Last name
+                            </Label>
+                            <Input
+                              id="lastName"
+                              value={formData.lastName}
+                              onChange={(e) =>
+                                handleInputChange("lastName", e.target.value)
+                              }
+                              className="border-slate-200 focus:border-blue-400 focus:ring-blue-400/20"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          disabled
+                          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:text-slate-500"
+                        >
+                          Update
+                        </Button>
+                      </CardContent>
+                    </Card>
+
+                    {/* Security */}
+                    <Card className="shadow-lg shadow-blue-100/50 border-blue-100/50 bg-white/80 backdrop-blur-sm">
+                      <CardHeader>
+                        <CardTitle className="text-slate-800">
+                          Security
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-6">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label className="text-slate-700 font-medium">
+                              Email
+                            </Label>
+                            <Input
+                              value="john.doe@example.com"
+                              disabled
+                              className="bg-slate-50 text-slate-600"
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label className="text-slate-700 font-medium">
+                              Password
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                type={showPassword ? "text" : "password"}
+                                value="••••••••••••"
+                                disabled
+                                className="bg-slate-50 text-slate-600 pr-10"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? (
+                                  <EyeOff className="w-4 h-4 text-slate-400" />
+                                ) : (
+                                  <Eye className="w-4 h-4 text-slate-400" />
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label className="text-slate-700 font-medium">
+                              Phone number
+                            </Label>
+                            <Input
+                              value="+1 (555) 123-4567"
+                              disabled
+                              className="bg-slate-50 text-slate-600"
+                            />
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label className="text-slate-700 font-medium">
-                            Phone number
-                          </Label>
-                          <Input
-                            value="+1 (555) 123-4567"
-                            disabled
-                            className="bg-slate-50 text-slate-600"
-                          />
+                        <Separator className="bg-slate-200" />
+
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+                          >
+                            <Lock className="w-4 h-4 mr-2" />
+                            Change password
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+                          >
+                            <Phone className="w-4 h-4 mr-2" />
+                            Change phone number
+                          </Button>
                         </div>
-                      </div>
-
-                      <Separator className="bg-slate-200" />
-
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <Button
-                          variant="outline"
-                          className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
-                        >
-                          <Lock className="w-4 h-4 mr-2" />
-                          Change password
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="flex-1 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300"
-                        >
-                          <Phone className="w-4 h-4 mr-2" />
-                          Change phone number
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </>
-            ) : (
-              <SubscriptionsSection />
-            )}
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
-    </div>
-  );
+                      </CardContent>
+                    </Card>
+                  </div>
+                </>
+              ) : (
+                <SubscriptionsSection />
+              )}
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
+      </div>
+    );
+  }
 }
