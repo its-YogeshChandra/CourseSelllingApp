@@ -86,6 +86,7 @@ import avatar from "../assets/rabbit.png";
 import NavSidebar from "./subCompnents/nav.sidebar.jsx";
 import { useNavigate } from "react-router";
 
+
 export default function Navbar() {
   const navLinks = ["Home", "Courses", "About Us"];
   const [sidebarOpen, setSidebarOpen] = useState(false);
