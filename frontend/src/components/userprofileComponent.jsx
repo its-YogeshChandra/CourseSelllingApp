@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sidebar";
 import authService from "../services/auth.js";
 import { useEffect } from "react";
+import { useSearchParams } from "react-router";
 
 function SubscriptionsSection() {
   const [selectedPlan, setSelectedPlan] = useState("premium");
@@ -394,11 +395,14 @@ function SubscriptionsSection() {
 
 export default function UserComponent() {
   const [showPassword, setShowPassword] = useState(false);
+  const [userData, setUserData] = useState();
   const [formData, setFormData] = useState({
     firstName: "John",
     lastName: "Doe",
   });
   const [activeSection, setActiveSection] = useState("profile");
+  const [searchParams] = useSearchParams();
+  const values = searchParams.get("data");
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -419,19 +423,19 @@ export default function UserComponent() {
     },
   ];
 
-  const [userData, setUserData] = useState(null);
-
   useEffect(() => {
     // Fetch user data
     const datafunction = async () => {
-      const userdata = await authService.findUserHandler();
-      if (userdata && userdata.data.success) {
+      const userdata = await authService.findUserHandler(values);
+
+      if (userdata.success == true) {
         setUserData(userdata.data);
       }
     };
     datafunction();
   }, []);
-  if (userData !== null) {
+
+  if (userData !== null || userData !== undefined) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50 font-inter">
         {/* Background decorative elements */}

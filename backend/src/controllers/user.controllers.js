@@ -37,7 +37,6 @@ const signupUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User successfully registered", Dbuser));
 });
 
-
 // controller for login user
 const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -333,19 +332,17 @@ const addtoCourseCompletion = asyncHandler(async (req, res) => {
 });
 
 const findUser = asyncHandler(async (req, res) => {
-   const { userId } = req.body;
-   if(mongoose.isValidObjectId(userId)){
+  const { userId } = req.body;
+  if (mongoose.isValidObjectId(userId)) {
     const user = await User.findById(userId).select("-password -refreshToken");
-    if(!user){
-      throw new ApiError(404,"No user found");
+    if (!user) {
+      throw new ApiError(404, "No user found");
     }
-    res.status(200).json(new ApiResponse(200,"User found",user));
-   }
+    res.status(200).json(new ApiResponse(200, "User found", user));
+  }
+});
 
-})
-
-
-
+const updateProfileInformation = asyncHandler(async (req, res) => {});
 
 export {
   signupUser,
@@ -355,5 +352,6 @@ export {
   authMe,
   findCourseCompletion,
   addtoCourseCompletion,
-  findUser
+  findUser,
+  updateProfileInformation,
 };

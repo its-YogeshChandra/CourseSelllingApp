@@ -57,6 +57,7 @@ export default function CourseBuyCard({ courseData }) {
       }
     } else {
       const meta = {
+        
         location: "coursedisplay",
         data: courseData._id || "",
       };

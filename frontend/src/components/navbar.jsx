@@ -41,16 +41,16 @@ export default function Navbar() {
   const navigateToProfile = async () => {
     //  check for the auth me
     const response = await authService.authMehandler();
-    console.log(response);
-    debugger;
     if (response.success == true) {
-      const meta = response.data._id;
+      const meta = {
+        data: response.data._id || "",
+      }
       const query = new URLSearchParams(meta).toString();
       navigate(`/app/userprofile?${query}`);
     } else {
       const meta = {
-        location: "coursedisplay",
-        data: courseData._id || "",
+        location: "home",
+        data: "",
       };
       const query = new URLSearchParams(meta).toString();
       navigate(`/app/auth/signup?${query}`);
