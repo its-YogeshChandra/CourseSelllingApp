@@ -342,7 +342,27 @@ const findUser = asyncHandler(async (req, res) => {
   }
 });
 
-const updateProfileInformation = asyncHandler(async (req, res) => {});
+const updateProfileInformation = asyncHandler(async (req, res) => {
+  const data = req.body;
+
+  //loop the object
+  for (const key in data) {
+    if (data[key] === "" || data[key] === null || data[key] === undefined) {
+      throw new ApiError(400, `${key} is empty`);
+    }
+
+    // extract the key with value id and query the database
+    if (key === "userId" && mongoose.isValidObjectId(data[key])) {
+      const user = await User.findById(data[key]);
+      if (!user) {
+        throw new ApiError(404, "No user found");
+      }
+
+      // update the user
+      
+    }
+  }
+});
 
 export {
   signupUser,
