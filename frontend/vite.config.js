@@ -15,6 +15,7 @@ export default defineConfig({
       "/api": {
         target: "https://courseselllingapp-backend.onrender.com",
         changeOrigin: true,
+        
       },
     },
   },
