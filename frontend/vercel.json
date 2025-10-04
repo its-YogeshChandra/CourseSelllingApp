@@ -3,6 +3,10 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://courseselllingapp-backend.onrender.com/api/:path*"
     }
   ]
 }
