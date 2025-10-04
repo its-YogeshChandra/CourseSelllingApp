@@ -12,10 +12,11 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "https://course-sellling-appfrontend.vercel.app/",
-      "https://course-sellling-ap-git-4d3c10-pandittheroyal-gmailcoms-projects.vercel.app/",
-      "https://course-sellling-appfrontend-15ftt10kd.vercel.app/",
-      "http://localhost:5173/",
+      // "https://course-sellling-appfrontend.vercel.app/",
+      // "https://course-sellling-ap-git-4d3c10-pandittheroyal-gmailcoms-projects.vercel.app/",
+      // "https://course-sellling-appfrontend-15ftt10kd.vercel.app/",
+      // "http://localhost:5173/",
+      "*",
     ],
     credentials: true,
   })
