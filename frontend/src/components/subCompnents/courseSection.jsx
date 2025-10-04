@@ -25,6 +25,7 @@ export default function CourseSection() {
     const handlerfunction = async () => {
       const response = await courseServices.getCourseData();
       if (response) {
+        console.log(response);
         //append data to redux store
         dispatch(addCourse(response.data));
         setTimeout(() => {
