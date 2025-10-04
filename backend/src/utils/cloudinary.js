@@ -1,7 +1,11 @@
 import { v2 as cloudinary } from "cloudinary";
 
 // creating cloudinary configuration
-cloudinary.config();
+cloudinary.config({
+  cloud_name: "dmqzlqu32",
+  api_key: process.env.CLOUDINARY_1_API_KEY,
+  api_secret: process.env.CLOUDINARY_1_API_SECRET,
+});
 const options = {
   use_filename: true,
   resource_type: "auto",
