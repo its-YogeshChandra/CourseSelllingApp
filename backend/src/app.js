@@ -11,7 +11,12 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: [
+      "https://course-sellling-appfrontend.vercel.app/",
+      "https://course-sellling-ap-git-4d3c10-pandittheroyal-gmailcoms-projects.vercel.app/",
+      "https://course-sellling-appfrontend-15ftt10kd.vercel.app/",
+      "http://localhost:5173/",
+    ],
     credentials: true,
   })
 );
@@ -30,7 +35,6 @@ app.use(
 );
 
 app.use(express.static("./public/temp"));
-
 
 //for user routes
 app.use("/api/v1/users", router);
