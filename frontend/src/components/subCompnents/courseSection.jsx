@@ -43,7 +43,7 @@ export default function CourseSection() {
 
   //function for changing courses according to the selection
   let data = useSelector((state) => {
-    console.logs(state);
+    console.log(state);
     return state.courseData.allcourses;
   });
 
