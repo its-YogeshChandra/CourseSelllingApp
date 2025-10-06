@@ -1,16 +1,13 @@
 import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useProfile } from "@/hooks/use-profile"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
-
+import { toast } from "sonner"
+import { Link } from "react-router"
 const PLANS = ["Basic", "Pro", "Premium"]
 
 
 export function SubscriptionCard() {
   const { profile, updateNested } = useProfile()
-  const { toast } = useToast()
   const [loadingPlan, setLoadingPlan] = useState<Plan | null>(null)
 
   const statusColor = useMemo(() => {
