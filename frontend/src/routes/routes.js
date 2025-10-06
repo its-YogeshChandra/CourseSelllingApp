@@ -12,6 +12,7 @@ import CourseCategory from "../pages/courseCategory.jsx";
 import Cart from "../pages/cart.jsx";
 import UserProfile from "../components/userprofile.jsx";
 import InstructorDashboard from "../pages/instructor.jsx";
+import TestingProfile from "../pages/testingProfile.jsx";
 
 const Routing = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const Routing = createBrowserRouter([
               {
                 path: "userprofile",
                 Component: UserProfile,
+              },
+              {
+                path: "testingprofile",
+                Component: TestingProfile,
               },
             ],
           },
