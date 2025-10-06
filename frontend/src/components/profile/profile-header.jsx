@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useProfile } from "@/hooks/use-profile";
+import { useState } from "react";
 
 export function ProfileHeader() {
-  const { profile } = useProfile();
+  const [profile , setProfile] = useState()
   const initials = profile.user.name
     .split(" ")
     .map((n) => n[0])

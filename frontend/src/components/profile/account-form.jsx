@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { useProfile } from "@/hooks/use-profile";
 
 export function AccountForm() {
   const { profile, updateNested } = useProfile();
