@@ -9,7 +9,6 @@ import { toast } from "sonner";
 export function AccountForm() {
   const { profile, updateNested } = useProfile();
   const { toast } = useToast();
-
   const [name, setName] = useState(profile.user.name);
   const [email, setEmail] = useState(profile.user.email);
   const [currentPassword, setCurrentPassword] = useState("");
