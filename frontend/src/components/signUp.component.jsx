@@ -195,7 +195,7 @@ function Signup() {
                   Already have an account?{" "}
                 </p>
                 <Link
-                  to="/app/auth/login"
+                  to="/auth/login"
                   className="text-[#fd3556] hover:text-[#e52e4a] transition-colors font-medium"
                 >
                   Sign In

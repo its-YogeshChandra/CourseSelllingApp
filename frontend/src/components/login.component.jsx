@@ -118,7 +118,7 @@ function Login() {
               <div className="mt-8 text-center">
                 <p className="inline text-gray-300">Don't have an account? </p>
                 <Link
-                  to="/app/auth/signup"
+                  to="/auth/signup"
                   className="text-[#fd3556] hover:text-[#e52e4a] transition-colors font-medium"
                 >
                   Sign Up

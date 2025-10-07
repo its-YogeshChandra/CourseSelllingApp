@@ -53,7 +53,7 @@ export default function CourseBuyCard({ courseData }) {
           studentId: studentId || ""
         };
         const query = new URLSearchParams(meta).toString();
-        navigate(`/app/cart?${query}`);
+        navigate(`/cart?${query}`);
       }
     } else {
       const meta = {
@@ -62,7 +62,7 @@ export default function CourseBuyCard({ courseData }) {
         data: courseData._id || "",
       };
       const query = new URLSearchParams(meta).toString();
-      navigate(`/app/auth/signup?${query}`);
+      navigate(`/auth/signup?${query}`);
     }
   };
 

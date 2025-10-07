@@ -9,7 +9,7 @@ export default function CourseSectionCard({ data }) {
   useEffect(() => {
     //send data through id into the coursedisplay section
     if (isEnrollCourse == true) {
-      navigate(`/app/coursedisplay?id=${data._id}`);
+      navigate(`/coursedisplay?id=${data._id}`);
     }
   }, [isEnrollCourse]);
 

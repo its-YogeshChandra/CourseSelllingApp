@@ -94,10 +94,10 @@ export default function CheckoutPage({ courseId, studentId }) {
     );
  
     if (response.success) {
-      navigate(`/app/coursedisplay?id=${courseId}`);
+      navigate(`/coursedisplay?id=${courseId}`);
     } else {
       const slug = cartItems[0].title
-      navigate(`/app/courseplayer?${slug}-${courseId}`);
+      navigate(`/courseplayer?${slug}-${courseId}`);
     }
   };
 
