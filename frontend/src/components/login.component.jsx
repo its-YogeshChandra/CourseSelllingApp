@@ -42,11 +42,13 @@ function Login() {
     const loginVal = await authService.login(logsendData);
 
     if (loginVal) {
-      const path = "/app/" + location;
+      const path = "/"+ location;
       switch (location) {
         case "coursedisplay":
           navigate(`${path}?id=${values}`);
           break;
+        case "home":
+         navigate("/")
         default:
           navigate(`${path}`);
           break;

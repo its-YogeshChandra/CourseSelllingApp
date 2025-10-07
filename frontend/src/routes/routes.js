@@ -21,7 +21,7 @@ const redirectToHome = () => {
 
 const Routing = createBrowserRouter([
   {
-    path: "",
+    path: "/",
     Component: App,
     children: [
       {

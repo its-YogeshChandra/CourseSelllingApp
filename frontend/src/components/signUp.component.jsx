@@ -64,14 +64,14 @@ function Signup() {
               navigate(`${path}?id=${values}`);
                 break;
               case "home":
-                navigate("")
+                navigate("/")
                 break;
               default:
                 navigate(`${path}`);
                 break;
             }
           } else {
-            navigate("");
+            navigate("/");
           }
         }
       }

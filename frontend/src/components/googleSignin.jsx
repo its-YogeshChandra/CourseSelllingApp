@@ -50,15 +50,15 @@ export default function GoogleLogin() {
             navigate(`${path}?id=${values}`);
             break;
           case "home":
-            console.log('inside the home')
-            navigate("");
+            console.log("inside the home");
+            navigate("/");
             break;
           default:
             navigate(`${path}`);
             break;
         }
       } else {
-        navigate("");
+        navigate("/");
       }
     } catch (error) {
       throw error;
