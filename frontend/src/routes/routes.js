@@ -16,16 +16,16 @@ import TestingProfile from "../pages/testingProfile.jsx";
 import { redirect } from "react-router";
 
 const redirectToHome = () => {
-    redirect("app/home");
+  redirect("app/home");
 };
 
 const Routing = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     Component: App,
     children: [
       {
-        path: "app",
+        path: "",
         Component: Layout,
         children: [
           {
@@ -46,7 +46,7 @@ const Routing = createBrowserRouter([
             Component: BaseLayout,
             children: [
               {
-                path: "home",
+                path: "",
                 Component: Home,
               },
               {
