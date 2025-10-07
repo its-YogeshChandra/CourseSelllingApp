@@ -4,7 +4,6 @@ import avatar from "../assets/rabbit.png";
 import NavSidebar from "./subCompnents/nav.sidebar.jsx";
 import { useNavigate } from "react-router";
 import authService from "../services/auth.js";
-
 export default function Navbar() {
   const navLinks = ["Home", "Courses", "About Us"];
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -30,9 +29,12 @@ export default function Navbar() {
     const elementArr = ["aboutus", "coursescategory", "home"];
     elementArr.map((e) => {
       const n = data.toLowerCase().replace(/\s+/g, "");
-      const value = "/app/" + e;
       if (e.includes(n)) {
-        navigate("/app/" + e);
+        if (n == "home") {
+          navigate("");
+        } else {
+          navigate("/" + e);
+        }
       }
     });
   };
@@ -44,16 +46,16 @@ export default function Navbar() {
     if (response.success == true) {
       const meta = {
         data: response.data._id || "",
-      }
+      };
       const query = new URLSearchParams(meta).toString();
-      navigate(`/app/userprofile?${query}`);
+      navigate(`/userprofile?${query}`);
     } else {
       const meta = {
         location: "home",
         data: "",
       };
       const query = new URLSearchParams(meta).toString();
-      navigate(`/app/auth/signup?${query}`);
+      navigate(`/auth/signup?${query}`);
     }
   };
 

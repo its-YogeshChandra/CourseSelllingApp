@@ -8,7 +8,7 @@ export default function GoogleLogin() {
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
   const values = searchParams.get("data");
-  
+
   useEffect(() => {
     // Load the Google script
     const script = document.createElement("script");
@@ -44,19 +44,21 @@ export default function GoogleLogin() {
       const val = await authService.googleAuth(response.credential);
 
       if (val) {
-        const path = "/app/" + location;
+        const path = "/" + location;
         switch (location) {
           case "coursedisplay":
             navigate(`${path}?id=${values}`);
+            break;
+          case "home":
+            console.log('inside the home')
+            navigate("");
             break;
           default:
             navigate(`${path}`);
             break;
         }
       } else {
-        navigate({
-          pathname: "/app/home",
-        });
+        navigate("");
       }
     } catch (error) {
       throw error;
