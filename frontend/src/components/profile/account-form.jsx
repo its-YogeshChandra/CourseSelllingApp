@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 export function AccountForm() {
-  const { profile, updateNested } =useState();
+  const { profile, updateNested } = useState();
   const [name, setName] = useState();
   const [email, setEmail] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -15,10 +15,7 @@ export function AccountForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
-
-  
-
-
+  const [isEditable, setIsEditable] = useState(false);
   async function onSaveProfile(e) {
     e.preventDefault();
     setSaving(true);
@@ -30,6 +27,12 @@ export function AccountForm() {
       description: "Your account details have been saved.",
     });
   }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   async function onChangePassword(e) {
     e.preventDefault();
@@ -79,7 +82,28 @@ export function AccountForm() {
           />
         </div>
 
-        <div className="flex items-center justify-end">
+        <div className="flex items-center justify-end gap-x-2">
+          {isEditable ? (
+            <Button
+              onclick={() => {
+                setIsEditable((prev) => {
+                  return !prev;
+                });
+              }}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              onclick={() => {
+                setIsEditable((prev) => {
+                  return !prev;
+                });
+              }}
+            >
+              Edit
+            </Button>
+          )}
           <Button type="submit" disabled={saving} aria-busy={saving}>
             {saving ? "Saving..." : "Save changes"}
           </Button>
