@@ -13,6 +13,11 @@ import Cart from "../pages/cart.jsx";
 import UserProfile from "../components/userprofile.jsx";
 import InstructorDashboard from "../pages/instructor.jsx";
 import TestingProfile from "../pages/testingProfile.jsx";
+import { redirect } from "react-router";
+
+const redirectToHome = () => {
+    redirect("app/home");
+};
 
 const Routing = createBrowserRouter([
   {
