@@ -1,8 +1,12 @@
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-
+import { useState } from "react"
 export function Preferences() {
-  const { profile, updateNested } = useState()
+  const [profile, updateProfile] = useState({
+    preferences: {
+      emailUpdates: true
+    }
+  })
 
   return (
     <div className="space-y-4">

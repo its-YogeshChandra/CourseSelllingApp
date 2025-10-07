@@ -7,9 +7,10 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-
 export function PaymentMethods() {
-  const { profile, updateProfile } = useState();
+  const [profile, updateProfile] = useState({
+    paymentMethods: [{ id: "123" }],
+  });
 
   const [adding, setAdding] = useState(false);
   const [brand, setBrand] = useState("Visa");

@@ -7,10 +7,9 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 
 export function AccountForm() {
-  const { profile, updateNested } = useProfile();
-  const { toast } = useToast();
-  const [name, setName] = useState(profile.user.name);
-  const [email, setEmail] = useState(profile.user.email);
+  const { profile, updateNested } =useState();
+  const [name, setName] = useState();
+  const [email, setEmail] = useState(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
