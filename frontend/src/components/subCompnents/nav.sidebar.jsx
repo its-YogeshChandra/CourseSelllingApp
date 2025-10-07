@@ -15,7 +15,7 @@ function NavSidebar({clickHandler}) {
               className="w-[40%] h-full max-[550px]:w-[35%] max-[550px]:h-[75%] "
               alt=""
             />
-            <p className="text-2xl">Luminate</p>
+            <p className="text-2xl">LearnVerge</p>
           </div>
 
           <button

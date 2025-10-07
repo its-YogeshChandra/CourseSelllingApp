@@ -4,6 +4,7 @@ import avatar from "../assets/rabbit.png";
 import NavSidebar from "./subCompnents/nav.sidebar.jsx";
 import { useNavigate } from "react-router";
 import authService from "../services/auth.js";
+import Logo from "../assets/Logo.png"
 export default function Navbar() {
   const navLinks = ["Home", "Courses", "About Us"];
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -65,8 +66,8 @@ export default function Navbar() {
       <div className="flex justify-between items-center px-4 py-3 lg:px-10 w-full">
         {/* Logo */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          <img src={logo} alt="Logo" className="w-10 h-10 object-contain" />
-          <p className="text-xl lg:text-2xl font-semibold">Luminate</p>
+          <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
+          <p className="text-xl lg:text-2xl font-semibold">LearnVerge</p>
         </div>
 
         {/* Desktop Nav Links */}
