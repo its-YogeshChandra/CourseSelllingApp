@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 export function AccountForm() {
   const { profile, updateNested } = useState();
   const [name, setName] = useState();
@@ -29,10 +29,14 @@ export function AccountForm() {
   }
 
   const {
-    register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data);
+  };
 
   async function onChangePassword(e) {
     e.preventDefault();
@@ -61,12 +65,18 @@ export function AccountForm() {
       <form onSubmit={onSaveProfile} className="grid grid-cols-1 gap-4">
         <div className="grid gap-2">
           <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your full name"
-            autoComplete="name"
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+              />
+            )}
           />
         </div>
 
@@ -83,30 +93,34 @@ export function AccountForm() {
         </div>
 
         <div className="flex items-center justify-end gap-x-2">
-          {isEditable ? (
-            <Button
-              onclick={() => {
-                setIsEditable((prev) => {
-                  return !prev;
-                });
-              }}
-            >
-              Cancel
+          <div className="flex items-center justify-end">
+            {isEditable ? (
+              <Button
+                onclick={() => {
+                  setIsEditable((prev) => {
+                    return !prev;
+                  });
+                }}
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button
+                onclick={() => {
+                  setIsEditable((prev) => {
+                    return !prev;
+                  });
+                }}
+              >
+                Edit
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center justify-end gap-x-2">
+            <Button type="submit" disabled={saving} aria-busy={saving}>
+              {saving ? "Saving..." : "Save changes"}
             </Button>
-          ) : (
-            <Button
-              onclick={() => {
-                setIsEditable((prev) => {
-                  return !prev;
-                });
-              }}
-            >
-              Edit
-            </Button>
-          )}
-          <Button type="submit" disabled={saving} aria-busy={saving}>
-            {saving ? "Saving..." : "Save changes"}
-          </Button>
+          </div>
         </div>
       </form>
 

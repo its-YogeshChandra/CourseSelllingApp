@@ -58,13 +58,13 @@ function Signup() {
           //check for navigation options (if courselocation display send id too)
           if (location) {
             const path = "/" + location;
-            console.log(location)
+            console.log(location);
             switch (location) {
               case "coursedisplay":
-              navigate(`${path}?id=${values}`);
+                navigate(`${path}?id=${values}`);
                 break;
               case "home":
-                navigate("/")
+                navigate("/");
                 break;
               default:
                 navigate(`${path}`);
