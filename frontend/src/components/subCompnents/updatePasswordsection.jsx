@@ -9,6 +9,7 @@ import { EyeOff, Eye } from "lucide-react";
 export function PasswordSection() {
   const [isPasswordEditable, setisPasswordEditable] = useState(false);
   const [showPassword, setShowPassword] = useState("password");
+  const [password, setPassword] = useState("value")
   const {
     handleSubmit,
     formState: { errors },
@@ -16,7 +17,7 @@ export function PasswordSection() {
     reset,
   } = useForm({
     defaultValues: {
-      currentPassword: "random user one",
+      currentPassword: "randomUser123@",
       newPassword: "",
       confirmPassword: "",
     },
@@ -24,6 +25,7 @@ export function PasswordSection() {
 
   const onChangePassword = (data) => {
     console.log(data);
+    setisPasswordEditable((prev) => !prev);
   };
 
   return (
@@ -39,22 +41,16 @@ export function PasswordSection() {
       <div className="grid gap-2">
         <Label htmlFor="current-password">Current password</Label>
         <div className="w-full h-auto flex gap-x-3">
-          <Controller
-            name="currentPassword"
-            control={control}
-            disabled={true}
-            rules={{ required: " current Password can't be empty" }}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="currentpassword"
-                type={showPassword}
-                autoComplete="current-password"
-              />
-            )}
+          <Input 
+          type = {showPassword}
+          value = {password}
+          readOnly
+           placeholder = "****"
+           className = "disable:text-black pointer-events-none"
           />
           {showPassword == "password" ? (
             <button
+              type="button"
               onClick={() => {
                 setShowPassword("text");
               }}
@@ -63,6 +59,7 @@ export function PasswordSection() {
             </button>
           ) : (
             <button
+              type="button"
               onClick={() => {
                 setShowPassword("password");
               }}
