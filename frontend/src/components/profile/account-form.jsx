@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
-
+import { PasswordSection } from "../subCompnents/updatePasswordsection";
 export function AccountForm() {
   const { profile, updateNested } = useState();
   const [name, setName] = useState();
@@ -170,7 +170,7 @@ export function AccountForm() {
       </form>
 
       <Separator />
-
+   <PasswordSection/>
       <form
         onSubmit={handleSubmit(onChangePassword)}
         className="grid grid-cols-1 gap-4"
