@@ -4,12 +4,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
-import { EyeOff, Eye } from "lucide-react";
+import { EyeOff, Eye, NotepadText } from "lucide-react";
 
 export function PasswordSection() {
   const [isPasswordEditable, setisPasswordEditable] = useState(false);
   const [showPassword, setShowPassword] = useState("password");
-  const [password, setPassword] = useState("value")
+  const [password, setPassword] = useState("value");
   const {
     handleSubmit,
     formState: { errors },
@@ -41,12 +41,12 @@ export function PasswordSection() {
       <div className="grid gap-2">
         <Label htmlFor="current-password">Current password</Label>
         <div className="w-full h-auto flex gap-x-3">
-          <Input 
-          type = {showPassword}
-          value = {password}
-          readOnly
-           placeholder = "****"
-           className = "disable:text-black pointer-events-none"
+          <Input
+            type={showPassword}
+            value={password}
+            readOnly
+            placeholder="****"
+            className="disable:text-black pointer-events-none"
           />
           {showPassword == "password" ? (
             <button
