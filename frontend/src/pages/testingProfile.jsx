@@ -9,7 +9,7 @@ import { Preferences } from "@/components/profile/preferences";
 
 export default function TestingProfile() {
   return (
-    <main className="min-h-dvh mt-4 md:mt-8 sm:mt-10 max-sm:mt-10 ">
+    <main className="min-h-dvh mt-4 md:mt-8 sm:mt-10 max-sm:mt-10 font-inter">
       <section className="container mx-auto px-4 py-6 md:py-10">
         <div className="space-y-6">
           <Suspense>
