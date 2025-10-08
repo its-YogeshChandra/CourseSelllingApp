@@ -7,29 +7,11 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
+import authService from "../../services/auth";
 import { PasswordSection } from "../subCompnents/updatePasswordsection";
 export function AccountForm() {
-  const { profile, updateNested } = useState();
-  const [name, setName] = useState();
-  const [email, setEmail] = useState(null);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [changingPassword, setChangingPassword] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [ispasswordEditable, setisPasswordEditable] = useState(false);
-  async function onSaveProfile(e) {
-    e.preventDefault();
-    setSaving(true);
-    await new Promise((r) => setTimeout(r, 500));
-    updateNested("user", { name, email });
-    setSaving(false);
-    toast({
-      title: "Profile updated",
-      description: "Your account details have been saved.",
-    });
-  }
 
   const {
     handleSubmit,
@@ -44,32 +26,13 @@ export function AccountForm() {
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
-    setIsEditable((prev) => !prev);
-  };
-
-  async function onChangePassword(e) {
-    e.preventDefault();
-    if (newPassword.length < 8 || newPassword !== confirmPassword) {
-      toast({
-        title: "Check your password",
-        description: "Passwords must match and be at least 8 characters.",
-        variant: "destructive",
-      });
-      return;
+    const response = await authService.updateProfileInfo(data);
+    if (response.success == true) {
+      setIsEditable((prev) => !prev);
     }
-    setChangingPassword(true);
-    await new Promise((r) => setTimeout(r, 600));
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setChangingPassword(false);
-    toast({
-      title: "Password changed",
-      description: "Your password was updated successfully.",
-    });
-  }
+  };
 
   return (
     <div className="space-y-6">

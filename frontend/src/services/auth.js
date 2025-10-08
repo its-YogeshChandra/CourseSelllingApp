@@ -3,7 +3,8 @@
 
 import axios from "axios";
 import { conf } from "../conf.js";
-const { signupUrl, loginUrl, googleAuth, authMe, findUser } = conf;
+const { signupUrl, loginUrl, googleAuth, authMe, findUser, updateProfile } =
+  conf;
 
 export class AuthServices {
   async signup(data) {
@@ -78,6 +79,18 @@ export class AuthServices {
       }
     } catch (error) {
       return error.response.data;
+    }
+  }
+
+  //for updating Profile information
+  async updateProfileInfo(data) {
+    try {
+      const response = await axios.post(updateProfile, data);
+      if (response) {
+        return response.data;
+      }
+    } catch (error) {
+      return error.repoonse.data;
     }
   }
 }

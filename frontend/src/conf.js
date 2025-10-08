@@ -5,7 +5,8 @@ const conf = {
   authMe: import.meta.env.VITE_AUTHME_URL,
   addCompletion: import.meta.env.VITE_COURSE_ADDTOCOMPLETION_URL,
   checkCompletion: import.meta.env.VITE_COURSE_CHECKCOMPLETION_URL,
-  findUser : import.meta.env.VITE_FINDUSER_URL
+  findUser: import.meta.env.VITE_FINDUSER_URL,
+  updateProfile: import.meta.env.VITE_UPDATEPROFILE_URL
 };
 
 const courseConf = {
@@ -14,7 +15,7 @@ const courseConf = {
   getCoursesUrl: import.meta.env.VITE_GETCOURSE_URL,
   getCourseandLessonUrl: import.meta.env.VITE_GETCOURSE_LESSONS_URL,
   isPresent: import.meta.env.VITE_ISPRESENT_URL,
-  addSubscription: import.meta.env.VITE_ADDSUBSCRIPTION_URL
+  addSubscription: import.meta.env.VITE_ADDSUBSCRIPTION_URL,
 };
 
 export { conf, courseConf };
