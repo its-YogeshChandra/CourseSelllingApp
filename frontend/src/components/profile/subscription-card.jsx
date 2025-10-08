@@ -13,6 +13,8 @@ export function SubscriptionCard() {
     },
   });
   const [loadingPlan, setLoadingPlan] = useState(PLANS);
+  const [courseName, setCourseName] = useState("javascript mastery ");
+  const [isSubscribed, setisSubscribed] = useState(true);
   // const statusColor = useMemo(() => {
   //   switch (profile.subscription.status) {
   //     case "active":
@@ -50,23 +52,25 @@ export function SubscriptionCard() {
               {profile.subscription.status}
             </Badge>
           </div>
-          <p className="text-sm">
-          Course :</p>
+          <p className="text-sm">Course :</p>
         </div>
       </div>
 
       <div
-        className="  w-full h-max flex flex-wrap items-center gap-2"
+        className="  w-full h-max border rounded-xl shadow-sm p-2 flex flex-wrap items-center justify-evenly gap-3 "
         role="group"
         aria-label="Choose plan"
       >
-   <NotepadText/> 
-   <span>{ }</span>       
-             </div>
+        <span className="uppercase py-1 px-2 text-gray-800 shadow-sm flex gap-x-2 ">
+          <NotepadText size={18} />
+          {courseName}
+        </span>
+        <Button variant="outline">View</Button>
+      </div>
 
-      <p className="text-xs text-muted-foreground">
-        Upgrade or downgrade anytime. Changes take effect immediately.
-      </p>
+      <Button variant="ghost" className="border" asChild>
+        <Link href="/courses">Find more courses</Link>
+      </Button>
     </div>
   );
 }
