@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
+import { useEffect } from "react";
 
 export function AccountForm() {
   const { profile, updateNested } = useState();
@@ -17,7 +18,7 @@ export function AccountForm() {
   const [saving, setSaving] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
-
+  const [ispasswordEditable, setisPasswordEditable] = useState(false);
   async function onSaveProfile(e) {
     e.preventDefault();
     setSaving(true);
@@ -34,10 +35,18 @@ export function AccountForm() {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm();
+    reset,
+  } = useForm({
+    defaultValues: {
+      username: "",
+      name: "",
+      email: "",
+    },
+  });
 
   const onSubmit = (data) => {
     console.log(data);
+    setIsEditable((prev) => !prev);
   };
 
   async function onChangePassword(e) {
@@ -74,15 +83,9 @@ export function AccountForm() {
             name="username"
             control={control}
             disabled={!isEditable}
+            rules={{ required: "username can't be empty" }}
             render={({ field }) => (
-              <Input
-                {...field}
-                onChange={(e) => {
-                  field.onChange(e.target.value);
-                }}
-                id="username"
-                placeholder="username"
-              />
+              <Input {...field} id="username" placeholder="username" />
             )}
           />
         </div>
@@ -92,13 +95,10 @@ export function AccountForm() {
           <Controller
             name="name"
             control={control}
+            disabled={!isEditable}
+            rules={{ required: " full name can't be empty" }}
             render={({ field }) => (
-              <Input
-                {...field}
-                id="name"
-                value=""
-                placeholder="Your full name"
-              />
+              <Input {...field} id="name" placeholder="Your full name" />
             )}
           />
         </div>
@@ -108,10 +108,11 @@ export function AccountForm() {
           <Controller
             name="email"
             control={control}
+            disabled={!isEditable}
+            rules={{ required: " email name can't be empty" }}
             render={({ field }) => (
               <Input
                 {...field}
-                value=""
                 id="email"
                 type="email"
                 placeholder="youremail@gmail.com"
@@ -150,9 +151,9 @@ export function AccountForm() {
             {isEditable ? (
               <Button
                 type="submit"
-                onClick={() => {
-                  setIsEditable((prev) => !prev);
-                }}
+                // onClick={() => {
+                // setIsEditable((prev) => !prev);
+                // }}
               >
                 Save Changes
               </Button>
@@ -171,59 +172,106 @@ export function AccountForm() {
       <Separator />
 
       <form
-        onSubmit={onChangePassword}
+        onSubmit={handleSubmit(onChangePassword)}
         className="grid grid-cols-1 gap-4"
         aria-labelledby="change-password"
       >
         <h3 id="change-password" className="text-sm font-medium">
           Change password
         </h3>
+
         <div className="grid gap-2">
           <Label htmlFor="current-password">Current password</Label>
-          <Input
-            id="current-password"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="••••••••"
-            autoComplete="current-password"
+          <Controller
+            name="email"
+            control={control}
+            disabled={!isEditable}
+            rules={{ required: " email name can't be empty" }}
+            render={({ field }) => (
+              <Input
+                id="current-password"
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+            )}
           />
         </div>
 
         <div className="grid gap-2 md:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="new-password">New password</Label>
-            <Input
-              id="new-password"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="At least 8 characters"
-              autoComplete="new-password"
+            <Controller
+              name="email"
+              control={control}
+              disabled={!isEditable}
+              rules={{ required: " email name can't be empty" }}
+              render={({ field }) => (
+                <Input
+                  id="new-password"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="At least 8 characters"
+                  autoComplete="new-password"
+                />
+              )}
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="confirm-password">Confirm new password</Label>
-            <Input
-              id="confirm-password"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter new password"
-              autoComplete="new-password"
+            <Controller
+              name="email"
+              control={control}
+              disabled={!isEditable}
+              rules={{ required: " email name can't be empty" }}
+              render={({ field }) => (
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter new password"
+                  autoComplete="new-password"
+                />
+              )}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-end">
-          <Button
-            type="submit"
-            variant="outline"
-            disabled={changingPassword}
-            aria-busy={changingPassword}
-          >
-            {changingPassword ? "Updating..." : "Update password"}
-          </Button>
+        <div className="flex items-center justify-end gap-x-2">
+          {ispasswordEditable ? (
+            <Button
+              type="button"
+              onClick={() => {
+                setisPasswordEditable((prev) => !prev);
+              }}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => {
+                setisPasswordEditable((prev) => !prev);
+              }}
+            >
+              Edit
+            </Button>
+          )}
+
+          {ispasswordEditable ? (
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={changingPassword}
+              aria-busy={changingPassword}
+            >
+              {changingPassword ? "Updating..." : "Update password"}
+            </Button>
+          ) : null}
         </div>
       </form>
     </div>
