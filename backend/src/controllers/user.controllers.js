@@ -345,21 +345,38 @@ const findUser = asyncHandler(async (req, res) => {
 const updateProfileInformation = asyncHandler(async (req, res) => {
   const data = req.body;
 
-  //loop the object
+  //loop the data for checking the object is correct
   for (const key in data) {
-    if (data[key] === "" || data[key] === null || data[key] === undefined) {
-      throw new ApiError(400, `${key} is empty`);
+    if (data[key] == "" || data[key] == undefined || data[key] == null) {
+      throw new ApiError(400, `${key} is incorrect`);
     }
 
-    // extract the key with value id and query the database
-    if (key === "userId" && mongoose.isValidObjectId(data[key])) {
-      const user = await User.findById(data[key]);
-      if (!user) {
-        throw new ApiError(404, "No user found");
-      }
+    //check the userId
+    const user = await User.findById(data.userId);
+    if (!user) {
+      throw new ApiError(400, "user not found");
+    }
 
-      // update the user
-      
+    //check for the operation type
+    if (data.operation == "password") {
+      user.password = data.newData;
+      const saved = await user.save({ validateBeforeSave: true });
+      if (!saved) {
+        throw new ApiError(500, "error while saving data");
+      }
+      return res
+        .status(200)
+        .json(new ApiResponse(200, `${data.operation} successfully updated`));
+    } else {
+      const operation = data.operation;
+      user[operation] = data.newData;
+      const saved = await user.save({ validateBeforeSave: false });
+      if (!saved) {
+        throw new ApiError(500, "error while saving data");
+      }
+      return res
+        .status(200)
+        .json(new ApiResponse(200, `${data.operation} successfully updated `));
     }
   }
 });
