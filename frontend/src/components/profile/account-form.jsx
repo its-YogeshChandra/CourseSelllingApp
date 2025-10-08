@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useForm, Controller } from "react-hook-form";
+
 export function AccountForm() {
   const { profile, updateNested } = useState();
   const [name, setName] = useState();
@@ -16,6 +17,7 @@ export function AccountForm() {
   const [saving, setSaving] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
+
   async function onSaveProfile(e) {
     e.preventDefault();
     setSaving(true);
@@ -62,7 +64,29 @@ export function AccountForm() {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={onSaveProfile} className="grid grid-cols-1 gap-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 gap-4"
+      >
+        <div className="grid gap-2">
+          <Label htmlFor="name">Username</Label>
+          <Controller
+            name="username"
+            control={control}
+            disabled={!isEditable}
+            render={({ field }) => (
+              <Input
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e.target.value);
+                }}
+                id="username"
+                placeholder="username"
+              />
+            )}
+          />
+        </div>
+
         <div className="grid gap-2">
           <Label htmlFor="name">Full Name</Label>
           <Controller
@@ -70,11 +94,10 @@ export function AccountForm() {
             control={control}
             render={({ field }) => (
               <Input
+                {...field}
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value=""
                 placeholder="Your full name"
-                autoComplete="name"
               />
             )}
           />
@@ -82,13 +105,18 @@ export function AccountForm() {
 
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                value=""
+                id="email"
+                type="email"
+                placeholder="youremail@gmail.com"
+              />
+            )}
           />
         </div>
 
@@ -96,7 +124,8 @@ export function AccountForm() {
           <div className="flex items-center justify-end">
             {isEditable ? (
               <Button
-                onclick={() => {
+                type="button"
+                onClick={() => {
                   setIsEditable((prev) => {
                     return !prev;
                   });
@@ -106,7 +135,8 @@ export function AccountForm() {
               </Button>
             ) : (
               <Button
-                onclick={() => {
+                type="button"
+                onClick={() => {
                   setIsEditable((prev) => {
                     return !prev;
                   });
@@ -117,9 +147,23 @@ export function AccountForm() {
             )}
           </div>
           <div className="flex items-center justify-end gap-x-2">
-            <Button type="submit" disabled={saving} aria-busy={saving}>
-              {saving ? "Saving..." : "Save changes"}
-            </Button>
+            {isEditable ? (
+              <Button
+                type="submit"
+                onClick={() => {
+                  setIsEditable((prev) => !prev);
+                }}
+              >
+                Save Changes
+              </Button>
+            ) : null}
+
+            {/* <Button type="submit" 
+            onClick = {()=>{
+              setIsEditable((prev)=> !prev)
+            }}>
+              {isEditable ? "Saving..." : "Save changes"}
+            </Button> */}
           </div>
         </div>
       </form>
