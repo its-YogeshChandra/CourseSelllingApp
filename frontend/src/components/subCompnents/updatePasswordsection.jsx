@@ -4,9 +4,11 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
+import { EyeOff, Eye } from "lucide-react";
 
 export function PasswordSection() {
   const [isPasswordEditable, setisPasswordEditable] = useState(false);
+  const [showPassword, setShowPassword] = useState("password");
   const {
     handleSubmit,
     formState: { errors },
@@ -14,9 +16,9 @@ export function PasswordSection() {
     reset,
   } = useForm({
     defaultValues: {
-      username: "",
-      name: "",
-      email: "",
+      currentPassword: "random user one",
+      newPassword: "",
+      confirmPassword: "",
     },
   });
 
@@ -36,21 +38,39 @@ export function PasswordSection() {
 
       <div className="grid gap-2">
         <Label htmlFor="current-password">Current password</Label>
-        <Controller
-          name="currentPassword"
-          control={control}
-          disabled={true}
-          rules={{ required: " current Password can't be empty" }}
-          render={({ field }) => (
-            <Input
-              {...field}
-              id="current-password"
-              type="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
+        <div className="w-full h-auto flex gap-x-3">
+          <Controller
+            name="currentPassword"
+            control={control}
+            disabled={true}
+            rules={{ required: " current Password can't be empty" }}
+            render={({ field }) => (
+              <Input
+                {...field}
+                id="currentpassword"
+                type={showPassword}
+                autoComplete="current-password"
+              />
+            )}
+          />
+          {showPassword == "password" ? (
+            <button
+              onClick={() => {
+                setShowPassword("text");
+              }}
+            >
+              <EyeOff className="pt-1.5" />
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setShowPassword("password");
+              }}
+            >
+              <Eye className="pt-1.5" />
+            </button>
           )}
-        />
+        </div>
       </div>
 
       <div className="grid gap-2 md:grid-cols-2">

@@ -148,132 +148,13 @@ export function AccountForm() {
             )}
           </div>
           <div className="flex items-center justify-end gap-x-2">
-            {isEditable ? (
-              <Button
-                type="submit"
-                // onClick={() => {
-                // setIsEditable((prev) => !prev);
-                // }}
-              >
-                Save Changes
-              </Button>
-            ) : null}
-
-            {/* <Button type="submit" 
-            onClick = {()=>{
-              setIsEditable((prev)=> !prev)
-            }}>
-              {isEditable ? "Saving..." : "Save changes"}
-            </Button> */}
+            {isEditable ? <Button type="submit">Save Changes</Button> : null}
           </div>
         </div>
       </form>
 
       <Separator />
-   <PasswordSection/>
-      <form
-        onSubmit={handleSubmit(onChangePassword)}
-        className="grid grid-cols-1 gap-4"
-        aria-labelledby="change-password"
-      >
-        <h3 id="change-password" className="text-sm font-medium">
-          Change password
-        </h3>
-
-        <div className="grid gap-2">
-          <Label htmlFor="current-password">Current password</Label>
-          <Controller
-            name="email"
-            control={control}
-            disabled={!isEditable}
-            rules={{ required: " email name can't be empty" }}
-            render={({ field }) => (
-              <Input
-                id="current-password"
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="••••••••"
-                autoComplete="current-password"
-              />
-            )}
-          />
-        </div>
-
-        <div className="grid gap-2 md:grid-cols-2">
-          <div className="grid gap-2">
-            <Label htmlFor="new-password">New password</Label>
-            <Controller
-              name="email"
-              control={control}
-              disabled={!isEditable}
-              rules={{ required: " email name can't be empty" }}
-              render={({ field }) => (
-                <Input
-                  id="new-password"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  autoComplete="new-password"
-                />
-              )}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="confirm-password">Confirm new password</Label>
-            <Controller
-              name="email"
-              control={control}
-              disabled={!isEditable}
-              rules={{ required: " email name can't be empty" }}
-              render={({ field }) => (
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter new password"
-                  autoComplete="new-password"
-                />
-              )}
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-x-2">
-          {ispasswordEditable ? (
-            <Button
-              type="button"
-              onClick={() => {
-                setisPasswordEditable((prev) => !prev);
-              }}
-            >
-              Cancel
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => {
-                setisPasswordEditable((prev) => !prev);
-              }}
-            >
-              Edit
-            </Button>
-          )}
-
-          {ispasswordEditable ? (
-            <Button
-              type="submit"
-              variant="outline"
-              disabled={changingPassword}
-              aria-busy={changingPassword}
-            >
-              {changingPassword ? "Updating..." : "Update password"}
-            </Button>
-          ) : null}
-        </div>
-      </form>
+      <PasswordSection />
     </div>
   );
 }
