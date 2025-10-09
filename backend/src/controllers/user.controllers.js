@@ -383,6 +383,23 @@ const updateProfileInformation = asyncHandler(async (req, res) => {
   }
 });
 
+const updateProfileInfo = asyncHandler(async (req, res) => {
+  //take the data from the body
+  const data = req.body;
+
+  //loop the data and check for the conditions
+  for (const key in data) {
+    if (data[key] === null || data[key] === undefined || data[key] === "") {
+      throw new ApiError(400, `${key} is incorrect`);
+    }
+  }
+
+  //check for the operations to perform
+  for(const key in data){
+     
+  }
+});
+
 export {
   signupUser,
   loginUser,
