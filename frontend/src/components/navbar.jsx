@@ -5,6 +5,7 @@ import NavSidebar from "./subCompnents/nav.sidebar.jsx";
 import { useNavigate } from "react-router";
 import authService from "../services/auth.js";
 import Logo from "../assets/Logo.png"
+
 export default function Navbar() {
   const navLinks = ["Home", "Courses", "About Us"];
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Navbar() {
       const n = data.toLowerCase().replace(/\s+/g, "");
       if (e.includes(n)) {
         if (n == "home") {
-          navigate("");
+          navigate("/");
         } else {
           navigate("/" + e);
         }
@@ -45,11 +46,12 @@ export default function Navbar() {
     //  check for the auth me
     const response = await authService.authMehandler();
     if (response.success == true) {
-      const meta = {
-        data: response.data._id || "",
-      };
-      const query = new URLSearchParams(meta).toString();
-      navigate(`/userprofile?${query}`);
+      // const meta = {
+      //   data: response.data._id || "",
+      // };
+      const meta1 = response.data._id
+      // const query = new URLSearchParams(meta).toString(); 
+      navigate(`/testingprofile/:${meta1}`);
     } else {
       const meta = {
         location: "home",

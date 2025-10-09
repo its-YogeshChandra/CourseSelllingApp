@@ -73,11 +73,14 @@ export class AuthServices {
   // For finding the user
   async findUserHandler(userId) {
     try {
+      console.log("function called")
       const response = await axios.post(findUser, { userId });
       if (response) {
-        return response.data;
+        console.log(response)
+       return response.data;
       }
     } catch (error) {
+      console.log(error)
       return error.response.data;
     }
   }
@@ -87,10 +90,12 @@ export class AuthServices {
     try {
       const response = await axios.post(updateProfile, data);
       if (response) {
+        console.log(response)
         return response.data;
       }
     } catch (error) {
-      return error.repoonse.data;
+      console.log(error)
+      return error.response.data
     }
   }
 }

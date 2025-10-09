@@ -74,7 +74,7 @@ const Routing = createBrowserRouter([
                 Component: UserProfile,
               },
               {
-                path: "testingprofile",
+                path: "testingprofile/:userId",
                 Component: TestingProfile,
               },
             ],

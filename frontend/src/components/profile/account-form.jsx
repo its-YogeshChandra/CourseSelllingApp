@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -9,25 +9,41 @@ import { useForm, Controller } from "react-hook-form";
 import { useEffect } from "react";
 import authService from "../../services/auth";
 import { PasswordSection } from "../subCompnents/updatePasswordsection";
+import { useParams } from "react-router";
 export function AccountForm() {
   const [isEditable, setIsEditable] = useState(false);
   const [ispasswordEditable, setisPasswordEditable] = useState(false);
+  const [username, setUsername] = useState("");
+  const [fullName, setfullName] = useState("");
+  const [email, setEmail] = useState("");
 
+  const { userId } = useParams();
+  console.log(userId)
   const {
     handleSubmit,
     formState: { errors },
     control,
-    reset,
+    setValue,
   } = useForm({
     defaultValues: {
-      username: "",
-      name: "",
-      email: "",
+      username: username,
+      name: fullName,
+      email: email,
     },
   });
 
+  //calling backend api for data
+  useEffect(() => {
+    const dataFetcher = async () => {
+      const data = await authService.findUserHandler(userId);
+     console.log(data)    };
+    dataFetcher();
+  }, [userId]);
+
+  
   const onSubmit = async (data) => {
     console.log(data);
+
     const response = await authService.updateProfileInfo(data);
     if (response.success == true) {
       setIsEditable((prev) => !prev);
@@ -47,9 +63,7 @@ export function AccountForm() {
             control={control}
             disabled={!isEditable}
             rules={{ required: "username can't be empty" }}
-            render={({ field }) => (
-              <Input {...field} id="username" placeholder="username" />
-            )}
+            render={({ field }) => <Input {...field} id="username" />}
           />
         </div>
 
@@ -60,9 +74,7 @@ export function AccountForm() {
             control={control}
             disabled={!isEditable}
             rules={{ required: " full name can't be empty" }}
-            render={({ field }) => (
-              <Input {...field} id="name" placeholder="Your full name" />
-            )}
+            render={({ field }) => <Input {...field} id="name" />}
           />
         </div>
 
@@ -73,14 +85,7 @@ export function AccountForm() {
             control={control}
             disabled={!isEditable}
             rules={{ required: " email name can't be empty" }}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="email"
-                type="email"
-                placeholder="youremail@gmail.com"
-              />
-            )}
+            render={({ field }) => <Input {...field} id="email" type="email" />}
           />
         </div>
 

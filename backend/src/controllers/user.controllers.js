@@ -331,15 +331,17 @@ const addtoCourseCompletion = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "data successfully added"));
 });
 
+//for getting user data
 const findUser = asyncHandler(async (req, res) => {
   const { userId } = req.body;
-  if (mongoose.isValidObjectId(userId)) {
-    const user = await User.findById(userId).select("-password -refreshToken");
-    if (!user) {
-      throw new ApiError(404, "No user found");
-    }
-    res.status(200).json(new ApiResponse(200, "User found", user));
+  if (!mongoose.isValidObjectId(userId)) {
+    throw new ApiError(400, "incorrect data");
   }
+  const user = await User.findById(userId).select("-password -refreshToken");
+  if (!user) {
+    throw new ApiError(404, "No user found");
+  }
+  res.status(200).json(new ApiResponse(200, "User found", user));
 });
 
 const updateProfileInformation = asyncHandler(async (req, res) => {

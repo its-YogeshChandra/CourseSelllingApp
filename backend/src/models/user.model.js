@@ -70,5 +70,7 @@ userSchema.methods.generateRefreshToken = function () {
   })
 }
 
+userSchema.methods.decryptPassword = function (password){
 
+}
 export const User = mongoose.model("User", userSchema);
