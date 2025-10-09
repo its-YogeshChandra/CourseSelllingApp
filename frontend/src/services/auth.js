@@ -3,8 +3,15 @@
 
 import axios from "axios";
 import { conf } from "../conf.js";
-const { signupUrl, loginUrl, googleAuth, authMe, findUser, updateProfile } =
-  conf;
+const {
+  signupUrl,
+  loginUrl,
+  googleAuth,
+  authMe,
+  findUser,
+  updatePassword,
+  updateProfile,
+} = conf;
 
 export class AuthServices {
   async signup(data) {
@@ -73,14 +80,14 @@ export class AuthServices {
   // For finding the user
   async findUserHandler(userId) {
     try {
-      console.log("function called")
+      console.log("function called");
       const response = await axios.post(findUser, { userId });
       if (response) {
-        console.log(response)
-       return response.data;
+        console.log(response);
+        return response.data;
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return error.response.data;
     }
   }
@@ -90,12 +97,26 @@ export class AuthServices {
     try {
       const response = await axios.post(updateProfile, data);
       if (response) {
-        console.log(response)
+        console.log(response);
         return response.data;
       }
     } catch (error) {
-      console.log(error)
-      return error.response.data
+      console.log(error);
+      return error.response.data;
+    }
+  }
+
+  //for updating Profile information
+  async updatePassword(data) {
+    try {
+      const response = await axios.post(updatePassword, data);
+      if (response) {
+        console.log(response);
+        return response.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
     }
   }
 }

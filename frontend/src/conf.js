@@ -6,7 +6,8 @@ const conf = {
   addCompletion: import.meta.env.VITE_COURSE_ADDTOCOMPLETION_URL,
   checkCompletion: import.meta.env.VITE_COURSE_CHECKCOMPLETION_URL,
   findUser: import.meta.env.VITE_FINDUSER_URL,
-  updateProfile: import.meta.env.VITE_UPDATEPROFILE_URL
+  updatePassword: import.meta.env.VITE_UPDATEPASSWORD_URL,
+  updateProfile: import.meta.env.VITE_UPDATEPROFILE_URL,
 };
 
 const courseConf = {

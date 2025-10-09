@@ -25,6 +25,7 @@ export function AccountForm() {
     formState: { errors },
     control,
     setValue,
+    watch,
   } = useForm({
     defaultValues: {
       username: username,
@@ -42,6 +43,7 @@ export function AccountForm() {
         for (const key in data.data) {
           if (neededAttribute.includes(key)) {
             setValue(`${key}`, data.data[key]);
+
             setDataPresent(true);
           }
         }
@@ -50,13 +52,23 @@ export function AccountForm() {
     dataFetcher();
   }, [userId]);
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  const onSubmit = async (values) => {
+    let payload = [];
+    // loop the values and extract the data
+    for (const key in values) {
+      if (key !== watch(`${key}`)) {
+        const userId = userid;
+        const operation = key;
+        const newData = values[key];
 
-    // const response = await authService.updateProfileInfo(data);
-    // if (response.success == true) {
-    // setIsEditable((prev) => !prev);
-    // }
+        //populate the payload
+        payload.push(userId, operation, newData);
+      }
+    }
+    const data = await authService.updateProfileInfo(payload);
+    if (data.success == true) {
+      setIsEditable((prev) => !prev);
+    }
   };
 
   if (dataPresent === true) {
@@ -83,7 +95,6 @@ export function AccountForm() {
               name="name"
               control={control}
               disabled={!isEditable}
-              rules={{ required: " full name can't be empty" }}
               render={({ field }) => <Input {...field} id="name" />}
             />
           </div>
