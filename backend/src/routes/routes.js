@@ -9,7 +9,8 @@ import {
   findCourseCompletion,
   addtoCourseCompletion,
   findUser,
-  updateProfileInformation
+  updateProfileInfo,
+  updatePassword,
 } from "../controllers/user.controllers.js";
 import {
   createcourse,
@@ -18,7 +19,7 @@ import {
   getCourseAndLessons,
   isSubscribed,
   addStudentToCourse,
-  courseDataForPlayer
+  courseDataForPlayer,
 } from "../controllers/course.controller.js";
 import { uploadMiddleware } from "../middlewares/multer.middleware.js";
 import {
@@ -55,12 +56,14 @@ router.route("/completioncheck").post(findCourseCompletion);
 // add to completion
 router.route("/addtocompletion").post(addtoCourseCompletion);
 
-//find the user 
+//find the user
 router.route("/finduser").post(findUser);
 
-//update userprofile information 
-router.route("/updateProfile").post(updateProfileInformation)
+//update userprofile information
+router.route("/updateprofile").post(updateProfileInfo);
 
+//update userPassword
+router.route("/updatepassword").post(updatePassword);
 
 //routes of course
 
@@ -86,8 +89,7 @@ courseRouter.route("/addStudentToCourse").post(addStudentToCourse);
 // courseRouter.route("/fetchAndUpload").get(fetchAndUpload);
 
 // #8 for courseData for the course player
-courseRouter.route("/getDataForPlayer").post(courseDataForPlayer)
-
+courseRouter.route("/getDataForPlayer").post(courseDataForPlayer);
 
 //routes for instructor
 // #1 for registering instructor

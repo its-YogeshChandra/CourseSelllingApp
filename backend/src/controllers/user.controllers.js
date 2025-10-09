@@ -344,60 +344,82 @@ const findUser = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "User found", user));
 });
 
-const updateProfileInformation = asyncHandler(async (req, res) => {
+//to update the password
+const updatePassword = asyncHandler(async (req, res) => {
+  //take the data from the body
   const data = req.body;
 
-  //loop the data for checking the object is correct
+  //dual check for the password
   for (const key in data) {
-    if (data[key] == "" || data[key] == undefined || data[key] == null) {
+    if (data[key] == undefined || data[key] == null || data[key] == "") {
       throw new ApiError(400, `${key} is incorrect`);
     }
-
-    //check the userId
-    const user = await User.findById(data.userId);
-    if (!user) {
-      throw new ApiError(400, "user not found");
-    }
-
-    //check for the operation type
-    if (data.operation == "password") {
-      user.password = data.newData;
-      const saved = await user.save({ validateBeforeSave: true });
-      if (!saved) {
-        throw new ApiError(500, "error while saving data");
-      }
-      return res
-        .status(200)
-        .json(new ApiResponse(200, `${data.operation} successfully updated`));
-    } else {
-      const operation = data.operation;
-      user[operation] = data.newData;
-      const saved = await user.save({ validateBeforeSave: false });
-      if (!saved) {
-        throw new ApiError(500, "error while saving data");
-      }
-      return res
-        .status(200)
-        .json(new ApiResponse(200, `${data.operation} successfully updated `));
-    }
   }
+
+  //check if the confirm password is correct
+  const { userId, currentPassword, newPassword } = data;
+  const userData = await User.findById(userId);
+  if (!userData) {
+    throw new ApiError(400, "user not found");
+  }
+  const isCorrect = await userData.isPasswordCorrect(currentPassword);
+  if (!isCorrect) {
+    throw new ApiError(400, "currentPassword is incorrect");
+  }
+
+  userData.password = newPassword;
+ await userData
+    .save({ validateBeforeSave: true })
+    .then((savedData) => {
+      if (savedData) {
+        // send the message to the frontend
+       return  res
+          .status(200)
+          .json(new ApiResponse(200, "password successfully updated"));
+      }
+    })
+    .catch((error) => {
+      throw new ApiError(500, "server error");
+    });
 });
 
+//to update the profile info
 const updateProfileInfo = asyncHandler(async (req, res) => {
   //take the data from the body
   const data = req.body;
 
   //loop the data and check for the conditions
-  for (const key in data) {
-    if (data[key] === null || data[key] === undefined || data[key] === "") {
-      throw new ApiError(400, `${key} is incorrect`);
+  data.map(async (element) => {
+    for (const key in element) {
+      //check for any issues
+      if (
+        element[key] == null ||
+        element[key] == undefined ||
+        element[key] === ""
+      ) {
+        throw new ApiError(400, `${key} is incorrect`);
+      }
     }
-  }
 
-  //check for the operations to perform
-  for(const key in data){
-     
-  }
+    const { userId, operation, newData } = element;
+    //check on the user using userId
+    const userData = await User.findById(userId);
+    if (!userData) {
+      throw new ApiError(400, "user not found");
+    }
+
+    //update the data with the information
+    userData[operation] = newData;
+    
+    const saved = await userData.save({ validateBeforeSave: false });
+
+    if (!saved) {
+      throw new ApiError(500, "error while saving data");
+    }
+  });
+
+  //send data to the frontend
+  res.status(200).json(new ApiResponse(200, "data successfully updated"));
 });
 
 export {
@@ -409,5 +431,6 @@ export {
   findCourseCompletion,
   addtoCourseCompletion,
   findUser,
-  updateProfileInformation,
+  updatePassword,
+  updateProfileInfo,
 };
