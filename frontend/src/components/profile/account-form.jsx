@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,9 +16,10 @@ export function AccountForm() {
   const [username, setUsername] = useState("");
   const [fullName, setfullName] = useState("");
   const [email, setEmail] = useState("");
+  const [dataPresent, setDataPresent] = useState(false);
 
   const { userId } = useParams();
-  console.log(userId)
+  const userid = userId.replace(":", "");
   const {
     handleSubmit,
     formState: { errors },
@@ -35,94 +36,106 @@ export function AccountForm() {
   //calling backend api for data
   useEffect(() => {
     const dataFetcher = async () => {
-      const data = await authService.findUserHandler(userId);
-     console.log(data)    };
+      const data = await authService.findUserHandler(userid);
+      if (data) {
+        const neededAttribute = ["email", "username", "fullname"];
+        for (const key in data.data) {
+          if (neededAttribute.includes(key)) {
+            setValue(`${key}`, data.data[key]);
+            setDataPresent(true);
+          }
+        }
+      }
+    };
     dataFetcher();
   }, [userId]);
 
-  
   const onSubmit = async (data) => {
     console.log(data);
 
-    const response = await authService.updateProfileInfo(data);
-    if (response.success == true) {
-      setIsEditable((prev) => !prev);
-    }
+    // const response = await authService.updateProfileInfo(data);
+    // if (response.success == true) {
+    // setIsEditable((prev) => !prev);
+    // }
   };
 
-  return (
-    <div className="space-y-6">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-1 gap-4"
-      >
-        <div className="grid gap-2">
-          <Label htmlFor="name">Username</Label>
-          <Controller
-            name="username"
-            control={control}
-            disabled={!isEditable}
-            rules={{ required: "username can't be empty" }}
-            render={({ field }) => <Input {...field} id="username" />}
-          />
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="name">Full Name</Label>
-          <Controller
-            name="name"
-            control={control}
-            disabled={!isEditable}
-            rules={{ required: " full name can't be empty" }}
-            render={({ field }) => <Input {...field} id="name" />}
-          />
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Controller
-            name="email"
-            control={control}
-            disabled={!isEditable}
-            rules={{ required: " email name can't be empty" }}
-            render={({ field }) => <Input {...field} id="email" type="email" />}
-          />
-        </div>
-
-        <div className="flex items-center justify-end gap-x-2">
-          <div className="flex items-center justify-end">
-            {isEditable ? (
-              <Button
-                type="button"
-                onClick={() => {
-                  setIsEditable((prev) => {
-                    return !prev;
-                  });
-                }}
-              >
-                Cancel
-              </Button>
-            ) : (
-              <Button
-                type="button"
-                onClick={() => {
-                  setIsEditable((prev) => {
-                    return !prev;
-                  });
-                }}
-              >
-                Edit
-              </Button>
-            )}
+  if (dataPresent === true) {
+    return (
+      <div className="space-y-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 gap-4"
+        >
+          <div className="grid gap-2">
+            <Label htmlFor="name">Username</Label>
+            <Controller
+              name="username"
+              control={control}
+              disabled={!isEditable}
+              rules={{ required: "username can't be empty" }}
+              render={({ field }) => <Input {...field} id="username" />}
+            />
           </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="name">Full Name</Label>
+            <Controller
+              name="name"
+              control={control}
+              disabled={!isEditable}
+              rules={{ required: " full name can't be empty" }}
+              render={({ field }) => <Input {...field} id="name" />}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Controller
+              name="email"
+              control={control}
+              disabled={!isEditable}
+              rules={{ required: " email name can't be empty" }}
+              render={({ field }) => (
+                <Input {...field} id="email" type="email" />
+              )}
+            />
+          </div>
+
           <div className="flex items-center justify-end gap-x-2">
-            {isEditable ? <Button type="submit">Save Changes</Button> : null}
+            <div className="flex items-center justify-end">
+              {isEditable ? (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setIsEditable((prev) => {
+                      return !prev;
+                    });
+                  }}
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setIsEditable((prev) => {
+                      return !prev;
+                    });
+                  }}
+                >
+                  Edit
+                </Button>
+              )}
+            </div>
+            <div className="flex items-center justify-end gap-x-2">
+              {isEditable ? <Button type="submit">Save Changes</Button> : null}
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
 
-      <Separator />
-      <PasswordSection />
-    </div>
-  );
+        <Separator />
+        <PasswordSection />
+      </div>
+    );
+  }
 }
