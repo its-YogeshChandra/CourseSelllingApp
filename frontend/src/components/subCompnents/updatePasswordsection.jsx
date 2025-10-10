@@ -1,30 +1,106 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm, Controller } from "react-hook-form";
 import { EyeOff, Eye, NotepadText } from "lucide-react";
-
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 export function PasswordSection() {
   const [isPasswordEditable, setisPasswordEditable] = useState(false);
   const [showPassword, setShowPassword] = useState("password");
   const [password, setPassword] = useState("value");
+  const [samePasswordError, setSamePasswordError] = useState({
+    isError: false,
+    message: "",
+  });
+  const [newPasswordError, setnewPasswordError] = useState({
+    isError: false,
+    message: "",
+  });
+  const [currentPasswordError, setcurrentPasswordError] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const [confirmPasswordError, setconfirmPasswordError] = useState({
+    isError: false,
+    message: "",
+  });
+
+  const regexCheck = new RegExp(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{5,20}$"
+  );
+
+  const schema = z
+    .object({
+      currentPassword: z
+        .string()
+        .min(1, { message: "currentPassword can't be empty" }),
+      newPassword: z
+        .string()
+        .regex(
+          regexCheck,
+          "Password must contain at least one uppercase, one lowercase, one number and one special character"
+        ),
+      confirmPassword: z.string().min(1,
+      {message: "confirm password can't be empty"}),
+    })
+    .refine((val) => val.newPassword === val.confirmPassword, {
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    });
+
   const {
     handleSubmit,
     formState: { errors },
     control,
-    reset,
+    setValue,
   } = useForm({
     defaultValues: {
-      currentPassword: "randomUser123@",
+      currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
+    resolver: zodResolver(schema),
   });
 
+  useEffect(() => {
+    if (errors.confirmPassword) {
+      console.log("error is present")
+      console.log(`error is ${errors.confirmPassword.message}`)
+      setconfirmPasswordError((prev) => ({
+        ...prev,
+        isError: !prev.isError,
+        message: errors.confirmPassword.message,
+      }));
+
+      // setTimeout(
+      //   setconfirmPasswordError((prev) => ({
+      //     ...prev,
+      //     isError: !prev.isError,
+      //     message: "",
+      //   })),
+      //   10000
+      // );
+    }
+    if (errors.currentPassword) {
+      setnewPasswordError();
+    }
+    if (errors.newPassword) {
+    }
+  }, [errors.currentPassword, errors.confirmPassword, errors.newPassword]);
+  
+  console.log(confirmPasswordError.message)
+
+  const onCancelChange = () => {
+    const keys = ["currentPassword", "newPassword", "confirmPassword"];
+    keys.map((key) => setValue(`${key}`, ""));
+    setisPasswordEditable((prev) => !prev);
+  };
   const onChangePassword = (data) => {
-    console.log(data);
+    if (errors) console.log(data);
     setisPasswordEditable((prev) => !prev);
   };
 
@@ -41,14 +117,22 @@ export function PasswordSection() {
       <div className="grid gap-2">
         <Label htmlFor="current-password">Current password</Label>
         <div className="w-full h-auto flex gap-x-3">
-          <Input
-            type={showPassword}
-            value={password}
-            readOnly
-            placeholder="****"
-            className="disable:text-black pointer-events-none"
+          <Controller
+            name="currentPassword"
+            control={control}
+            disabled={!isPasswordEditable}
+            render={({ field }) => (
+              <Input
+                {...field}
+                id="current-password"
+                type="password"
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+              />
+            )}
           />
-          {showPassword == "password" ? (
+
+          {/* {showPassword == "password" ? (
             <button
               type="button"
               onClick={() => {
@@ -66,7 +150,7 @@ export function PasswordSection() {
             >
               <Eye className="pt-1.5" />
             </button>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -77,7 +161,6 @@ export function PasswordSection() {
             name="newPassword"
             control={control}
             disabled={!isPasswordEditable}
-            rules={{ required: " new password can't be empty" }}
             render={({ field }) => (
               <Input
                 {...field}
@@ -88,6 +171,7 @@ export function PasswordSection() {
               />
             )}
           />
+          {errors?.newPassword && <p> {errors.newPassword.message}</p>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="confirm-password">Confirm new password</Label>
@@ -95,7 +179,6 @@ export function PasswordSection() {
             name="confirmPassword"
             control={control}
             disabled={!isPasswordEditable}
-            rules={{ required: "confirm-password can't be empty" }}
             render={({ field }) => (
               <Input
                 {...field}
@@ -106,6 +189,7 @@ export function PasswordSection() {
               />
             )}
           />
+         {errors?.confirmPassword && <p>{errors.confirmPassword.message}</p> }
         </div>
       </div>
 
@@ -114,7 +198,7 @@ export function PasswordSection() {
           <Button
             type="button"
             onClick={() => {
-              setisPasswordEditable((prev) => !prev);
+              onCancelChange();
             }}
           >
             Cancel
