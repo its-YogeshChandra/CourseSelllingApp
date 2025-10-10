@@ -29,7 +29,7 @@ export function AccountForm() {
   } = useForm({
     defaultValues: {
       username: username,
-      name: fullName,
+      fullname: fullName,
       email: email,
     },
   });
@@ -40,10 +40,21 @@ export function AccountForm() {
       const data = await authService.findUserHandler(userid);
       if (data) {
         const neededAttribute = ["email", "username", "fullname"];
+        const funcObj = {
+          username: (value) => {
+            setUsername(value);
+          },
+          email: (value) => {
+            setEmail(value);
+          },
+          fullname: (value) => {
+            setfullName(value);
+          },
+        };
         for (const key in data.data) {
           if (neededAttribute.includes(key)) {
             setValue(`${key}`, data.data[key]);
-
+            funcObj[key](data.data[key]);
             setDataPresent(true);
           }
         }
@@ -51,6 +62,21 @@ export function AccountForm() {
     };
     dataFetcher();
   }, [userId]);
+
+
+useEffect(()=>{
+  //add the values that we get 
+  const valObj = {
+    username: username,
+    email: email,
+  
+  }
+  setValue("email")
+
+},[])
+
+
+
 
   const onSubmit = async (values) => {
     let payload = [];
@@ -92,7 +118,7 @@ export function AccountForm() {
           <div className="grid gap-2">
             <Label htmlFor="name">Full Name</Label>
             <Controller
-              name="name"
+              name="fullname"
               control={control}
               disabled={!isEditable}
               render={({ field }) => <Input {...field} id="name" />}

@@ -8,11 +8,7 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
-    firstName: {
-      type: String,
-      trim: true,
-    },
-    lastName: {
+    fullname: {
       type: String,
       trim: true,
     },
