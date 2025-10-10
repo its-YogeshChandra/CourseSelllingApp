@@ -15,14 +15,6 @@ export function PasswordSection() {
     isError: false,
     message: "",
   });
-  const [newPasswordError, setnewPasswordError] = useState({
-    isError: false,
-    message: "",
-  });
-  const [currentPasswordError, setcurrentPasswordError] = useState({
-    isError: false,
-    message: "",
-  });
 
   const [confirmPasswordError, setconfirmPasswordError] = useState({
     isError: false,
@@ -44,11 +36,10 @@ export function PasswordSection() {
           regexCheck,
           "Password must contain at least one uppercase, one lowercase, one number and one special character"
         ),
-      confirmPassword: z.string().min(1,
-      {message: "confirm password can't be empty"}),
+      confirmPassword: z.string(),
     })
     .refine((val) => val.newPassword === val.confirmPassword, {
-      message: "Passwords don't match",
+      message: "Password don't match",
       path: ["confirmPassword"],
     });
 
@@ -57,6 +48,7 @@ export function PasswordSection() {
     formState: { errors },
     control,
     setValue,
+    clearErrors,
   } = useForm({
     defaultValues: {
       currentPassword: "",
@@ -68,31 +60,22 @@ export function PasswordSection() {
 
   useEffect(() => {
     if (errors.confirmPassword) {
-      console.log("error is present")
-      console.log(`error is ${errors.confirmPassword.message}`)
-      setconfirmPasswordError((prev) => ({
-        ...prev,
-        isError: !prev.isError,
-        message: errors.confirmPassword.message,
-      }));
-
-      // setTimeout(
-      //   setconfirmPasswordError((prev) => ({
-      //     ...prev,
-      //     isError: !prev.isError,
-      //     message: "",
-      //   })),
-      //   10000
-      // );
+      setTimeout(() => {
+        clearErrors("confirmPassword");
+      }, 4000);
     }
     if (errors.currentPassword) {
-      setnewPasswordError();
+      console.log(errors.currentPassword.message);
+      setTimeout(() => {
+        clearErrors("currentPassword");
+      }, 4000);
     }
     if (errors.newPassword) {
+      setTimeout(() => {
+        clearErrors("newPassword");
+      }, 4000);
     }
   }, [errors.currentPassword, errors.confirmPassword, errors.newPassword]);
-  
-  console.log(confirmPasswordError.message)
 
   const onCancelChange = () => {
     const keys = ["currentPassword", "newPassword", "confirmPassword"];
@@ -131,7 +114,6 @@ export function PasswordSection() {
               />
             )}
           />
-
           {/* {showPassword == "password" ? (
             <button
               type="button"
@@ -152,6 +134,7 @@ export function PasswordSection() {
             </button>
           )} */}
         </div>
+        {errors?.currentPassword && <p>{errors.currentPassword.message}</p>}
       </div>
 
       <div className="grid gap-2 md:grid-cols-2">
@@ -189,7 +172,7 @@ export function PasswordSection() {
               />
             )}
           />
-         {errors?.confirmPassword && <p>{errors.confirmPassword.message}</p> }
+          {errors?.confirmPassword && <p>{errors.confirmPassword.message}</p>}
         </div>
       </div>
 
