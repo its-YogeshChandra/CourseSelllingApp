@@ -17,6 +17,7 @@ export function AccountForm() {
   const [fullName, setfullName] = useState("");
   const [email, setEmail] = useState("");
   const [dataPresent, setDataPresent] = useState(false);
+  const [isCancelling, setisCancelling] = useState(false);
 
   const { userId } = useParams();
   const userid = userId.replace(":", "");
@@ -63,20 +64,17 @@ export function AccountForm() {
     dataFetcher();
   }, [userId]);
 
-
-useEffect(()=>{
-  //add the values that we get 
-  const valObj = {
-    username: username,
-    email: email,
-  
-  }
-  setValue("email")
-
-},[])
-
-
-
+  useEffect(() => {
+    //add the values that we get
+    const valObj = {
+      username: username,
+      email: email,
+      fulllname: fullName,
+    };
+    const keys = ["email", "username", "fullname"];
+    keys.map((key) => setValue(`${key}`, `${valObj[key]}`));
+    setIsEditable((prev) => !prev);
+  }, [isCancelling]);
 
   const onSubmit = async (values) => {
     let payload = [];
@@ -144,9 +142,7 @@ useEffect(()=>{
                 <Button
                   type="button"
                   onClick={() => {
-                    setIsEditable((prev) => {
-                      return !prev;
-                    });
+                  setisCancelling(true)
                   }}
                 >
                   Cancel
