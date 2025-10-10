@@ -11,6 +11,7 @@ const {
   findUser,
   updatePassword,
   updateProfile,
+  logoutUrl,
 } = conf;
 
 export class AuthServices {
@@ -61,6 +62,19 @@ export class AuthServices {
       }
     }
   }
+  
+  //for logout
+    async logOut(data) {
+    try {
+      const response = await axios.post(logoutUrl);
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return error.response.data
+      }
+    }
+  }
+ 
 
   //for auth me service
   async authMehandler() {

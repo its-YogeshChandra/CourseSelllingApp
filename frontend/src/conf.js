@@ -8,6 +8,7 @@ const conf = {
   findUser: import.meta.env.VITE_FINDUSER_URL,
   updatePassword: import.meta.env.VITE_UPDATEPASSWORD_URL,
   updateProfile: import.meta.env.VITE_UPDATEPROFILE_URL,
+  logoutUrl: import.meta.env.VITE_LOGOUT_USER,
 };
 
 const courseConf = {

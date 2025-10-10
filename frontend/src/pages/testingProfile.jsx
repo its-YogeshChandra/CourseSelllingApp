@@ -35,7 +35,7 @@ export default function TestingProfile() {
       <section className="container mx-auto px-4 py-6 md:py-10">
         <div className="space-y-6">
           <Suspense>
-            <ProfileHeader />
+            <ProfileHeader userData ={userData} />
           </Suspense>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-12">

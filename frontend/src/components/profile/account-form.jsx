@@ -77,7 +77,6 @@ export function AccountForm({ data }) {
     // loop the values and extract the data
     for (const key in values) {
       if (values[key] !== watch(`${key}`)) {
-        console.log(watch(`${key}`));
         const userId = userid;
         const operation = key;
         const newData = values[key];
@@ -168,7 +167,7 @@ export function AccountForm({ data }) {
         </form>
 
         <Separator />
-        <PasswordSection />
+        <PasswordSection userId = {userid} />
       </div>
     );
   }

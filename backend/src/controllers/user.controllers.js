@@ -175,7 +175,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const data = req.user;
 
-  const mongoUser = User.findById(data._id);
+  const mongoUser = await User.findById(data._id);
   if (!mongoUser) {
     throw new ApiError(500, "Error while finding user");
   }

@@ -2,9 +2,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { Link } from "react-router";
-
-export function ProfileHeader() {
+import { Link, Navigate, useNavigate } from "react-router";
+import authService from "../../services/auth";
+import { toast } from "sonner";
+export function ProfileHeader({ userData }) {
   const [profile, setProfile] = useState({
     name: "random",
     email: "random@gmail.com",
@@ -14,6 +15,19 @@ export function ProfileHeader() {
       status: "purchased",
     },
   });
+  const navigate = useNavigate();
+  const logOut = async () => {
+    //calling the backend api
+    const data = await authService.logOut();
+    console.log(data)
+    if (data.success == true) {
+      //navigate user to home
+      navigate("/");
+
+      //provide the data
+      toast("logout successfully");
+    }
+  };
 
   return (
     <header className="flex flex-col items-start justify-between gap-4 rounded-lg bg-card p-4 text-card-foreground md:flex-row md:items-center md:p-6">
@@ -23,22 +37,16 @@ export function ProfileHeader() {
             src={profile.avatarUrl || undefined}
             alt={`${profile.name}'s profile picture`}
           />
-          <AvatarFallback className="font-medium"> Random </AvatarFallback>
+          <AvatarFallback className="font-medium">
+            {" "}
+            {userData.data.username}{" "}
+          </AvatarFallback>
         </Avatar>
         <div className="space-y-1">
           <h1 className="text-xl font-semibold leading-tight text-pretty md:text-2xl">
-            {profile.name}
+            {userData.data.username}
           </h1>
-          <p className="text-sm text-muted-foreground">{profile.email}</p>
-          <div className="mt-1">
-            <Badge
-              variant="outline"
-              className="capitalize"
-              aria-label={`Subscription status: ${profile.subscription.status}`}
-            >
-              {profile.subscription.status}
-            </Badge>
-          </div>
+          <p className="text-sm text-muted-foreground">{userData.data.email}</p>
         </div>
       </div>
 
@@ -46,7 +54,14 @@ export function ProfileHeader() {
         <Link href="#help" aria-label="Get help or support">
           <Button variant="secondary">Help</Button>
         </Link>
-        <Button variant="ghost" aria-label="Logout">
+        <Button
+          variant="ghost"
+          aria-label="Logout"
+          onClick={() => {
+            //calling logout
+            logOut();
+          }}
+        >
           Logout
         </Button>
       </div>

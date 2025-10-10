@@ -7,9 +7,15 @@ import { useForm, Controller } from "react-hook-form";
 import { EyeOff, Eye, NotepadText } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-export function PasswordSection() {
+import authService from "../../services/auth";
+import { toast } from "sonner";
+export function PasswordSection({ userId }) {
   const [isPasswordEditable, setisPasswordEditable] = useState(false);
-  const [showPassword, setShowPassword] = useState("password");
+  const [showPassword, setShowPassword] = useState({
+    currentPassword: "password",
+    newPassword: "password",
+    confirmPassword: "password",
+  });
   const [password, setPassword] = useState("value");
   const [samePasswordError, setSamePasswordError] = useState({
     isError: false,
@@ -41,6 +47,10 @@ export function PasswordSection() {
     .refine((val) => val.newPassword === val.confirmPassword, {
       message: "Password don't match",
       path: ["confirmPassword"],
+    })
+    .refine((val) => val.newPassword !== val.currentPassword, {
+      message: "can't be same as current password",
+      path: ["newPassword"],
     });
 
   const {
@@ -65,7 +75,6 @@ export function PasswordSection() {
       }, 4000);
     }
     if (errors.currentPassword) {
-      console.log(errors.currentPassword.message);
       setTimeout(() => {
         clearErrors("currentPassword");
       }, 4000);
@@ -77,14 +86,35 @@ export function PasswordSection() {
     }
   }, [errors.currentPassword, errors.confirmPassword, errors.newPassword]);
 
+  //onclicking the cancel button
   const onCancelChange = () => {
     const keys = ["currentPassword", "newPassword", "confirmPassword"];
     keys.map((key) => setValue(`${key}`, ""));
     setisPasswordEditable((prev) => !prev);
   };
-  const onChangePassword = (data) => {
-    if (errors) console.log(data);
+
+  //submitting the data
+  const onChangePassword = async (formdata) => {
+    //create the checker array
+    const checkerArray = ["currentPassword", "newPassword"];
+    let payload = { userId: userId };
+
+    //loop the data and update payload
+    for (const key in formdata) {
+      if (checkerArray.includes(key)) {
+        payload[key] = formdata[key];
+      }
+    }
+
+    //api call
+    const data = await authService.updatePassword(payload);
+
+    if (data.success == true) {
+      toast("password successfully updated");
+    }
     setisPasswordEditable((prev) => !prev);
+    const keys = ["currentPassword", "newPassword", "confirmPassword"];
+    keys.map((key) => setValue(`${key}`, ""));
   };
 
   return (
@@ -108,31 +138,38 @@ export function PasswordSection() {
               <Input
                 {...field}
                 id="current-password"
-                type="password"
+                type={showPassword.currentPassword}
                 placeholder="At least 8 characters"
                 autoComplete="new-password"
               />
             )}
           />
-          {/* {showPassword == "password" ? (
-            <button
-              type="button"
-              onClick={() => {
-                setShowPassword("text");
-              }}
-            >
-              <EyeOff className="pt-1.5" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => {
-                setShowPassword("password");
-              }}
-            >
-              <Eye className="pt-1.5" />
-            </button>
-          )} */}
+          {isPasswordEditable == true &&
+            (showPassword.currentPassword == "password" ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPassword((prev) => ({
+                    ...prev,
+                    currentPassword: "text",
+                  }));
+                }}
+              >
+                <EyeOff className="pt-1.5" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPassword((prev) => ({
+                    ...prev,
+                    currentPassword: "password",
+                  }));
+                }}
+              >
+                <Eye className="pt-1.5" />
+              </button>
+            ))}
         </div>
         {errors?.currentPassword && <p>{errors.currentPassword.message}</p>}
       </div>
@@ -140,38 +177,94 @@ export function PasswordSection() {
       <div className="grid gap-2 md:grid-cols-2">
         <div className="grid gap-2">
           <Label htmlFor="new-password">New password</Label>
-          <Controller
-            name="newPassword"
-            control={control}
-            disabled={!isPasswordEditable}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="new-password"
-                type="password"
-                placeholder="At least 8 characters"
-                autoComplete="new-password"
-              />
-            )}
-          />
+          <div className="w-full h-auto flex gap-x-3">
+            <Controller
+              name="newPassword"
+              control={control}
+              disabled={!isPasswordEditable}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="new-password"
+                  type={showPassword.newPassword}
+                  placeholder="At least 8 characters"
+                  autoComplete="new-password"
+                />
+              )}
+            />
+            {isPasswordEditable == true &&
+              (showPassword.newPassword == "password" ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword((prev) => ({
+                      ...prev,
+                      newPassword: "text",
+                    }));
+                  }}
+                >
+                  <EyeOff className="pt-1.5" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword((prev) => ({
+                      ...prev,
+                      newPassword: "password",
+                    }));
+                  }}
+                >
+                  <Eye className="pt-1.5" />
+                </button>
+              ))}
+          </div>
           {errors?.newPassword && <p> {errors.newPassword.message}</p>}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="confirm-password">Confirm new password</Label>
-          <Controller
-            name="confirmPassword"
-            control={control}
-            disabled={!isPasswordEditable}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="confirm-password"
-                type="password"
-                placeholder="Re-enter new password"
-                autoComplete="new-password"
-              />
-            )}
-          />
+          <div className="w-full h-auto flex gap-x-3">
+            <Controller
+              name="confirmPassword"
+              control={control}
+              disabled={!isPasswordEditable}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="confirm-password"
+                  type={showPassword.confirmPassword}
+                  placeholder="Re-enter new password"
+                  autoComplete="new-password"
+                />
+              )}
+            />
+            {isPasswordEditable == true &&
+              (showPassword.confirmPassword == "password" ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword((prev) => ({
+                      ...prev,
+                      confirmPassword: "text",
+                    }));
+                  }}
+                >
+                  <EyeOff className="pt-1.5" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword((prev) => ({
+                      ...prev,
+                      confirmPassword: "password",
+                    }));
+                  }}
+                >
+                  <Eye className="pt-1.5" />
+                </button>
+              ))}
+          </div>
           {errors?.confirmPassword && <p>{errors.confirmPassword.message}</p>}
         </div>
       </div>
