@@ -54,6 +54,7 @@ export function AccountForm() {
         };
         for (const key in data.data) {
           if (neededAttribute.includes(key)) {
+            console.log(key)
             setValue(`${key}`, data.data[key]);
             funcObj[key](data.data[key]);
             setDataPresent(true);
@@ -64,17 +65,11 @@ export function AccountForm() {
     dataFetcher();
   }, [userId]);
 
-  useEffect(() => {
-    //add the values that we get
-    const valObj = {
-      username: username,
-      email: email,
-      fulllname: fullName,
-    };
-    const keys = ["email", "username", "fullname"];
-    keys.map((key) => setValue(`${key}`, `${valObj[key]}`));
-    setIsEditable((prev) => !prev);
-  }, [isCancelling]);
+ const onCancelling = ()=>{
+  
+ }
+ 
+
 
   const onSubmit = async (values) => {
     let payload = [];
@@ -142,7 +137,7 @@ export function AccountForm() {
                 <Button
                   type="button"
                   onClick={() => {
-                  setisCancelling(true)
+                    setisCancelling(true);
                   }}
                 >
                   Cancel

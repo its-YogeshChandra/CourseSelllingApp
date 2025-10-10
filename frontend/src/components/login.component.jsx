@@ -6,12 +6,15 @@ import { Link, useNavigate } from "react-router";
 import authService from "../services/auth.js";
 import validator from "validator";
 import { useSearchParams } from "react-router";
+import { Button } from "../components/ui/button.js";
 
 function Login() {
   const [logsendData, setLogSendData] = useState(null);
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
   const values = searchParams.get("data");
+  console.log(location);
+  console.log(values);
   const {
     register,
     handleSubmit,
@@ -42,16 +45,22 @@ function Login() {
     const loginVal = await authService.login(logsendData);
 
     if (loginVal) {
-      const path = "/"+ location;
-      switch (location) {
-        case "coursedisplay":
-          navigate(`${path}?id=${values}`);
-          break;
-        case "home":
-         navigate("/")
-        default:
-          navigate(`${path}`);
-          break;
+      if (location) {
+        const path = "/" + location;
+        console.log(location);
+        switch (location) {
+          case "coursedisplay":
+            navigate(`${path}?id=${values}`);
+            break;
+          case "home":
+            navigate("/");
+            break;
+          default:
+            navigate(`${path}`);
+            break;
+        }
+      } else {
+        navigate("/");
       }
     }
   };

@@ -6,8 +6,30 @@ import { AccountForm } from "@/components/profile/account-form";
 import { SubscriptionCard } from "@/components/profile/subscription-card";
 import { PaymentMethods } from "@/components/profile/payment-methods";
 import { Preferences } from "@/components/profile/preferences";
+import authService from "../services/auth";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import Loader from "../components/customComp/loaderAnimation";
 
 export default function TestingProfile() {
+  const { userId } = useParams();
+  const userid = userId.replace(":", "");
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+    const dataLoader = async () => {
+      const data = await authService.findUserHandler(userid);
+      //update the sate using the data
+      if (data.success == true) {
+        const values = data.data;
+        setUserData(values);
+        
+      }
+    };
+    dataLoader();
+  }, []);
+ if(!userData){
+  return <Loader />
+ } else{
   return (
     <main className="min-h-dvh mt-4 md:mt-8 sm:mt-10 max-sm:mt-10 font-inter">
       <section className="container mx-auto px-4 py-6 md:py-10">
@@ -67,4 +89,5 @@ export default function TestingProfile() {
       </section>
     </main>
   );
+}
 }

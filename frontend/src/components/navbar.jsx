@@ -57,7 +57,7 @@ export default function Navbar() {
         location: "home",
         data: "",
       };
-      const query = new URLSearchParams(meta).toString();
+     const query = new URLSearchParams(meta).toString();
       navigate(`/auth/signup?${query}`);
     }
   };

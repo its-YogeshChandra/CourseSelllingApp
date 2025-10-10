@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router";
 import authService from "../services/auth.js";
 import GoogleLogin from "./googleSignin.jsx";
 import { useSearchParams } from "react-router";
-
 const regexCheck = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{5,20}$"
 );
@@ -46,6 +45,15 @@ function Signup() {
 
   const navigate = useNavigate();
 
+  const navigatetoLogin = () => {
+    const meta = {
+      location: location,
+      data: values,
+    };
+    const query = new URLSearchParams(meta).toString();
+    navigate(`/auth/login?${query}`);
+  };
+
   const signup = async (data) => {
     try {
       const val = await authService.signup(data);
@@ -58,7 +66,6 @@ function Signup() {
           //check for navigation options (if courselocation display send id too)
           if (location) {
             const path = "/" + location;
-            console.log(location);
             switch (location) {
               case "coursedisplay":
                 navigate(`${path}?id=${values}`);
@@ -194,12 +201,15 @@ function Signup() {
                 <p className="inline text-gray-300">
                   Already have an account?{" "}
                 </p>
-                <Link
-                  to="/auth/login"
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigatetoLogin();
+                  }}
                   className="text-[#fd3556] hover:text-[#e52e4a] transition-colors font-medium"
                 >
                   Sign In
-                </Link>
+                </button>
               </div>
             </div>
           </div>
