@@ -1,4 +1,3 @@
-import React from "react";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,7 @@ import { useEffect } from "react";
 import authService from "../../services/auth";
 import { PasswordSection } from "../subCompnents/updatePasswordsection";
 import { useParams } from "react-router";
-export function AccountForm() {
+export function AccountForm({ data }) {
   const [isEditable, setIsEditable] = useState(false);
   const [ispasswordEditable, setisPasswordEditable] = useState(false);
   const [username, setUsername] = useState("");
@@ -37,45 +36,48 @@ export function AccountForm() {
 
   //calling backend api for data
   useEffect(() => {
-    const dataFetcher = async () => {
-      const data = await authService.findUserHandler(userid);
-      if (data) {
-        const neededAttribute = ["email", "username", "fullname"];
-        const funcObj = {
-          username: (value) => {
-            setUsername(value);
-          },
-          email: (value) => {
-            setEmail(value);
-          },
-          fullname: (value) => {
-            setfullName(value);
-          },
-        };
-        for (const key in data.data) {
-          if (neededAttribute.includes(key)) {
-            console.log(key)
-            setValue(`${key}`, data.data[key]);
-            funcObj[key](data.data[key]);
-            setDataPresent(true);
-          }
+    if (data) {
+      const neededAttribute = ["email", "username", "fullname"];
+      const funcObj = {
+        username: (value) => {
+          setUsername(value);
+        },
+        email: (value) => {
+          setEmail(value);
+        },
+        fullname: (value) => {
+          setfullName(value);
+        },
+      };
+      for (const key in data.data) {
+        if (neededAttribute.includes(key)) {
+          setValue(`${key}`, data.data[key]);
+          funcObj[key](data.data[key]);
+          setDataPresent(true);
         }
       }
+    }
+  }, [data]);
+
+  const onCancelling = () => {
+    const keys = ["email", "username", "fullname"];
+    const valObj = {
+      email: email,
+      username: username,
+      fullname: fullName,
     };
-    dataFetcher();
-  }, [userId]);
-
- const onCancelling = ()=>{
-  
- }
- 
-
+    keys.map((key) => {
+      setValue(`${key}`, `${valObj[key]}`);
+    });
+    setIsEditable((prev) => !prev);
+  };
 
   const onSubmit = async (values) => {
     let payload = [];
     // loop the values and extract the data
     for (const key in values) {
-      if (key !== watch(`${key}`)) {
+      if (values[key] !== watch(`${key}`)) {
+        console.log(watch(`${key}`));
         const userId = userid;
         const operation = key;
         const newData = values[key];
@@ -83,10 +85,14 @@ export function AccountForm() {
         //populate the payload
         payload.push(userId, operation, newData);
       }
-    }
-    const data = await authService.updateProfileInfo(payload);
-    if (data.success == true) {
       setIsEditable((prev) => !prev);
+    }
+
+    if (payload.length > 0) {
+      const data = await authService.updateProfileInfo(payload);
+      if (data.success == true) {
+        setIsEditable((prev) => !prev);
+      }
     }
   };
 
@@ -137,7 +143,7 @@ export function AccountForm() {
                 <Button
                   type="button"
                   onClick={() => {
-                    setisCancelling(true);
+                    onCancelling();
                   }}
                 >
                   Cancel

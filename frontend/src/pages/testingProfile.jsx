@@ -20,7 +20,7 @@ export default function TestingProfile() {
       const data = await authService.findUserHandler(userid);
       //update the sate using the data
       if (data.success == true) {
-        const values = data.data;
+        const values = data;
         setUserData(values);
         
       }
@@ -44,7 +44,7 @@ export default function TestingProfile() {
                 <CardTitle className="text-balance">Account</CardTitle>
               </CardHeader>
               <CardContent>
-                <AccountForm />
+                <AccountForm data = {userData}/>
               </CardContent>
             </Card>
 
