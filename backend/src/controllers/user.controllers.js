@@ -106,6 +106,7 @@ const googleLogin = asyncHandler(async (req, res) => {
     const option = {
       httpOnly: true,
       secure: false,
+      // maxAge: 10*60*60*1000
     };
 
     const access_Token = alreadyDbuser.generateAccessToken();
@@ -172,7 +173,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   //clear refresh token form db
   //clear refresh token from cookies
   // send back response to the user
-
+  console.log(req.user)
   const data = req.user;
 
   const mongoUser = await User.findById(data._id);
@@ -184,7 +185,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   const option = {
     httpOnly: true,
-    secure: false,
+    secure: true,
   };
   res
     .status(200)
