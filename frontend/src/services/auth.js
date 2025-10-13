@@ -44,7 +44,7 @@ export class AuthServices {
       }
     } catch (error) {
       if (error instanceof Error) {
-        throw error;
+      return error.response.data
       }
     }
   }

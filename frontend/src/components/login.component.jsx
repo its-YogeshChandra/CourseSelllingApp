@@ -13,8 +13,6 @@ function Login() {
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
   const values = searchParams.get("data");
-  console.log(location);
-  console.log(values);
   const {
     register,
     handleSubmit,
@@ -27,27 +25,21 @@ function Login() {
   }
 
   const Login = async (data) => {
+    let logSendData = {};
     const isEmail = validator.isEmail(data.usernameORemail);
     if (isEmail) {
-      setLogSendData({
-        username: null,
-        email: data.usernameORemail,
-        password: data.password,
-      });
+      (logSendData.username = null),
+        (logSendData.email = data.usernameORemail),
+        (logSendData.password = data.password);
     } else {
-      setLogSendData({
-        username: data.usernameORemail,
-        email: null,
-        password: data.password,
-      });
+      (logSendData.username = data.usernameORemail),
+        (logSendData.email = null),
+        (logSendData.password = data.password);
     }
-
-    const loginVal = await authService.login(logsendData);
-
+    const loginVal = await authService.login(logSendData);
     if (loginVal) {
       if (location) {
         const path = "/" + location;
-        console.log(location);
         switch (location) {
           case "coursedisplay":
             navigate(`${path}?id=${values}`);
