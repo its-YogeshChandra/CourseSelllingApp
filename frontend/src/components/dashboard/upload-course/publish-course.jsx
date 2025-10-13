@@ -37,7 +37,7 @@ export function PublishCourse({
   onBackToLessons,
   onBackToCourse,
   onPublish,
-  setStep
+  setStep,
 }) {
   const [price, setPrice] = useState({
     price: "",
@@ -74,7 +74,6 @@ export function PublishCourse({
 
       //calling backend api
       const upload = await courseServices.uploadCourse(courseData);
-      console.log(upload);
       if (upload) {
         const resetForm = () => {
           setCourse({

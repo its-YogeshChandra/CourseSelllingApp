@@ -271,7 +271,6 @@ export default function CoursePlaylist({
   };
 
   if (courseValues && lessons) {
-    console.log(lessons);
     return (
       <div className="w-full bg-white  shadow-md overflow-hidden font-inter rounded-2xl">
         {/* Course Header */}

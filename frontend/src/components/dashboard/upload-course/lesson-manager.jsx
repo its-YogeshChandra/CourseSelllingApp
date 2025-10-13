@@ -88,7 +88,6 @@ export function LessonManager({
   };
 
   const editlesson = (lessonid) => {
-    console.log(lessonid);
     //collect data from parameter and add it into state
     if (lessonid !== "") {
       setupdLessonid(lessonid);

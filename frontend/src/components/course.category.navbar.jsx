@@ -11,7 +11,6 @@ export default function CourseFilteringNavbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("Searching for:", searchQuery);
     // Implement your search logic here
   };
 

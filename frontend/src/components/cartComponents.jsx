@@ -39,7 +39,6 @@ export default function CheckoutPage({ courseId, studentId }) {
       const combinedData = await courseServices.getCourseandLessonData(
         courseId
       );
-      console.log(combinedData);
 
       if (!combinedData) return;
       else {
@@ -55,7 +54,6 @@ export default function CheckoutPage({ courseId, studentId }) {
           pricekeyArr.map((e) => {
             if (e.currency == courseData.price.currency) {
               const displayPrice = e.icon + courseData.price.price;
-              console.log(displayPrice);
               setCartItems((prev) => [
                 {
                   ...prev,
@@ -75,7 +73,6 @@ export default function CheckoutPage({ courseId, studentId }) {
   }, [courseId]);
 
   // Log the cart items to see what is being displayed
-  console.log(cartItems);
 
   const removeItem = (id) => {
     setCartItems(cartItems.filter((item) => item._id !== id));

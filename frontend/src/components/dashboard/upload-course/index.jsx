@@ -22,8 +22,6 @@ export function UploadNewCourse() {
     lessons: [],
   });
 
-  console.log(course);
-  console.log(course.lessons.length);
 
   const handleCourseSubmit = async (courseData) => {
     if (!courseData.title || !courseData.description || !courseData.category) {
@@ -61,7 +59,6 @@ export function UploadNewCourse() {
 
   //for adding lessons
   const handleLessonsComplete = async (data, courseId) => {
-    console.log(data);
     //checking for data has lessons
     if (!data) {
       toast.error("No lesson", {
@@ -73,7 +70,6 @@ export function UploadNewCourse() {
     //get course and update the course state
     const valfromdb = await getData();
     const neededVal = valfromdb.filter((e) => e.id === courseId);
-    console.log(neededVal[0]);
     setCourse(neededVal[0]);
   };
 
@@ -87,11 +83,9 @@ export function UploadNewCourse() {
     }
     //deletelesson and update the courseobject id
     const deletetheLesson = await deleteLesson(courseId, lessonId);
-    console.log(deletetheLesson);
     //get course and update the course state
     const valfromdb = await getData();
     const neededVal = valfromdb.filter((e) => e.id === courseId);
-    console.log(neededVal);
     localStorageService.setinStorage("courseData", neededVal[0]);
     setCourse(neededVal[0]);
   };

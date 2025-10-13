@@ -19,7 +19,6 @@ export function ProfileHeader({ userData }) {
   const logOut = async () => {
     //calling the backend api
     const data = await authService.logOut();
-    console.log(data)
     if (data.success == true) {
       //navigate user to home
       navigate("/");

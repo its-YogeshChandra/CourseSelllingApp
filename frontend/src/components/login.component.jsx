@@ -9,7 +9,6 @@ import { useSearchParams } from "react-router";
 import { Button } from "../components/ui/button.js";
 
 function Login() {
-  const [logsendData, setLogSendData] = useState(null);
   const [searchParams] = useSearchParams();
   const location = searchParams.get("location");
   const values = searchParams.get("data");

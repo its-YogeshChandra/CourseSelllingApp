@@ -50,7 +50,6 @@ export default function GoogleLogin() {
             navigate(`${path}?id=${values}`);
             break;
           case "home":
-            console.log("inside the home");
             navigate("/");
             break;
           default:
