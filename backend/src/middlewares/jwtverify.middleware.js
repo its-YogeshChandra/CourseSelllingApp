@@ -14,8 +14,6 @@ const jwtVerify = asyncHandler(async (req, _, next) => {
     throw new ApiError("Unauthorized request");
   }
   const decodedUser = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  console.log(`decodedUser :`) 
-  console.log(decodedUser)
   if (type == "teacher") {
     const mongoUser = await Instructor.findById(decodedUser._id);
     if (!mongoUser) {

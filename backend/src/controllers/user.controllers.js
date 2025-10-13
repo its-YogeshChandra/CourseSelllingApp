@@ -173,7 +173,6 @@ const logoutUser = asyncHandler(async (req, res) => {
   //clear refresh token form db
   //clear refresh token from cookies
   // send back response to the user
-  console.log(req.user)
   const data = req.user;
 
   const mongoUser = await User.findById(data._id);
