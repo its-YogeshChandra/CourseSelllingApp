@@ -77,7 +77,7 @@ courseRouter.route("/uploadlessons").post(uploadMiddleware, uploadlessons);
 courseRouter.route("/getCourseData").get(getCourses);
 
 //#4  for getting course and lesson data both
-courseRouter.route("/getCourse&lessonData").get(getCourseAndLessons);
+courseRouter.route("/getCourseAndLessonData").get(getCourseAndLessons);
 
 //#5 for checking student information
 courseRouter.route("/isSubscribed").post(isSubscribed);

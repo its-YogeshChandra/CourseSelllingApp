@@ -10,7 +10,13 @@ import {
 } from "@/components/ui/card";
 
 
+/**
+ * MessagesCard component - displays recent student messages
+ * Shows the 3 most recent messages with unread status highlighting
+ * Provides quick access to student communications
+ */
 export function MessagesCard() {
+  // Mock message data - would be fetched from API in production
   const mockMessages = [
     {
       id: 1,
@@ -46,28 +52,35 @@ export function MessagesCard() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
+          {/* Display up to 3 most recent messages */}
           {mockMessages.slice(0, 3).map((message) => (
             <div
               key={message.id}
-              className={`p-3 rounded-lg border ${
-                message.unread
+              className={`p-3 rounded-lg border ${message.unread
                   ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                   : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-              }`}
+                }`}
             >
+              {/* Message header with student name and timestamp */}
               <div className="flex justify-between items-start mb-2">
                 <div className="font-medium text-sm">{message.student}</div>
                 <div className="text-xs text-muted-foreground">
                   {message.time}
                 </div>
               </div>
+
+              {/* Course name */}
               <div className="text-xs text-muted-foreground mb-1">
                 {message.course}
               </div>
+
+              {/* Message content */}
               <div className="text-sm">{message.message}</div>
             </div>
           ))}
         </div>
+
+        {/* View all messages button */}
         <Button variant="outline" className="w-full mt-4">
           <Mail className="mr-2 h-4 w-4" />
           View All Messages

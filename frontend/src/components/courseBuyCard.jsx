@@ -39,25 +39,48 @@ export default function CourseBuyCard({ courseData }) {
 
   //check for user signup or not
   const checker = async () => {
-    const data = await authService.authMehandler();
+    // Validate courseData exists before proceeding
+    if (!courseData || !courseData._id) {
+      console.error("Course data not available yet");
+      return;
+    }
 
-    if (data.success == true) {
-      //check if user has subscribed to the course
-      const studentId = data.data._id;
-      const val = await courseServices.isSubscribed(courseData._id, studentId);
-      if (val.success == true) {
+    try {
+      const data = await authService.authMehandler();
+
+      // Check if auth was successful AND data exists
+      if (data?.success === true && data?.data?._id) {
+        // User is authenticated - check if already subscribed to course
+        const studentId = data.data._id;
+        const val = await courseServices.isSubscribed(courseData._id, studentId);
+
+        if (val?.success === true) {
+          // User is already subscribed - could redirect to course player
+          console.log("User already subscribed to this course");
+        } else {
+          // User not subscribed - redirect to cart
+          const meta = {
+            location: "coursedisplay",
+            data: courseData._id || "",
+            studentId: studentId || ""
+          };
+          const query = new URLSearchParams(meta).toString();
+          navigate(`/cart?${query}`);
+        }
       } else {
+        // User is not authenticated - redirect to signup
         const meta = {
           location: "coursedisplay",
           data: courseData._id || "",
-          studentId: studentId || ""
         };
         const query = new URLSearchParams(meta).toString();
-        navigate(`/cart?${query}`);
+        navigate(`/auth/signup?${query}`);
       }
-    } else {
+    } catch (error) {
+      // Handle unexpected errors
+      console.error("Error checking authentication:", error);
+      // Redirect to signup on error
       const meta = {
-        
         location: "coursedisplay",
         data: courseData._id || "",
       };

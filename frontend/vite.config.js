@@ -13,10 +13,10 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "https://courseselllingapp-backend.onrender.com",
-        // target: "http://localhost:8080/",
+        //target: "https://courseselllingapp-backend.onrender.com",
+        target: "http://localhost:8080/",
         changeOrigin: true,
-        
+
       },
     },
   },

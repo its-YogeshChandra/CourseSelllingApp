@@ -42,14 +42,18 @@ export function DashboardLayout() {
 
   return (
     <div
-      className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${
-        darkMode ? "dark" : ""
-      }`}
+      className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${darkMode ? "dark" : ""
+        }`}
     >
       <div className="flex">
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="lg:pl-64 flex flex-col flex-1">
-          <Header darkMode={darkMode} setDarkMode={setDarkMode} />
+          <Header
+            darkMode={darkMode}
+            setDarkMode={setDarkMode}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
           <main className="flex-1 p-4 sm:p-6 lg:p-8">{renderContent()}</main>
         </div>
       </div>

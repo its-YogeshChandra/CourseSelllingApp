@@ -47,18 +47,28 @@ import { toast } from "sonner";
 import { mockCourses } from "@/lib/mock-data";
 import { UploadCourseModal } from "./upload-course-modal";
 
+/**
+ * CoursesTable component - displays instructor's courses with filtering and pagination
+ * Features: status filtering, pagination, course actions (edit, view, delete)
+ * Responsive table with horizontal scroll on mobile devices
+ */
 export function CoursesTable() {
+  // State management for filtering, pagination, and upload modal
   const [courseFilter, setCourseFilter] = React.useState("all");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isUploadModalOpen, setIsUploadModalOpen] = React.useState(false);
 
+  // Pagination configuration
   const coursesPerPage = 3;
+
+  // Filter courses based on selected status
   const filteredCourses = mockCourses.filter((course) => {
     if (courseFilter === "all") return true;
     return course.status.toLowerCase() === courseFilter.toLowerCase();
   }
   );
 
+  // Calculate pagination values
   const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
   const startIndex = (currentPage - 1) * coursesPerPage;
   const paginatedCourses = filteredCourses.slice(
@@ -66,6 +76,7 @@ export function CoursesTable() {
     startIndex + coursesPerPage
   );
 
+  // Course action handlers
   const handleDeleteCourse = (courseId, courseTitle) => {
     toast.success("Course Deleted", {
       description: `"${courseTitle}" has been successfully deleted.`,
@@ -104,6 +115,7 @@ export function CoursesTable() {
         </div>
       </CardHeader>
       <CardContent>
+        {/* Horizontal scroll wrapper for table responsiveness on mobile */}
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -136,8 +148,8 @@ export function CoursesTable() {
                         course.status === "Published"
                           ? "default"
                           : course.status === "Draft"
-                          ? "secondary"
-                          : "outline"
+                            ? "secondary"
+                            : "outline"
                       }
                     >
                       {course.status}

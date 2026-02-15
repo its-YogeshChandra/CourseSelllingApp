@@ -20,16 +20,27 @@ export default function CourseDisplay() {
   // fetch data from backend using this id
   useEffect(() => {
     const func = async () => {
-      const combinedData = await courseServices.getCourseandLessonData(
-        courseId
-      );
+      try {
+        const combinedData = await courseServices.getCourseandLessonData(
+          courseId
+        );
 
-      //set data into the state variables
-      setCourseVal(combinedData.data.course);
-      setLessonVal(combinedData.data.lessons);
+        // Validate response data exists before accessing nested properties
+        if (combinedData?.data?.course && combinedData?.data?.lessons) {
+          setCourseVal(combinedData.data.course);
+          setLessonVal(combinedData.data.lessons);
+        } else {
+          console.error("Invalid course data received:", combinedData);
+        }
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+      }
     };
-    func();
-  }, []);
+
+    if (courseId) {
+      func();
+    }
+  }, [courseId]);
 
   return (
     <div className="w-screen h-screen gap-y-4">
@@ -40,7 +51,7 @@ export default function CourseDisplay() {
           <CourseContent lessonData={lessonVal} />
         </div>
         <div className="w-screen h-max px-5 ">
-          <CourseBuyCard courseData = {courseVal} />
+          <CourseBuyCard courseData={courseVal} />
           <CourseInstSection />
         </div>
       </div>

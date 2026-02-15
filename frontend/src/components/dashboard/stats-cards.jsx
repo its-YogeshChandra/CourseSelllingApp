@@ -3,19 +3,30 @@ import { BookOpen, DollarSign, MessageSquare, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { mockCourses, mockMessages } from "@/lib/mock-data";
 
+/**
+ * StatsCards component - displays key metrics in card format
+ * Shows total courses, active students, earnings, and unread messages
+ * Uses responsive grid layout that adapts from 1 column on mobile to 4 columns on large screens
+ */
 export function StatsCards() {
+  // Calculate total students across all courses
   const totalStudents = mockCourses.reduce(
     (sum, course) => sum + course.students,
     0
   );
+
+  // Count published courses
   const publishedCourses = mockCourses.filter(
     (course) => course.status === "Published"
   ).length;
+
+  // Calculate total earnings across all courses
   const totalEarnings = mockCourses.reduce(
     (sum, course) => sum + course.earnings,
     0
   );
 
+  // Define stat cards configuration
   const stats = [
     {
       title: "Total Courses",
@@ -44,6 +55,7 @@ export function StatsCards() {
   ];
 
   return (
+    // Responsive grid: 1 column mobile, 2 columns tablet, 4 columns desktop
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {stats.map((stat) => {
         const Icon = stat.icon;

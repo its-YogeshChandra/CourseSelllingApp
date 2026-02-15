@@ -1,9 +1,11 @@
 "use client";
 
+import * as React from "react";
 import {
   Bell,
   ChevronDown,
   LogOut,
+  Menu,
   Moon,
   Settings,
   Sun,
@@ -18,18 +20,55 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { DashboardSidebarContent } from "./sidebar";
 
-export function Header({ darkMode, setDarkMode }) {
+export function Header({ darkMode, setDarkMode, activeTab, setActiveTab }) {
+  // State to control mobile sidebar open/close
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            {/* Mobile menu button - visible only on mobile (< lg) */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden"
+                  aria-label="Toggle menu"
+                >
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-64 p-0">
+                {/* Mobile sidebar content - reuses DashboardSidebarContent */}
+                <div className="flex flex-col h-full bg-white dark:bg-gray-800">
+                  <DashboardSidebarContent
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    onItemClick={() => setMobileMenuOpen(false)}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            {/* Page title */}
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Teacher Dashboard
             </h1>
           </div>
+
+          {/* Right side header actions */}
           <div className="flex items-center space-x-4">
+            {/* Dark mode toggle */}
             <Button
               variant="ghost"
               size="icon"
@@ -43,6 +82,7 @@ export function Header({ darkMode, setDarkMode }) {
               )}
             </Button>
 
+            {/* Notifications button with badge */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
@@ -50,6 +90,7 @@ export function Header({ darkMode, setDarkMode }) {
               </span>
             </Button>
 
+            {/* User profile dropdown menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center space-x-2">
