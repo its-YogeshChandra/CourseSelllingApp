@@ -9,15 +9,24 @@ const app = express();
 // for cookies
 app.use(cookieParser());
 
+// CORS configuration
+// origin: ["*"] with credentials: true is INVALID per the CORS spec.
+// Browsers silently reject it, breaking cookies and auth headers.
+// Use ALLOWED_ORIGINS env var (comma-separated) to whitelist domains.
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+  : ["http://localhost:5173", "http://localhost:3000"];
+
 app.use(
   cors({
-    origin: [
-      // "https://course-sellling-appfrontend.vercel.app/",
-      // "https://course-sellling-ap-git-4d3c10-pandittheroyal-gmailcoms-projects.vercel.app/",
-      // "https://course-sellling-appfrontend-15ftt10kd.vercel.app/",
-      // "http://localhost:5173/",
-      "*",
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (server-to-server, curl, etc.)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
