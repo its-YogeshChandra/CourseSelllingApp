@@ -8,7 +8,7 @@
 #   ./init-ssl.sh yourdomain.com your@email.com
 #
 # Prerequisites:
-#   - DNS A records pointing to this server
+#   - DNS A/AAAA records pointing to this server
 #   - Docker & Docker Compose installed
 #   - Port 80 free (no other web server running)
 #   - nginx/nginx.conf = HTTP-only config (default)
@@ -34,13 +34,34 @@ echo ""
 
 # Step 1: Verify DNS is pointing to this server
 echo "[1/5] Verifying DNS for $DOMAIN..."
-SERVER_IP=$(curl -s ifconfig.me)
-DNS_IP=$(dig +short "$DOMAIN" | head -1)
-if [ "$SERVER_IP" != "$DNS_IP" ]; then
-  echo "  ⚠️  WARNING: DNS mismatch!"
-  echo "  Server IP:  $SERVER_IP"
-  echo "  DNS points: $DNS_IP"
-  echo "  Make sure your A record points to $SERVER_IP"
+
+# Get server IPs (both IPv4 and IPv6)
+SERVER_IPv4=$(curl -4 -s --connect-timeout 5 ifconfig.me 2>/dev/null || echo "none")
+SERVER_IPv6=$(curl -6 -s --connect-timeout 5 ifconfig.me 2>/dev/null || echo "none")
+
+# Get DNS records
+DNS_A=$(dig +short "$DOMAIN" A | head -1)
+DNS_AAAA=$(dig +short "$DOMAIN" AAAA | head -1)
+
+echo "  Server IPv4: $SERVER_IPv4"
+echo "  Server IPv6: $SERVER_IPv6"
+echo "  DNS A:       ${DNS_A:-not set}"
+echo "  DNS AAAA:    ${DNS_AAAA:-not set}"
+
+# Check if at least one record matches
+DNS_OK=false
+if [ "$SERVER_IPv4" != "none" ] && [ "$SERVER_IPv4" = "$DNS_A" ]; then
+  DNS_OK=true
+fi
+if [ "$SERVER_IPv6" != "none" ] && [ "$SERVER_IPv6" = "$DNS_AAAA" ]; then
+  DNS_OK=true
+fi
+
+if [ "$DNS_OK" = false ]; then
+  echo ""
+  echo "  ⚠️  WARNING: No DNS record matches this server's IP!"
+  echo "  If using IPv4 → add an A record pointing to $SERVER_IPv4"
+  echo "  If using IPv6 → add an AAAA record pointing to $SERVER_IPv6"
   read -p "  Continue anyway? (y/N) " -n 1 -r
   echo ""
   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -48,7 +69,7 @@ if [ "$SERVER_IP" != "$DNS_IP" ]; then
     exit 1
   fi
 else
-  echo "  ✅ DNS is correctly pointing to $SERVER_IP"
+  echo "  ✅ DNS is correctly configured"
 fi
 
 # Step 2: Start nginx + backend + frontend with HTTP-only config
