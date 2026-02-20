@@ -41,8 +41,8 @@ RUN pnpm run build
 # Serve built static files with a lightweight nginx image
 FROM nginx:stable-alpine
 
-# Remove default nginx content
-RUN rm -rf /usr/share/nginx/html/*
+# Remove default nginx content and recreate the directory
+RUN rm -rf /usr/share/nginx/html && mkdir -p /usr/share/nginx/html
 
 # Copy built frontend assets
 COPY --from=builder /app/dist /usr/share/nginx/html
