@@ -6,6 +6,13 @@
 # Usage:
 #   chmod +x init-ssl.sh
 #   ./init-ssl.sh yourdomain.com your@email.com
+#
+# Prerequisites:
+#   - DNS A records pointing to this server
+#   - Docker & Docker Compose installed
+#   - Port 80 free (no other web server running)
+#   - nginx/nginx.conf = HTTP-only config (default)
+#   - nginx/nginx.ssl.conf = SSL template with "yourdomain.com" placeholders
 # ============================================================
 
 set -e
@@ -19,47 +26,42 @@ if [ -z "$DOMAIN" ] || [ -z "$EMAIL" ]; then
   exit 1
 fi
 
+echo ""
 echo "============================================"
 echo "  SSL Setup for: $DOMAIN"
 echo "============================================"
+echo ""
 
-# Step 1: Replace placeholder domain in nginx config
-echo "[1/4] Updating nginx config with domain: $DOMAIN"
-sed -i "s/yourdomain.com/$DOMAIN/g" nginx/nginx.conf
-sed -i "s/yourdomain.com/$DOMAIN/g" docker-compose.yml
+# Step 1: Verify DNS is pointing to this server
+echo "[1/5] Verifying DNS for $DOMAIN..."
+SERVER_IP=$(curl -s ifconfig.me)
+DNS_IP=$(dig +short "$DOMAIN" | head -1)
+if [ "$SERVER_IP" != "$DNS_IP" ]; then
+  echo "  ⚠️  WARNING: DNS mismatch!"
+  echo "  Server IP:  $SERVER_IP"
+  echo "  DNS points: $DNS_IP"
+  echo "  Make sure your A record points to $SERVER_IP"
+  read -p "  Continue anyway? (y/N) " -n 1 -r
+  echo ""
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Aborted."
+    exit 1
+  fi
+else
+  echo "  ✅ DNS is correctly pointing to $SERVER_IP"
+fi
 
-# Step 2: Create a temporary nginx config (HTTP only) for cert issuance
-echo "[2/4] Creating temporary HTTP-only nginx config..."
-cat > nginx/nginx.tmp.conf << 'EOF'
-server {
-    listen 80;
-    server_name DOMAIN_PLACEHOLDER;
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }
-
-    location / {
-        return 200 'SSL setup in progress...';
-        add_header Content-Type text/plain;
-    }
-}
-EOF
-sed -i "s/DOMAIN_PLACEHOLDER/$DOMAIN/g" nginx/nginx.tmp.conf
-
-# Swap in the temp config
-cp nginx/nginx.conf nginx/nginx.conf.bak
-cp nginx/nginx.tmp.conf nginx/nginx.conf
-
-# Step 3: Start nginx with HTTP-only config
-echo "[3/4] Starting nginx for certificate issuance..."
-docker compose up -d nginx
+# Step 2: Start nginx + backend + frontend with HTTP-only config
+# (nginx.conf is already the HTTP-only version by default)
+echo "[2/5] Starting services with HTTP-only config..."
+docker compose up -d nginx backend frontend
 
 # Wait for nginx to be ready
+echo "  Waiting for nginx to start..."
 sleep 5
 
-# Step 4: Request the certificate
-echo "[4/4] Requesting SSL certificate from Let's Encrypt..."
+# Step 3: Request the SSL certificate via Certbot
+echo "[3/5] Requesting SSL certificate from Let's Encrypt..."
 docker compose run --rm certbot certonly \
   --webroot \
   --webroot-path=/var/www/certbot \
@@ -69,19 +71,30 @@ docker compose run --rm certbot certonly \
   -d "$DOMAIN" \
   -d "www.$DOMAIN"
 
-# Restore the full nginx config (with SSL)
-echo "Restoring full nginx config..."
-cp nginx/nginx.conf.bak nginx/nginx.conf
-rm nginx/nginx.tmp.conf nginx/nginx.conf.bak
+# Step 4: Replace domain placeholders in SSL config and activate it
+echo "[4/5] Activating SSL nginx config..."
 
-# Restart everything
-echo "Starting all services..."
+# Create the production SSL config from the template
+sed "s/yourdomain.com/$DOMAIN/g" nginx/nginx.ssl.conf > nginx/nginx.conf
+
+# Also update the ALLOWED_ORIGINS in docker-compose.yml
+sed -i.bak "s/yourdomain.com/$DOMAIN/g" docker-compose.yml
+rm -f docker-compose.yml.bak
+
+# Step 5: Restart everything with SSL
+echo "[5/5] Restarting all services with SSL..."
 docker compose down
 docker compose up -d
 
 echo ""
 echo "============================================"
-echo "  SSL setup complete!"
+echo "  ✅ SSL setup complete!"
 echo "  Your app is live at: https://$DOMAIN"
 echo "  Certbot will auto-renew certificates."
 echo "============================================"
+echo ""
+echo "  Useful commands:"
+echo "    docker compose logs -f nginx     # check nginx logs"
+echo "    docker compose logs -f backend   # check backend logs"
+echo "    docker compose ps                # check all services"
+echo ""
