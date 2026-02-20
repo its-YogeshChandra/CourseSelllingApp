@@ -15,8 +15,6 @@
 #   - nginx/nginx.ssl.conf = SSL template with "yourdomain.com" placeholders
 # ============================================================
 
-set -e
-
 DOMAIN=$1
 EMAIL=$2
 
@@ -81,16 +79,45 @@ docker compose up -d nginx backend frontend
 echo "  Waiting for nginx to start..."
 sleep 5
 
+# Verify nginx is responding
+if ! curl -s -o /dev/null -w "%{http_code}" http://localhost | grep -q "200\|301\|302"; then
+  echo ""
+  echo "  ❌ ERROR: Nginx is not responding on port 80!"
+  echo "  Check logs with: docker compose logs nginx"
+  echo "  Leaving services running with HTTP-only config."
+  exit 1
+fi
+echo "  ✅ Nginx is responding on port 80"
+
 # Step 3: Request the SSL certificate via Certbot
+# NOTE: --entrypoint is needed because docker-compose.yml sets certbot's
+# entrypoint to a renewal loop. We override it here to run certonly instead.
 echo "[3/5] Requesting SSL certificate from Let's Encrypt..."
-docker compose run --rm certbot certonly \
+if ! docker compose run --rm --entrypoint "certbot" certbot certonly \
   --webroot \
   --webroot-path=/var/www/certbot \
   --email "$EMAIL" \
   --agree-tos \
   --no-eff-email \
   -d "$DOMAIN" \
-  -d "www.$DOMAIN"
+  -d "www.$DOMAIN"; then
+
+  echo ""
+  echo "  ❌ ERROR: Certbot failed to obtain SSL certificate!"
+  echo ""
+  echo "  Common causes:"
+  echo "    1. DNS not pointing to this server (check A/AAAA records)"
+  echo "    2. Port 80 is blocked by a firewall"
+  echo "    3. Too many certificate requests (rate limited)"
+  echo "    4. Domain not registered or expired"
+  echo ""
+  echo "  Your site is still running on HTTP (no SSL)."
+  echo "  Fix the issue above and re-run this script."
+  echo ""
+  exit 1
+fi
+
+echo "  ✅ SSL certificate obtained successfully"
 
 # Step 4: Replace domain placeholders in SSL config and activate it
 echo "[4/5] Activating SSL nginx config..."
@@ -101,6 +128,8 @@ sed "s/yourdomain.com/$DOMAIN/g" nginx/nginx.ssl.conf > nginx/nginx.conf
 # Also update the ALLOWED_ORIGINS in docker-compose.yml
 sed -i.bak "s/yourdomain.com/$DOMAIN/g" docker-compose.yml
 rm -f docker-compose.yml.bak
+
+echo "  ✅ SSL config activated for $DOMAIN"
 
 # Step 5: Restart everything with SSL
 echo "[5/5] Restarting all services with SSL..."
