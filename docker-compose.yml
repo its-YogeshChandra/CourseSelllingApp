@@ -1,7 +1,7 @@
 # ============================================================
 # Docker Compose - Course Selling App
 # ============================================================
-# Target architecture: linux/arm64
+# Architecture: auto-detected (works on both amd64 and arm64)
 # Services:
 #   1. backend   - Node.js API server (Express)
 #   2. frontend  - Vite React app (served via nginx)
@@ -14,7 +14,7 @@
 services:
   # ---- Backend API ----
   backend:
-    platform: linux/arm64
+
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -43,7 +43,7 @@ services:
 
   # ---- Frontend (built + served by internal nginx) ----
   frontend:
-    platform: linux/arm64
+
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -82,7 +82,7 @@ services:
 
   # ---- Nginx Reverse Proxy (SSL termination) ----
   nginx:
-    platform: linux/arm64
+
     image: nginx:stable-alpine
     container_name: courseselling-nginx
     restart: unless-stopped
@@ -112,7 +112,7 @@ services:
   # ---- Certbot (SSL certificate manager) ----
   # Run once to obtain certs, then auto-renews via the entrypoint
   certbot:
-    platform: linux/arm64
+
     image: certbot/certbot
     container_name: courseselling-certbot
     volumes:
