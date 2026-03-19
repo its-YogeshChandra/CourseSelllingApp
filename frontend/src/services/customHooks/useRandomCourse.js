@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 
 const useRandomCourses = () => {
-  const arrVal = useSelector((state) => state.courseData.allcourses);
+  const arrVal = useSelector((state) => state.courseData.allcourses) || [];
 
   const shuffled = [...arrVal];
   for (let i = shuffled.length - 1; i > 0; i--) {
