@@ -37,19 +37,17 @@ ARG VITE_LOGOUT_USER
 # Build the Vite app (env vars are baked into the static bundle)
 RUN pnpm run build
 
-# ---- Production Stage ----
-# Serve built static files with a lightweight nginx image
-FROM nginx:stable-alpine
+#changing this to node alpine 
+# ---Production Stage ---
+FROM node:20-alpine AS production
 
-# Remove default nginx content and recreate the directory
-RUN rm -rf /usr/share/nginx/html && mkdir -p /usr/share/nginx/html
+#install all dependencies
+RUN pnpm install --frozen-lockfile
 
-# Copy built frontend assets
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /app
 
-# Copy custom nginx config for SPA routing
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /app/dist
 
-EXPOSE 80
+EXPOSE 3000
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "dist", "-l", "3000", "-s" ]
