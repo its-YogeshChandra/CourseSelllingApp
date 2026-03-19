@@ -37,12 +37,12 @@ ARG VITE_LOGOUT_USER
 # Build the Vite app (env vars are baked into the static bundle)
 RUN pnpm run build
 
-#changing this to node alpine 
-# ---Production Stage ---
+# ---- Production Stage ----
 FROM node:20-alpine AS production
 
-#install all dependencies
-RUN pnpm install --frozen-lockfile
+# Install pnpm and a lightweight static file server
+RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm add -g serve
 
 WORKDIR /app
 
@@ -50,4 +50,4 @@ COPY --from=builder /app/dist /app/dist
 
 EXPOSE 3000
 
-CMD ["serve", "dist", "-l", "3000", "-s" ]
+CMD ["serve", "dist", "-l", "3000", "-s"]
