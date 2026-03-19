@@ -40,10 +40,8 @@ RUN pnpm run build
 # ---- Production Stage ----
 FROM node:20-alpine AS production
 
-# Install pnpm and a lightweight static file server
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-RUN pnpm install -g serve
+# Install a lightweight static file server (npm comes with node, no extra setup)
+RUN npm install -g serve
 
 WORKDIR /app
 
