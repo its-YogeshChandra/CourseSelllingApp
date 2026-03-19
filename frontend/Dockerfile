@@ -43,9 +43,7 @@ FROM node:20-alpine AS production
 # Install pnpm and a lightweight static file server
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-RUN pnpm setup
-
-RUN pnpm add -g serve
+RUN pnpm install -g serve
 
 WORKDIR /app
 
