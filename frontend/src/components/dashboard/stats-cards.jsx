@@ -55,21 +55,21 @@ export function StatsCards() {
   ];
 
   return (
-    // Responsive grid: 1 column mobile, 2 columns tablet, 4 columns desktop
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    // Responsive grid: 2 columns on mobile, 2 on tablet, 4 on large screens
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
       {stats.map((stat) => {
         const Icon = stat.icon;
         return (
           <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2 p-3 sm:p-4 md:p-6">
+              <CardTitle className="text-xs sm:text-sm font-medium truncate pr-2">
                 {stat.title}
               </CardTitle>
-              <Icon className="h-4 w-4 text-muted-foreground" />
+              <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">{stat.subtitle}</p>
+            <CardContent className="p-3 pt-0 sm:p-4 sm:pt-0 md:p-6 md:pt-0">
+              <div className="text-lg sm:text-xl md:text-2xl font-bold">{stat.value}</div>
+              <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{stat.subtitle}</p>
             </CardContent>
           </Card>
         );

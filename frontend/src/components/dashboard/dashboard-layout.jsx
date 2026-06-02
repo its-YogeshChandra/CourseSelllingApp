@@ -1,8 +1,6 @@
-"use client";
-
 import * as React from "react";
 import { Header } from "./header";
-import { Sidebar } from "./sidebar";
+import { Sidebar, MobileTabBar } from "./sidebar";
 import { DashboardContent } from "./dashboard-content";
 import { UploadNewCourse } from "./upload-course";
 
@@ -42,21 +40,30 @@ export function DashboardLayout() {
 
   return (
     <div
-      className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${darkMode ? "dark" : ""
-        }`}
+      className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${
+        darkMode ? "dark" : ""
+      }`}
     >
-      <div className="flex">
+      <div className="flex min-h-screen">
+        {/* Desktop sidebar — hidden below lg */}
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="lg:pl-64 flex flex-col flex-1">
+
+        {/* Main content area — full width on mobile, offset on desktop */}
+        <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
           <Header
             darkMode={darkMode}
             setDarkMode={setDarkMode}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
           />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8">{renderContent()}</main>
+          <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 pb-20 lg:pb-8 overflow-x-hidden">
+            {renderContent()}
+          </main>
         </div>
       </div>
+
+      {/* Mobile bottom tab bar — visible below lg */}
+      <MobileTabBar activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   );
 }

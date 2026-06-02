@@ -271,19 +271,19 @@ export function PublishCourse({
       {/* Action Buttons */}
       <Card>
         <CardContent className="pt-6">
-          <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-4">
-            <div className="flex space-x-2">
-              <Button variant="outline" onClick={onBackToCourse}>
+          <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
+            <div className="flex flex-col xs:flex-row gap-2">
+              <Button variant="outline" onClick={onBackToCourse} className="text-sm">
                 Back to Course
               </Button>
-              <Button variant="outline" onClick={onBackToLessons}>
+              <Button variant="outline" onClick={onBackToLessons} className="text-sm">
                 Back to Lessons
               </Button>
             </div>
             <Button
               onClick={() => courseSubmit()}
               disabled={course.lessons.length === 0}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 text-sm"
               size="lg"
             >
               <Upload className="mr-2 h-4 w-4" />

@@ -1,4 +1,3 @@
-"use client";
 import { Toaster } from "@/components/ui/sonner";
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 

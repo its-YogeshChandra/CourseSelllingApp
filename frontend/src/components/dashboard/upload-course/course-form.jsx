@@ -150,11 +150,11 @@ export function CourseForm({ course, onSubmit, onReset }) {
             </div>
           </div>
 
-          <div className="flex justify-between">
-            <Button type="button" variant="outline" onClick={onReset}>
+          <div className="flex flex-col-reverse sm:flex-row justify-between gap-2">
+            <Button type="button" variant="outline" onClick={onReset} className="text-sm">
               Reset Form
             </Button>
-            <Button type="submit">Continue to Lessons</Button>
+            <Button type="submit" className="text-sm">Continue to Lessons</Button>
           </div>
         </form>
       </CardContent>
