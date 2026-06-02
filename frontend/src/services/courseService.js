@@ -7,6 +7,8 @@ const {
   getCourseandLessonUrl,
   isPresent,
   addSubscription,
+  cloudname,
+  uploadPreset
 } = courseConf;
 
 const { addCompletion, checkCompletion } = conf;
@@ -170,6 +172,36 @@ export class courseAction {
       return error.response.data;
     }
   }
+ 
+  async uploadToMediaBucket(mediaFile, fileName) {
+    const url = `https://api.cloudinary.com/v1_1/${cloudname}/auto/upload`;
+   const formData = new FormData();
+   formData.append('file', mediaFile, fileName);
+   formData.append('upload_preset', uploadPreset);
+  
+   try {
+    const response = await axios.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data' 
+      },
+      
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        console.log(`Upload Progress (${fileName}): ${percentCompleted}%`);
+      }
+    });
+
+    // Axios automatically parses the JSON response into 'data'
+    //has to clear once api get checked 
+    console.log(`Successfully uploaded: ${response.data.secure_url}`);
+    return response.data.secure_url; 
+
+  } catch (error) {
+    // Axios puts server error responses inside error.response
+    console.error("Cloudinary upload error:", error.response?.data || error.message);
+    throw error;
+  }
+}
 }
 const courseServices = new courseAction();
 
