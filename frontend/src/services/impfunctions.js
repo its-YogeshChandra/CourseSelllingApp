@@ -1,4 +1,5 @@
 import { nanoid } from "@reduxjs/toolkit";
+import { FFmpeg } from '@ffmpeg/ffmpeg';
 
 const modifiedObject = (obj, keyfromobjects) => {
   const newobj = { ...obj };
@@ -14,4 +15,21 @@ const modifiedObject = (obj, keyfromobjects) => {
   return newobj;
 };
 
-export { modifiedObject };
+//extract the uploaded files from the form and run ffmpeg wasm 
+const uploadFiles = (files) => {
+  const formData = new FormData();
+
+  
+
+   
+
+  return axios
+    .post("/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => res.data);
+};
+
+export { modifiedObject, uploadFiles };

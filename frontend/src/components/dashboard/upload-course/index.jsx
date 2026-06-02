@@ -65,7 +65,10 @@ export function UploadNewCourse() {
         description: "please add atleast one course",
       });
     }
-    //addlesson and update the courseobject id
+
+    //data received here 
+    //ffmpeg
+    //  utility function /addlesson and update the courseobject id
     const addthelesson = await addlesson(data, courseId);
     //get course and update the course state
     const valfromdb = await getData();
