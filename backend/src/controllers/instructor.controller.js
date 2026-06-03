@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { Instructor } from "../models/instructor.model.js";
-
+import { User } from "../models/user.model.js";
 
 
 const instructorSignup = asyncHandler(async (req, res) => {
@@ -13,8 +13,8 @@ const instructorSignup = asyncHandler(async (req, res) => {
       $or: [{ username }, { email }],
     });
 
-    if (dbUser) {
-      throw new ApiError(400, "User already exists");
+    if (!dbUser) {
+      throw new ApiError(400, "User doesn't exists");
     }
 
     const createUser = await Instructor.create({
@@ -67,7 +67,7 @@ const instructorLogin = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secured: true,
+    secure: true,
   };
 
   res

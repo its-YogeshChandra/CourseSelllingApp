@@ -85,4 +85,4 @@ function getOptimalChunkSize(totalBytes) {
 
 
 
-export { modifiedObject , handleVideoUpload };
+export { handleVideoUpload };

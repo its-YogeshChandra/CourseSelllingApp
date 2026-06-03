@@ -38,7 +38,7 @@ import { getData } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 import localStorageService from "../../../services/localStorage.js";
 import UpdateLessonWithPreview from "./lessonManagerComp/upload.lesson.jsx";
-import { modifiedObject, handleVideoUpload } from "../../../services/impfunctions.js";
+import { handleVideoUpload } from "../../../services/impfunctions.js";
 
 export function LessonManager({
   course,

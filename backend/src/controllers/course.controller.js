@@ -10,6 +10,13 @@ import { deleteAllFilesInFolder } from "../utils/clearFolder.js";
 const createcourse = asyncHandler(async (req, res) => {
   const { courseName, category, instructor, description, price, title } =
     req.body;
+  
+  //revamp the function
+
+  //read the directly from req.body
+  //no media will be shared through server 
+
+  
 
   const files = req.files.thumbnail;
   const { path } = files[0];
