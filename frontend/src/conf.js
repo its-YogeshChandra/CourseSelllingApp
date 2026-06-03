@@ -9,6 +9,7 @@ const conf = {
   updatePassword: import.meta.env.VITE_UPDATEPASSWORD_URL,
   updateProfile: import.meta.env.VITE_UPDATEPROFILE_URL,
   logoutUrl: import.meta.env.VITE_LOGOUT_USER,
+  createInstructor: import.meta.env.VITE_CREATEINSTRUCTOR_URL,
 };
 
 const courseConf = {

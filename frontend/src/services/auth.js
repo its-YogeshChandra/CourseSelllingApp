@@ -12,6 +12,7 @@ const {
   updatePassword,
   updateProfile,
   logoutUrl,
+  createInstructor
 } = conf;
 
 export class AuthServices {
@@ -119,6 +120,19 @@ export class AuthServices {
   async updatePassword(data) {
     try {
       const response = await axios.post(updatePassword, data);
+      if (response) {
+        return response.data;
+      }
+    } catch (error) {
+      return error.response.data;
+    }
+  }
+
+
+  //for login instructor 
+ async createInstructor(data) {
+    try {
+      const response = await axios.post(createInstructor, data);
       if (response) {
         return response.data;
       }
