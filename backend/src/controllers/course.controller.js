@@ -198,7 +198,7 @@ const isSubscribed = asyncHandler(async (req, res) => {
   }
 
   //send data to the frontend
-  res.status(200).json(200, "Student is present", isPresent);
+  res.status(200).json(new ApiResponse(200, "Student is present", isPresent));
 });
 
 // controller for adding student to the course
@@ -230,13 +230,32 @@ const addStudentToCourse = asyncHandler(async (req, res) => {
 const courseDataForPlayer = asyncHandler(async (req, res) => {
   const { courseId } = req.body;
 
+  if (!courseId) {
+    throw new ApiError(400, "courseId is required");
+  }
+
   const courseData = await Course.findById(courseId);
+  if (!courseData) {
+    throw new ApiError(404, "Course not found");
+  }
 
   const lessonData = await Lesson.find({ courseRef: courseId });
 
-  lessonData.map((lesson) => {
-    lesson.video.map();
+  const playerData = lessonData.map((lesson) => {
+    return {
+      lessonId: lesson._id,
+      title: lesson.title,
+      description: lesson.description,
+      videos: lesson.video || [],
+    };
   });
+
+  res.status(200).json(
+    new ApiResponse(200, "Player data fetched", {
+      course: courseData,
+      lessons: playerData,
+    })
+  );
 });
 export {
   createcourse,

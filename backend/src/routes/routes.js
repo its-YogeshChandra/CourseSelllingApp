@@ -92,11 +92,11 @@ courseRouter.route("/addStudentToCourse").post(addStudentToCourse);
 courseRouter.route("/getDataForPlayer").post(courseDataForPlayer);
 
 //routes for instructor
-// #1 for registering instructor
-insturctorRouter.route("/insSignup").post(instructorSignup);
+// #1 for registering as instructor (requires authenticated user)
+insturctorRouter.route("/insSignup").post(jwtVerify, instructorSignup);
 
-// #2 for logging instructor
-insturctorRouter.route("/insLogin").post(instructorLogin);
+// #2 for verifying instructor role (requires authenticated user)
+insturctorRouter.route("/insLogin").post(jwtVerify, instructorLogin);
 
 // #3 for logging out instructor
 insturctorRouter.route("/insLogout").post(jwtVerify, instructorlogout);

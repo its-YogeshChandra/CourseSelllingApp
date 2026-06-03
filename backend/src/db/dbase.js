@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { DbName } from "../constants.js";
 
 dotenv.config({
-  path: "./env",
+  path: "./.env",
 });
 
 const connectDb = async () => {
@@ -15,7 +15,8 @@ const connectDb = async () => {
       `mongoDb is connected and the host is : ${connector.connection.host}`
     );
   } catch (error) {
-    console.error(`Error is :${error}`);
+    console.error(`MongoDB connection failed: ${error}`);
+    process.exit(1);
   }
 };
 

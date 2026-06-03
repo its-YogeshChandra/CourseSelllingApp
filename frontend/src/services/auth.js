@@ -132,7 +132,10 @@ export class AuthServices {
   //for login instructor 
  async createInstructor(data) {
     try {
-      const response = await axios.post(createInstructor, data);
+      const response = await axios.post(createInstructor, data ,{
+         withCredentials: true,
+         credentials: "include",
+      });
       if (response) {
         return response.data;
       }

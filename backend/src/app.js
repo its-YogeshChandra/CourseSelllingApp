@@ -1,7 +1,7 @@
 import express, { urlencoded } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { courseRouter, router } from "./routes/routes.js";
+import { courseRouter, router, insturctorRouter } from "./routes/routes.js";
 import { errorMiddleware } from "./middlewares/globaError.middleware.js";
 
 const app = express();
@@ -51,6 +51,9 @@ app.use("/api/v1/users", router);
 
 // for course routes
 app.use("/api/v1/course", courseRouter);
+
+// for instructor routes
+app.use("/api/v1/instructor", insturctorRouter);
 
 //for global error
 app.use(errorMiddleware);

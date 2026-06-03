@@ -388,10 +388,11 @@ const updateProfileInfo = asyncHandler(async (req, res) => {
   //take the data from the body
   const data = req.body;
 
-  //loop the data and check for the conditions
-  data.map(async (element) => {
+  // Only allow updating these safe fields
+  const allowedFields = ["username", "fullname", "email"];
+
+  for (const element of data) {
     for (const key in element) {
-      //check for any issues
       if (
         element[key] == null ||
         element[key] == undefined ||
@@ -402,6 +403,12 @@ const updateProfileInfo = asyncHandler(async (req, res) => {
     }
 
     const { userId, operation, newData } = element;
+
+    // Block updates to sensitive fields
+    if (!allowedFields.includes(operation)) {
+      throw new ApiError(400, `Updating "${operation}" is not allowed`);
+    }
+
     //check on the user using userId
     const userData = await User.findById(userId);
     if (!userData) {
@@ -416,7 +423,7 @@ const updateProfileInfo = asyncHandler(async (req, res) => {
     if (!saved) {
       throw new ApiError(500, "error while saving data");
     }
-  });
+  }
 
   //send data to the frontend
   res.status(200).json(new ApiResponse(200, "data successfully updated"));
