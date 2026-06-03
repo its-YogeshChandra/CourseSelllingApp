@@ -68,7 +68,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: false,
+    secure: true,
   };
 
   res
@@ -105,7 +105,7 @@ const googleLogin = asyncHandler(async (req, res) => {
   if (alreadyDbuser) {
     const option = {
       httpOnly: true,
-      secure: false,
+      secure: true,
       // maxAge: 10*60*60*1000
     };
 
@@ -150,12 +150,12 @@ const googleLogin = asyncHandler(async (req, res) => {
   if (googleLoggedUser) {
     const option = {
       httpOnly: true,
-      secure: false,
+      secure: true,
     };
     res
       .status(200)
-      .cookie(access_Token, option)
-      .cookie(refresh_Token, option)
+      .cookie("accessToken", access_Token, option)
+      .cookie("refreshToken", refresh_Token, option)
       .json(
         new ApiResponse(
           200,

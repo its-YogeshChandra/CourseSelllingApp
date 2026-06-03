@@ -17,7 +17,8 @@ export default defineConfig({
     proxy: {
       "/api": {
         //target: "https://courseselllingapp-backend.onrender.com",
-        target: "https://learnverge.site/",
+        // target: "https://learnverge.site/",
+        target: "http://localhost:8080",
         changeOrigin: true,
 
       },
