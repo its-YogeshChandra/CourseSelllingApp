@@ -7,14 +7,16 @@ import { User } from "../models/user.model.js";
 
 const instructorSignup = asyncHandler(async (req, res) => {
     //simple signup same as user
-    const { username, email, password } = req.body;
+    const userId = req.user._id; 
 
-    const dbUser = await User.findOne({
-      $or: [{ username }, { email }],
-    });
+    const dbUser = await User.findById(userId).select("password -refreshToken");
 
     if (!dbUser) {
       throw new ApiError(400, "User doesn't exists");
+    }
+
+    if (dbUser.role === "instructor") {
+      throw new ApiError(400, "User is already an instructor")
     }
 
     //update the role in the user object 
