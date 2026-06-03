@@ -39,43 +39,20 @@ const instructorSignup = asyncHandler(async (req, res) => {
 
 // login user
 const instructorLogin = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body.data;
 
-  if (!(username || email)) {
-    throw new ApiError(400, "Email or username is missing");
-  }
+   const userId = req.user._id;
+   const dbUser = await User.findById(userId).select("-password -refreshToken")
 
-  const Dbuser = await Instructor.findOne({
-    $or: [{ username }, { email }],
-  });
+   if (!dbUser) {
+    throw new ApiError(400, "User doesn't exists")
+   }
 
-  if (!Dbuser) {
-    throw new ApiError(400, "Invalid credentials user doesn't exists");
-  }
-
-  const isPasswordValid = await Dbuser.isPasswordCorrect(password);
-
-  if (!isPasswordValid) {
-    throw new ApiError(400, "Invalid password");
-  }
-
-  const accessToken = Dbuser.generateAccessToken();
-  const refreshToken = Dbuser.generateRefreshToken();
-
-  const loggedUser = await Instructor.findByIdAndUpdate(Dbuser._id, {
-    refreshToken,
-  }).select("-password -refreshToken");
-
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
-
-  res
+   if (dbUser.role !== "instructor") {
+    throw new ApiError(400, "User is not an instructor")
+   }
+  
+   res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .cookie("type", "teacher", options)
     .json(new ApiResponse(200, "User successfully logged In", loggedUser));
 });
 
