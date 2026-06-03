@@ -38,7 +38,7 @@ import { getData } from "../../../services/indexed.db/db.js";
 import { nanoid } from "@reduxjs/toolkit";
 import localStorageService from "../../../services/localStorage.js";
 import UpdateLessonWithPreview from "./lessonManagerComp/upload.lesson.jsx";
-import { modifiedObject } from "../../../services/impfunctions.js";
+import { modifiedObject, handleVideoUpload } from "../../../services/impfunctions.js";
 
 export function LessonManager({
   course,
@@ -68,7 +68,7 @@ export function LessonManager({
     control,
   } = useForm({});
 
-  const addtheLesson = (data) => {
+  const addtheLesson = async (data) => {
     data.id = nanoid();
     const keysArr = [];
     //clear the non-existent keys and make keysout of array value keys
@@ -81,7 +81,9 @@ export function LessonManager({
         }
       }
     }
-    const lessonObj = modifiedObject(data, keysArr);
+    // const lessonObj = await modifiedObject(data, keysArr);
+    const lessonObj = await handleVideoUpload(data, keysArr);
+    
     const courseVal = localStorageService.getfromStorage("courseData")[0];
     onContinueToPublish(lessonObj, courseVal.id);
     setIsLessonModalOpen(false);

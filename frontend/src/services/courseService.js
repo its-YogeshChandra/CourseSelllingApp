@@ -19,19 +19,9 @@ export class courseAction {
     //#1 seperating course object
     const { lessons } = course;
     delete course.lessons;
-    const key = ["images", "videos", "notes"];
-    lessons.map((lesson) => {
-      key.forEach((key) => {
-        if (lesson[key]) {
-          if (Array.isArray(lesson[key])) {
-            lesson[key] = lesson[key].map((e) => {
-              console.log(e.files);
-              return e.files;
-            });
-          }
-        }
-      });
-    });
+    // Media files are already processed and uploaded to Cloudinary
+    // by modifiedObject() in impfunctions.js — lesson data now contains
+    // URLs ({title, url} objects), not File objects.
 
     //#2 sending course data to backend
     try {
@@ -47,30 +37,13 @@ export class courseAction {
       //#3 receiving data from backend
       const val = await courseadd();
 
-      //#4 updating lessondata with courseid and send data to backend(lessonhandler) :
+      //#4 updating lessondata with courseid and send metadata to backend:
+      // Lesson data already has Cloudinary URLs (video, videoChunks, image, notes)
+      // so we send plain JSON instead of multipart/form-data.
       const courseId = val.data._id;
       const values = lessons.map(async (lesson) => {
-        //creating formData (#way to send nested multipart data into backend )
-        const formData = new FormData();
         lesson.courseRef = courseId;
-        for (let keypart in lesson) {
-          if (
-            keypart === "images" ||
-            keypart === "videos" ||
-            keypart === "notes"
-          ) {
-            lesson[keypart].map((file) => {
-              formData.append(keypart, file);
-            });
-          } else {
-            formData.append(keypart, lesson[keypart]);
-          }
-        }
-
-        //sending data to backend
-        const response = await axios.post(lessonUrl, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response = await axios.post(lessonUrl, lesson);
         return response;
       });
       //waiting for all responses to collect
@@ -173,8 +146,8 @@ export class courseAction {
     }
   }
  
-  async uploadToMediaBucket(mediaFile, fileName) {
-    const url = `https://api.cloudinary.com/v1_1/${cloudname}/auto/upload`;
+  async uploadToMediaBucket(mediaFile, fileName, resourceType = "auto", contentRange, uploadId) {
+    const url = `https://api.cloudinary.com/v1_1/${cloudname}/${resourceType}/upload`;
    const formData = new FormData();
    formData.append('file', mediaFile, fileName);
    formData.append('upload_preset', uploadPreset);
@@ -182,9 +155,10 @@ export class courseAction {
    try {
     const response = await axios.post(url, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data' 
+        'Content-Type': 'multipart/form-data', 
+        'X-Unique-Upload-ID': uploadId,
+        'Content-Range': contentRange,
       },
-      
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         console.log(`Upload Progress (${fileName}): ${percentCompleted}%`);
