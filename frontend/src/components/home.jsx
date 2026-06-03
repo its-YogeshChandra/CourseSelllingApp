@@ -9,7 +9,7 @@ import Footer from "./footer.jsx";
 
 export default function Home() {
   return (
-    <div className="w-screen h-screen">
+    <div className="w-full min-h-screen">
       <CollegeLandingPage />
       <CourseSection />
       <CourseCatalogue />

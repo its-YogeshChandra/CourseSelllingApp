@@ -12,6 +12,8 @@ import CourseCategory from "../pages/courseCategory.jsx";
 import Cart from "../pages/cart.jsx";
 import UserProfile from "../components/userprofile.jsx";
 import InstructorDashboard from "../pages/instructor.jsx";
+import InstructorSignupPage from "../pages/instructorSignUp.page.jsx";
+import InstructorLoginPage from "../pages/instructorLogin.page.jsx";
 import TestingProfile from "../pages/testingProfile.jsx";
 import { redirect } from "react-router";
 
@@ -82,6 +84,14 @@ const Routing = createBrowserRouter([
           {
             path: "instructor",
             children: [
+              {
+                path: "signup",
+                Component: InstructorSignupPage,
+              },
+              {
+                path: "login",
+                Component: InstructorLoginPage,
+              },
               {
                 path: "dashboard",
                 Component: InstructorDashboard,

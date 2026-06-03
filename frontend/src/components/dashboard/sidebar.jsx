@@ -6,6 +6,8 @@ import {
   Settings,
   Upload,
 } from "lucide-react";
+import Logo from "../../assets/Logo.png";
+import { Link } from "react-router";
 
 // Navigation items configuration for the dashboard sidebar
 const sidebarItems = [
@@ -26,12 +28,12 @@ export function DashboardSidebarContent({
   return (
     <>
       {/* Sidebar header with platform branding */}
-      <div className="flex items-center flex-shrink-0 px-4 py-6">
-        <BookOpen className="h-8 w-8 text-blue-600" />
+      <Link to="/" className="flex items-center flex-shrink-0 px-4 py-6 hover:opacity-80 transition-opacity">
+        <img src={Logo} alt="Logo" className="w-10 h-10 object-contain" />
         <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
-          EduPlatform
+          Learnverge
         </span>
-      </div>
+      </Link>
 
       {/* Navigation menu */}
       <nav className="flex-1 px-4 pb-4 space-y-1">

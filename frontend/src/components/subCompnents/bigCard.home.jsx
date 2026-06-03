@@ -5,7 +5,7 @@ import studentpng from "../../assets/stuident.jpg"
 
 export default function CollegeLandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-100 via-teal-50 to-gray-100 relative overflow-hidden">
+    <div className="w-full bg-gradient-to-br from-orange-100 via-teal-50 to-gray-100 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-20 right-20 w-32 h-32 opacity-20">
         <svg viewBox="0 0 100 100" className="w-full h-full text-emerald-400">

@@ -87,10 +87,21 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right Icons */}
-        <div className="flex items-center gap-4 flex-shrink-0">
-          <button onClick={navigateToProfile}>
-            <img src={avatar} alt="avatar" className="w-10 h-10 rounded-full" />
+        {/* Right Icons / Buttons */}
+        <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
+          <button 
+            onClick={navigateToProfile}
+            className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-[#fd3556] border-2 border-[#fd3556] rounded-full hover:bg-red-50 transition-colors whitespace-nowrap"
+          >
+            <span className="hidden sm:inline">User Login</span>
+            <span className="sm:hidden">User</span>
+          </button>
+          <button 
+            onClick={() => navigate("/instructor/login")}
+            className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-[#fd3556] rounded-full hover:bg-[#e52e4a] transition-colors whitespace-nowrap"
+          >
+            <span className="hidden sm:inline">Instructor Login</span>
+            <span className="sm:hidden">Instructor</span>
           </button>
           {/* Mobile Menu Button */}
           <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>

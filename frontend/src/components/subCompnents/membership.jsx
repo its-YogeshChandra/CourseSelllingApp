@@ -2,7 +2,7 @@ import { Palette, Brain, Heart, User } from "lucide-react";
 
 export default function Membership() {
   return (
-    <div className="h-[525px] mt-5  flex font-inter max-[769px]:flex max-[769px]:flex-col">
+    <div className="h-auto lg:h-[525px] mt-5 flex font-inter flex-col lg:flex-row">
       {/* Left Section - Membership CTA */}
       <div className="flex-1 bg-red-500 flex items-center justify-center p-6 lg:p-8">
         <div className="max-w-xs text-white">

@@ -1,6 +1,9 @@
 import plane from "../../assets/plane.png";
+import { useNavigate } from "react-router";
 
 export default function TeacherSection() {
+  const navigate = useNavigate();
+
   return (
     <div className="bg-gray-300 pt-16 px-6 font-inter pb-28">
       <div className="max-w-7xl mx-auto">
@@ -30,7 +33,10 @@ export default function TeacherSection() {
                 injected humour, or randomized words which don't look even
                 slightly believable.
               </p>
-              <button className="bg-red-500 hover:bg-red-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
+              <button 
+                onClick={() => navigate("/instructor/signup")}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+              >
                 Apply Now
               </button>
             </div>
