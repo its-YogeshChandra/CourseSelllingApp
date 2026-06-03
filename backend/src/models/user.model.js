@@ -20,6 +20,11 @@ const userSchema = new Schema(
       type: String,
       trim: true,
     },
+    role: {
+      type: String,
+      enum: ["admin", "instructor", "student"],
+      default: "student",
+    },
     refreshToken: {
       type: String,
       trim: true,

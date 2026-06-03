@@ -17,21 +17,22 @@ const instructorSignup = asyncHandler(async (req, res) => {
       throw new ApiError(400, "User doesn't exists");
     }
 
-    const createUser = await Instructor.create({
-      username: username,
-      email: email,
-      password: password,
-    });
+    //update the role in the user object 
+    dbUser.role = "instructor"
+    await dbUser.save({ validateBeforeSave: false })
+      .then(async (saveddata) => {
+       const Dbuser = await User.findById(saveddata._id).select("-refreshToken");
+       
+       if (Dbuser.role !== "instructor") {
+        throw new ApiError(500, "Error occured during updating role")
+       } else {
+        return res.status(200).json(new ApiResponse(200, "Instructor creation successfull", Dbuser))
+       }
 
-    const Dbuser = await Instructor.findById(createUser._id).select("-refreshToken");
-
-    if (!Dbuser) {
-      throw new ApiError(500, "Error occured during creating user");
-    }
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, "User successfully registered", Dbuser));
+      })
+      .catch((err) => {
+        throw new ApiError(500, "Error occured during updating role")
+      })
 
 })
 
