@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CoursePlaylist from "../components/course.playlist ";
 import CoursePlayerComp from "../components/course.player.jsx";
-import { useEffect } from "react";
 import { courseServices } from "../services/courseService.js";
 
 export default function CoursePlayer() {
@@ -27,20 +26,21 @@ export default function CoursePlayer() {
   }, []);
 
   return (
-    <div className=" w-screen max-w-screen overflow-x-hidden h-max grid grid-cols-[1fr_0.5fr] grid-rows-1  max-lg:grid max-lg:grid-cols-1 max-lg:grid-rows-[1fr_1fr]">
-      {" "}
-      {/* change color for better quality*/}
-      <div className="  flex flex-col py-3 pl-2 max-md:p-1 gap-y-2 ">
-        {" "}
-        {/* change color for better quality*/}
-        <div className="w-full h-max pr-[8px] ">
-          {" "}
+    <div className="min-h-screen bg-gray-50/50 w-full overflow-x-hidden font-inter pt-20 lg:pt-24">
+      {/* 
+        Grid layout: 
+        1 column on mobile (player stacks on top of playlist)
+        2 columns on large screens with fixed width for playlist 
+      */}
+      <div className="max-w-[1600px] mx-auto p-4 lg:p-6 grid grid-cols-1 xl:grid-cols-[1fr_450px] lg:grid-cols-[1fr_350px] gap-6 lg:gap-8 items-start">
+        
+        {/* Left Side: Player Area */}
+        <div className="w-full flex flex-col">
           <CoursePlayerComp selectedDataType={selectedDataType} />
         </div>
-      </div>
-      <div className=" w-full">
-        {/* change color for better quality*/}
-        <div className="w-full h-full  lg:pt-18 pl-[8px] pr-[16px] ">
+        
+        {/* Right Side: Playlist Area (Sticky on Desktop) */}
+        <div className="w-full xl:sticky xl:top-24 mt-2 xl:mt-0">
           <CoursePlaylist
             coursefullData={courseData}
             lessonData={lessonData}

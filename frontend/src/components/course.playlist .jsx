@@ -1,232 +1,62 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ChevronDown,
   ChevronRight,
-  Play,
-  FileText,
-  Clock,
-  CheckCircle,
+  PlayCircle,
   FileImage,
-  NotebookText,
+  BookOpen,
+  Trophy,
+  CheckCircle2,
+  Clock,
+  Play
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useEffect } from "react";
-
-// Sample course data
-const courseData = {
-  title: "Advanced Web Development with React & Next.js",
-  chapters: [
-    {
-      id: "chapter-1",
-      title: "Getting Started with React",
-      subChapters: [
-        {
-          id: "1-1",
-          title: "Introduction to React",
-          type: "video",
-          duration: "12:45",
-          completed: true,
-        },
-        {
-          id: "1-2",
-          title: "Setting Up Your Development Environment",
-          type: "video",
-          duration: "08:30",
-          completed: true,
-        },
-        {
-          id: "1-3",
-          title: "React Components and Props",
-          type: "video",
-          duration: "15:20",
-          completed: false,
-        },
-        {
-          id: "1-4",
-          title: "Essential React Concepts",
-          type: "note",
-          duration: "05:00",
-          completed: false,
-        },
-      ],
-    },
-    {
-      id: "chapter-2",
-      title: "State Management in React",
-      subChapters: [
-        {
-          id: "2-1",
-          title: "Understanding React State",
-          type: "video",
-          duration: "14:15",
-          completed: false,
-        },
-        {
-          id: "2-2",
-          title: "Working with Forms and Events",
-          type: "video",
-          duration: "18:30",
-          completed: false,
-        },
-        {
-          id: "2-3",
-          title: "State Management Best Practices",
-          type: "note",
-          duration: "04:30",
-          completed: false,
-        },
-      ],
-    },
-    {
-      id: "chapter-3",
-      title: "Next.js Fundamentals",
-      subChapters: [
-        {
-          id: "3-1",
-          title: "Introduction to Next.js",
-          type: "video",
-          duration: "16:40",
-          completed: false,
-        },
-        {
-          id: "3-2",
-          title: "Routing in Next.js",
-          type: "video",
-          duration: "12:55",
-          completed: false,
-        },
-        {
-          id: "3-3",
-          title: "Data Fetching Methods",
-          type: "video",
-          duration: "20:10",
-          completed: false,
-        },
-        {
-          id: "3-4",
-          title: "Next.js API Routes",
-          type: "note",
-          duration: "06:15",
-          completed: false,
-        },
-        {
-          id: "3-5",
-          title: "Deployment Strategies",
-          type: "note",
-          duration: "07:30",
-          completed: false,
-        },
-      ],
-    },
-    {
-      id: "chapter-4",
-      title: "Advanced React Patterns",
-      subChapters: [
-        {
-          id: "4-1",
-          title: "Context API and useContext",
-          type: "video",
-          duration: "17:25",
-          completed: false,
-        },
-        {
-          id: "4-2",
-          title: "Custom Hooks",
-          type: "video",
-          duration: "15:50",
-          completed: false,
-        },
-        {
-          id: "4-3",
-          title: "Render Props and Higher-Order Components",
-          type: "video",
-          duration: "19:05",
-          completed: false,
-        },
-        {
-          id: "4-4",
-          title: "Performance Optimization",
-          type: "note",
-          duration: "08:20",
-          completed: false,
-        },
-      ],
-    },
-  ],
-};
 
 export default function CoursePlaylist({
   coursefullData,
   lessonData,
   setSelectedDataType,
 }) {
-  // State for expanded chapters
   const [isExpanded, setIsExpanded] = useState([]);
-
-  // state  for course
   const [courseValues, setCourseValues] = useState(null);
   const [lessons, setLesson] = useState(null);
+  const [activeItemId, setActiveItemId] = useState(null);
+  
+  // Dummy completed items for visual effect, in a real app this would come from props/backend
+  const [completedItems, setCompletedItems] = useState({});
 
-  // for updating the data with the course and lesson values
   useEffect(() => {
     if (coursefullData && lessonData) {
       setCourseValues(coursefullData);
       setLesson(lessonData);
+      
+      // Auto-expand first chapter by default
+      if (lessonData.length > 0 && isExpanded.length === 0) {
+        setIsExpanded([lessonData[0]._id]);
+      }
     }
   }, [coursefullData, lessonData]);
 
-  // State for completed items
-  const [completedItems, setCompletedItems] = useState(
-    // better thinking of using localstorage or indexedDB
-    // Initialize with completed items from the data
-    courseData.chapters.reduce((acc, chapter) => {
-      chapter.subChapters.forEach((subChapter) => {
-        if (subChapter.completed) {
-          acc[subChapter.id] = true;
-        }
+  const { totalItems, completedCount, progressPercentage } = useMemo(() => {
+    let totalItems = 0;
+    let completedCount = 0;
+
+    if (lessons) {
+      lessons.forEach((chapter) => {
+        totalItems += (chapter.video?.length || 0) + (chapter.image?.length || 0) + (chapter.notes?.length || 0);
       });
-      return acc;
-    }, {})
-  );
+      // Mocking some progress for UI demonstration if there's no actual completed data
+      completedCount = Math.floor(totalItems * 0.3); // 30% complete mockup
+    }
 
-  // Calculate total course duration and progress
-  const { totalDuration, totalItems, completedCount, progressPercentage } =
-    useMemo(() => {
-      let totalMinutes = 0;
-      let totalSeconds = 0;
-      let totalItems = 0;
-      let completedCount = 0;
+    const progressPercentage = totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
 
-      courseData.chapters.forEach((chapter) => {
-        chapter.subChapters.forEach((subChapter) => {
-          totalItems++;
-          const [minutes, seconds] = subChapter.duration.split(":").map(Number);
-          totalMinutes += minutes;
-          totalSeconds += seconds;
+    return {
+      totalItems,
+      completedCount,
+      progressPercentage,
+    };
+  }, [lessons, completedItems]);
 
-          if (completedItems[subChapter.id]) {
-            completedCount++;
-          }
-        });
-      });
-
-      // Adjust seconds to minutes
-      totalMinutes += Math.floor(totalSeconds / 60);
-      totalSeconds = totalSeconds % 60;
-
-      const formattedDuration = `${totalMinutes}h ${totalSeconds}m`;
-      const progressPercentage =
-        totalItems > 0 ? Math.round((completedCount / totalItems) * 100) : 0;
-
-      return {
-        totalDuration: formattedDuration,
-        totalItems,
-        completedCount,
-        progressPercentage,
-      };
-    }, [completedItems]);
-
-  // Toggle chapter expansion
   const toggleChapter = (chapterId) => {
     setIsExpanded((prev) => {
       if (prev.includes(chapterId)) {
@@ -237,171 +67,186 @@ export default function CoursePlaylist({
     });
   };
 
-  // Toggle completion status
-  const toggleCompletion = (subChapterId) => {
-    setCompletedItems((prev) => ({
-      ...prev,
-      [subChapterId]: !prev[subChapterId],
-    }));
+  const handleSelectItem = (dataType, url, id) => {
+    setSelectedDataType({ dataType, url, id });
+    setActiveItemId(id);
   };
 
-  // Get chapter duration
-  const getChapterDuration = (chapter) => {
-    let totalMinutes = 0;
-    let totalSeconds = 0;
+  if (!courseValues || !lessons) return null;
 
-    chapter.subChapters.forEach((subChapter) => {
-      const [minutes, seconds] = subChapter.duration.split(":").map(Number);
-      totalMinutes += minutes;
-      totalSeconds += seconds;
-    });
-
-    // Adjust seconds to minutes
-    totalMinutes += Math.floor(totalSeconds / 60);
-    totalSeconds = totalSeconds % 60;
-
-    return `${totalMinutes}:${totalSeconds.toString().padStart(2, "0")}`;
-  };
-
-  // Get chapter completion count
-  const getChapterCompletionCount = (chapter) => {
-    return chapter.subChapters.filter(
-      (subChapter) => completedItems[subChapter.id]
-    ).length;
-  };
-
-  if (courseValues && lessons) {
-    return (
-      <div className="w-full bg-white  shadow-md overflow-hidden font-inter rounded-2xl">
-        {/* Course Header */}
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 text-white">
-          <h1 className="text-xl font-bold">{courseValues.title}</h1>
-          <div className="flex justify-between items-center mt-2 text-sm">
-            <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-1" />
-              <span>200 min</span>
+  return (
+    <div className="w-full bg-white shadow-2xl shadow-gray-200/50 border border-gray-100 overflow-hidden font-inter rounded-3xl flex flex-col xl:max-h-[85vh]">
+      {/* Course Header */}
+      <div className="p-6 border-b border-gray-100 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl opacity-60"></div>
+        <div className="relative z-10">
+          <h1 className="text-xl font-extrabold text-gray-900 leading-tight mb-4">
+            {courseValues.title}
+          </h1>
+          
+          <div className="flex items-center justify-between text-sm font-medium text-gray-500 mb-3">
+            <div className="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-md">
+              <Clock className="w-4 h-4 text-indigo-500" />
+              <span>~ 12h 30m</span>
             </div>
-            <div>
-              {completedCount} of {totalItems} completed
+            <div className="flex items-center gap-1.5 text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md">
+              <Trophy className="w-4 h-4" />
+              <span>{progressPercentage}%</span>
             </div>
           </div>
 
           {/* Progress Bar */}
-          <div className="mt-3 h-2 bg-white/30 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden mt-1">
             <div
-              className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-300"
+              className="h-full bg-indigo-600 rounded-full transition-all duration-1000 ease-out relative"
               style={{ width: `${progressPercentage}%` }}
-            ></div>
+            >
+              <div className="absolute top-0 right-0 bottom-0 left-0 bg-gradient-to-r from-transparent to-white/30"></div>
+            </div>
           </div>
-          <div className="text-right text-xs mt-1">
-            {progressPercentage}% complete
+          <div className="text-xs text-gray-400 font-medium mt-2 flex justify-between">
+            <span>{completedCount} lessons completed</span>
+            <span>{totalItems} total</span>
           </div>
         </div>
+      </div>
 
-        {/* Chapters List */}
-        <div className="h-auto overflow-y-auto">
-          {lessons.map((chapter) => (
-            <div key={chapter._id} className="border-b border-gray-200">
+      {/* Chapters List */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar bg-gray-50/30">
+        {lessons.map((chapter, index) => {
+          const isOpen = isExpanded.includes(chapter._id);
+          
+          return (
+            <div key={chapter._id} className="border-b border-gray-100 last:border-b-0">
               {/* Chapter Header */}
               <button
                 onClick={() => toggleChapter(chapter._id)}
-                className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                className={`w-full flex items-center justify-between p-5 transition-all duration-200 ${
+                  isOpen ? "bg-white" : "hover:bg-white"
+                }`}
               >
-                <div className="flex items-center">
-                  {isExpanded.includes(chapter._id) ? (
-                    <ChevronDown className="w-5 h-5 text-gray-500 mr-2" />
-                  ) : (
-                    <ChevronRight className="w-5 h-5 text-gray-500 mr-2" />
-                  )}
-                  <span className="font-medium text-left">{chapter.title}</span>
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${
+                    isOpen ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-400"
+                  }`}>
+                    <span className="text-sm font-bold">{index + 1}</span>
+                  </div>
+                  <span className={`font-semibold text-left transition-colors ${
+                    isOpen ? "text-gray-900" : "text-gray-600"
+                  }`}>
+                    {chapter.title}
+                  </span>
                 </div>
-                <div className="text-sm text-gray-500 flex items-center">
-                  {/* <span className="mr-2">
-                  {getChapterCompletionCount(chapter)}/
-                  {chapter.subChapters.length}
-                </span> */}
-                  {/* <span>{getChapterDuration(chapter)}</span> */}
+                <div className={`p-1 rounded-full transition-all duration-200 ${
+                  isOpen ? "rotate-180 text-indigo-500" : "text-gray-400"
+                }`}>
+                  <ChevronDown className="w-5 h-5" />
                 </div>
               </button>
 
               {/* Sub-chapters */}
-              {isExpanded.includes(chapter._id) && (
-                <div className="pl-6 pr-2 pb-2">
-                  {chapter.video.length > 0 &&
-                    chapter.video.map((subChapter) => (
-                      <div
+              <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden bg-white ${
+                  isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+                }`}
+              >
+                <div className="px-3 pb-4 space-y-1">
+                  
+                  {/* Videos */}
+                  {chapter.video?.map((subChapter) => {
+                    const isActive = activeItemId === subChapter._id;
+                    return (
+                      <button
                         key={subChapter._id}
-                        className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg mb-1"
+                        onClick={() => handleSelectItem("video", subChapter.url, subChapter._id)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group ${
+                          isActive 
+                            ? "bg-indigo-50 border border-indigo-100 shadow-sm" 
+                            : "hover:bg-gray-50 border border-transparent"
+                        }`}
                       >
-                        <button
-                          className=""
-                          onClick={() =>
-                            setSelectedDataType((prev) => {
-                              return {
-                                dataType: "video",
-                                url: subChapter.url,
-                                id: subChapter._id,
-                              };
-                            })
-                          }
-                        >
-                          <div className="flex justify-evenly gap-x-2">
-                            <Play />
-                            <p>{subChapter.title}</p>
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg transition-colors ${
+                            isActive ? "bg-indigo-600 text-white shadow-md shadow-indigo-200" : "bg-indigo-50 text-indigo-500 group-hover:bg-indigo-100 group-hover:text-indigo-600"
+                          }`}>
+                            <PlayCircle className="w-4 h-4" />
                           </div>
-                        </button>
-                      </div>
-                    ))}
+                          <span className={`text-sm font-medium text-left ${
+                            isActive ? "text-indigo-900" : "text-gray-600 group-hover:text-gray-900"
+                          }`}>
+                            {subChapter.title}
+                          </span>
+                        </div>
+                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)] animate-pulse"></div>}
+                      </button>
+                    );
+                  })}
 
-                  {chapter.image.length > 0 &&
-                    chapter.image.map((subChapter) => (
-                      <div
+                  {/* Images */}
+                  {chapter.image?.map((subChapter) => {
+                    const isActive = activeItemId === subChapter._id;
+                    return (
+                      <button
                         key={subChapter._id}
-                        className="flex items-center  justify-between p-2 hover:bg-gray-50 rounded-lg mb-1"
+                        onClick={() => handleSelectItem("image", subChapter.url, subChapter._id)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group ${
+                          isActive 
+                            ? "bg-emerald-50 border border-emerald-100 shadow-sm" 
+                            : "hover:bg-gray-50 border border-transparent"
+                        }`}
                       >
-                        <button
-                          className=""
-                          onClick={() =>
-                            setSelectedDataType((prev) => {
-                              return { dataType: "image", url: subChapter.url };
-                            })
-                          }
-                        >
-                          <div className="flex justify-evenly gap-x-2">
-                            <FileImage />
-                            <p>{subChapter.title}</p>
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg transition-colors ${
+                            isActive ? "bg-emerald-500 text-white shadow-md shadow-emerald-200" : "bg-emerald-50 text-emerald-500 group-hover:bg-emerald-100 group-hover:text-emerald-600"
+                          }`}>
+                            <FileImage className="w-4 h-4" />
                           </div>
-                        </button>
-                      </div>
-                    ))}
+                          <span className={`text-sm font-medium text-left ${
+                            isActive ? "text-emerald-900" : "text-gray-600 group-hover:text-gray-900"
+                          }`}>
+                            {subChapter.title}
+                          </span>
+                        </div>
+                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse"></div>}
+                      </button>
+                    );
+                  })}
 
-                  {chapter.notes.length > 0 &&
-                    chapter.notes.map((subChapter) => (
-                      <div
+                  {/* Notes */}
+                  {chapter.notes?.map((subChapter) => {
+                    const isActive = activeItemId === subChapter._id;
+                    return (
+                      <button
                         key={subChapter._id}
-                        className="flex items-center  justify-between p-2 hover:bg-gray-50 rounded-lg mb-1"
+                        onClick={() => handleSelectItem("notes", subChapter.url, subChapter._id)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 group ${
+                          isActive 
+                            ? "bg-amber-50 border border-amber-100 shadow-sm" 
+                            : "hover:bg-gray-50 border border-transparent"
+                        }`}
                       >
-                        <button
-                          className=""
-                          onClick={() =>
-                            setSelectedDataType((prev) => {
-                              return { dataType: "notes", url: subChapter.url };
-                            })
-                          }
-                        >
-                          <div className="flex justify-evenly gap-x-2">
-                            <NotebookText />
-                            <p>{subChapter.title}</p>
+                        <div className="flex items-center gap-3">
+                          <div className={`p-2 rounded-lg transition-colors ${
+                            isActive ? "bg-amber-500 text-white shadow-md shadow-amber-200" : "bg-amber-50 text-amber-500 group-hover:bg-amber-100 group-hover:text-amber-600"
+                          }`}>
+                            <BookOpen className="w-4 h-4" />
                           </div>
-                        </button>
-                      </div>
-                    ))}
+                          <span className={`text-sm font-medium text-left ${
+                            isActive ? "text-amber-900" : "text-gray-600 group-hover:text-gray-900"
+                          }`}>
+                            {subChapter.title}
+                          </span>
+                        </div>
+                        {isActive && <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)] animate-pulse"></div>}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
-    );
-  }
+    </div>
+  );
 }
