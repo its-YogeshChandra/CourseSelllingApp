@@ -207,6 +207,7 @@ const isSubscribed = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "Student is present", isPresent));
 });
 
+
 // controller for adding student to the course
 const addStudentToCourse = asyncHandler(async (req, res) => {
   const { courseId, studentId } = req.body;

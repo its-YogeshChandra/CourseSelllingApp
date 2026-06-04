@@ -1,7 +1,6 @@
 import { connect } from "amqplib";
 
-
-
+//connection function 
 const connectToRabbitMQ = async () => {
     try {
         const connection = await connect(process.env.RABBITMQ_URL);
@@ -12,6 +11,7 @@ const connectToRabbitMQ = async () => {
     }
 }
 
+//adding message function 
 const sendMessageToQueue = async (channel, queueName, message) => {
     try {
         await channel.assertQueue(queueName, {
