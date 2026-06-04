@@ -3,9 +3,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiError.js";
 import { Course } from "../models/course.model.js";
 import { uploadonCloudinary } from "../utils/cloudinary.js";
-import { pathfinder } from "../utils/path.finder.js";
 import { Lesson } from "../models/courseData.model.js";
-import { deleteAllFilesInFolder } from "../utils/clearFolder.js";
 import { uploadOnRedis } from "../utils/redis_utility.js";
 
 const createcourse = asyncHandler(async (req, res) => {
@@ -47,69 +45,59 @@ const createcourse = asyncHandler(async (req, res) => {
 });
 
 const uploadlessons = asyncHandler(async (req, res) => {
-  //fetching data from body
-  //fetching data from files
-  //creating data in the db
-  //checking for edge cases
-  //sending data back to the user/client
+  // Frontend uploads files directly to Cloudinary and sends us JSON metadata.
+  // Expected req.body shape:
+  // {
+  //   title: "Lesson Title",
+  //   description: "...",
+  //   courseRef: "mongoObjectId",
+  //   videos: [{ title: "file.mp4", url: ["https://..."] }],
+  //   images: [{ title: "img.png", url: ["https://..."] }],
+  //   notes:  [{ title: "doc.pdf", url: ["https://..."] }]
+  // }
 
   const { title, courseRef, description, videos, images, notes } = req.body;
 
-  //rather destructuring check for key's
-  const keys = ["images", "videos", "notes"];
+  if (!title || !courseRef) {
+    throw new ApiError(400, "title and courseRef are required");
+  }
 
-  //iterate keys and punch value of present keys in the object or something
-  const arrayToUpload = [];
-  keys.map((key) => {
-    if (req.files[key]) {
-      arrayToUpload.push(pathfinder(req.files[key]));
-    }
-  });
-
-  const uploadedData = arrayToUpload.map((e) => {
-    return e.map((e) => {
-      return uploadonCloudinary(e);
-    });
-  });
-
-  const gainedValue = await Promise.all(uploadedData.flat());
-
+  // Build arrays matching the Lesson schema ({title, url} per item)
   const videosArr = [];
   const imagesArr = [];
   const notesArr = [];
 
-  gainedValue.map((e) => {
-    switch (e.resource_type) {
-      case "video":
-        const videoObj = {
-          title: e.original_filename,
-          url: e.secure_url,
-        };
-        videosArr.push(videoObj);
-        break;
-      case "image":
-        const obj = {
-          title: "",
-          url: "",
-        };
-        if (["jpg", "png", "jpeg"].includes(e.format)) {
-          obj.title = e.original_filename;
-          obj.url = e.secure_url;
-          imagesArr.push(obj);
-        } else {
-          obj.title = e.original_filename;
-          obj.url = e.secure_url;
-          notesArr.push(obj);
-        }
-        break;
-      default:
-        break;
+  if (Array.isArray(videos)) {
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i];
+      videosArr.push({
+        title: v.title || `video_${i}`,
+        url: Array.isArray(v.url) ? v.url[0] : v.url,
+      });
     }
-  });
+  }
 
-  //clear out the public => temp folder
-  deleteAllFilesInFolder("./public/temp");
+  if (Array.isArray(images)) {
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      imagesArr.push({
+        title: img.title || `image_${i}`,
+        url: Array.isArray(img.url) ? img.url[0] : img.url,
+      });
+    }
+  }
 
+  if (Array.isArray(notes)) {
+    for (let i = 0; i < notes.length; i++) {
+      const n = notes[i];
+      notesArr.push({
+        title: n.title || `note_${i}`,
+        url: Array.isArray(n.url) ? n.url[0] : n.url,
+      });
+    }
+  }
+
+  // Create the lesson document in DB
   const createLesson = await Lesson.create({
     title,
     courseRef,
@@ -118,23 +106,35 @@ const uploadlessons = asyncHandler(async (req, res) => {
     image: imagesArr,
     notes: notesArr,
   });
+
   if (!createLesson) {
     throw new ApiError(500, "Error while creating database document");
   }
-  
-const mediaArr = [videos, images, notes];
-   mediaArr.forEach((e) => {
-     //get the file name and the url 
-      const fileName = e.fileName;
-      const url = e.url;
 
-       //upload the job in redis
-       const job = uploadOnRedis(fileName, url, createLesson._id, e.resource_type);
-       if (!job ){
-        throw new ApiError(500, "Error while uploading job in redis");
-       }
-       console.log("Job uploaded in redis" , job);
-   })
+  // Queue Redis jobs for each media item
+  const mediaGroups = [
+    { items: videosArr, type: "video" },
+    { items: imagesArr, type: "image" },
+    { items: notesArr, type: "notes" },
+  ];
+
+  for (let g = 0; g < mediaGroups.length; g++) {
+    const group = mediaGroups[g];
+    for (let i = 0; i < group.items.length; i++) {
+      const item = group.items[i];
+      const job = await uploadOnRedis(
+        item.title,
+        item.url,
+        createLesson._id.toString(),
+        group.type
+      );
+      if (!job && job !== 0) {
+        console.error(`[Redis] Failed to queue job for ${group.type}: ${item.title}`);
+      } else {
+        console.log(`[Redis] Job queued for ${group.type}: ${item.title}`);
+      }
+    }
+  }
 
   res
     .status(200)

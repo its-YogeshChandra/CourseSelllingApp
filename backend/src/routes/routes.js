@@ -70,8 +70,8 @@ router.route("/updatepassword").post(updatePassword);
 // #1 for creating course
 courseRouter.route("/createcourse").post(uploadMiddleware, createcourse);
 
-//#2 for uploading lessons
-courseRouter.route("/uploadlessons").post(uploadMiddleware, uploadlessons);
+//#2 for uploading lessons (JSON metadata — files are uploaded directly to Cloudinary by frontend)
+courseRouter.route("/uploadlessons").post(uploadlessons);
 
 //#3 for getting course data
 courseRouter.route("/getCourseData").get(getCourses);
