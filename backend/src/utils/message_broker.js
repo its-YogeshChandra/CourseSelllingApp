@@ -51,11 +51,13 @@ const sendMessageToQueue = async (channel, queueName, message) => {
   );
 
   if (!sent) {
-    // Channel buffer is full — wait for drain before sending more
+    // Buffer full — message IS queued, but wait for drain before sending more
+    console.log("[RabbitMQ] Backpressure — waiting for drain...");
     await new Promise((resolve) => channel.once("drain", resolve));
   }
 
   console.log(`[RabbitMQ] Message sent to queue: ${queueName}`);
+  return true;
 };
 
 export { connectToRabbitMQ, sendMessageToQueue };

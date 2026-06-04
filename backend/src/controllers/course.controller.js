@@ -123,6 +123,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
       const item = group.items[i];
       const {connection, channel} = await connectToRabbitMQ();
       const job = await sendMessageToQueue(channel , "videoProcessing" , item);
+      console.log("job details : ", job)
       if (job){
         console.log(`[RabbitMQ] Job queued for ${group.type}: ${item.title}`);
       }else {
