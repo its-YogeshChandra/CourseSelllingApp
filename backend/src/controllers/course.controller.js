@@ -5,6 +5,7 @@ import { Course } from "../models/course.model.js";
 import { uploadonCloudinary } from "../utils/cloudinary.js";
 import { Lesson } from "../models/courseData.model.js";
 import { uploadOnRedis } from "../utils/redis_utility.js";
+import {connectToRabbitMQ , sendMessageToQueue} from "../utils/message_broker.js"
 
 const createcourse = asyncHandler(async (req, res) => {
   const { courseName, category, instructor, description, price, title } =
