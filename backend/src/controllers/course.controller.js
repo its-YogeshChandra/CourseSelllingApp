@@ -114,8 +114,6 @@ const uploadlessons = asyncHandler(async (req, res) => {
   // Queue Redis jobs for each media item
   const mediaGroups = [
     { items: videosArr, type: "video" },
-    { items: imagesArr, type: "image" },
-    { items: notesArr, type: "notes" },
   ];
 
   for (let g = 0; g < mediaGroups.length; g++) {
