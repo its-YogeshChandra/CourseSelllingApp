@@ -15,8 +15,9 @@ const connectToRabbitMQ = async () => {
 const sendMessageToQueue = async (channel, queueName, message) => {
     try {
         await channel.assertQueue(queueName, {
-            durable: false
+            durable: true 
         });
+
         await channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
         console.log(`Message sent to queue: ${queueName}`);
         
