@@ -121,16 +121,13 @@ const uploadlessons = asyncHandler(async (req, res) => {
     const group = mediaGroups[g];
     for (let i = 0; i < group.items.length; i++) {
       const item = group.items[i];
-      const job = await uploadOnRedis(
-        item.title,
-        item.url,
-        createLesson._id.toString(),
-        group.type
-      );
-      if (!job && job !== 0) {
-        console.error(`[Redis] Failed to queue job for ${group.type}: ${item.title}`);
-      } else {
-        console.log(`[Redis] Job queued for ${group.type}: ${item.title}`);
+      const {connection, channel} = await connectToRabbitMQ();
+      const job = await sendMessageToQueue(channel , "videoProcessing" , item);
+      if (job){
+        console.log(`[RabbitMQ] Job queued for ${group.type}: ${item.title}`);
+      }else {
+        console.error(`[RabbitMQ] Failed to queue job for ${group.type}: ${item.title}`);
+        throw new ApiError(500 , "Error while queuing job")
       }
     }
   }
