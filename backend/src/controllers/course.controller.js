@@ -6,19 +6,13 @@ import { uploadonCloudinary } from "../utils/cloudinary.js";
 import { pathfinder } from "../utils/path.finder.js";
 import { Lesson } from "../models/courseData.model.js";
 import { deleteAllFilesInFolder } from "../utils/clearFolder.js";
+import { uploadOnRedis } from "../utils/redis_utility.js";
 
 const createcourse = asyncHandler(async (req, res) => {
   const { courseName, category, instructor, description, price, title } =
     req.body;
   
-  //revamp the function
-
-  //read the directly from req.body
-  //no media will be shared through server 
-
-  
-
-  const files = req.files.thumbnail;
+    const files = req.files.thumbnail;
   const { path } = files[0];
 
   // upload data on cloudinary
@@ -59,7 +53,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
   //checking for edge cases
   //sending data back to the user/client
 
-  const { title, courseRef, description } = req.body;
+  const { title, courseRef, description, videos, images, notes } = req.body;
 
   //rather destructuring check for key's
   const keys = ["images", "videos", "notes"];
@@ -127,6 +121,20 @@ const uploadlessons = asyncHandler(async (req, res) => {
   if (!createLesson) {
     throw new ApiError(500, "Error while creating database document");
   }
+  
+const mediaArr = [videos, images, notes];
+   mediaArr.forEach((e) => {
+     //get the file name and the url 
+      const fileName = e.fileName;
+      const url = e.url;
+
+       //upload the job in redis
+       const job = uploadOnRedis(fileName, url, createLesson._id, e.resource_type);
+       if (!job ){
+        throw new ApiError(500, "Error while uploading job in redis");
+       }
+       console.log("Job uploaded in redis" , job);
+   })
 
   res
     .status(200)
