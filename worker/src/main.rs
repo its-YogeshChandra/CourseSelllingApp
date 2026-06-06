@@ -1,24 +1,36 @@
-//writing a custom background worker 
+mod cloudinary;
+mod config;
 mod consumer;
 mod handlers;
 mod models;
-use tokio;
-use lapin :: {
-   BasicProperties, Connection, ConnectionProperties, Result, options::*, types::FieldTable
-};
+
 use dotenvy::dotenv;
-use std::env;
-//conect to the rabbit mq using lapin 
+use tracing::info;
+use tracing_subscriber::EnvFilter;
+
+use crate::config::Config;
+use crate::consumer::run_worker_pool;
 
 #[tokio::main]
 async fn main() {
-  dotenv().ok();
-    let conn_addr = std::env::var("RABBITMQ_URL").expect("RABBITMQ_URL must be set");
-    let runtime = lapin::runtime::default_runtime().unwrap();
+    // Load .env file (if present)
+    dotenv().ok();
 
-    let connection = Connection::connect(&conn_addr , ConnectionProperties::default()).await.unwrap();
-    let channel = connection.create_channel().await.unwrap();
+    // Initialize structured logging.
+    // Set RUST_LOG=info (or debug/trace) to control verbosity.
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
+        )
+        .init();
 
-    let mut consumer = channel.basic_consume("videoProcessing".into(), "my-worker".into(),BasicConsumeOptions::default(), FieldTable::default());
-     
+    info!("Starting video processing worker...");
+
+    let config = Config::from_env();
+    info!(workers = config.worker_count, "Config loaded ✓");
+
+    if let Err(e) = run_worker_pool(config).await {
+        tracing::error!("Worker pool exited with error: {}", e);
+        std::process::exit(1);
     }
+}
