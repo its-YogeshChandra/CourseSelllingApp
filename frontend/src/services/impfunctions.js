@@ -8,8 +8,6 @@ const handleVideoUpload = async (data, keysArr) => {
   console.log("[handleVideoUpload] Called with keys:", keysArr);
   console.log("[handleVideoUpload] Input data:", data);
 
-  // react-hook-form Controller uses [...e.target.files] which produces
-  // a plain Array of File objects, NOT a FileList. So we check Array.isArray.
   for (let k = 0; k < keysArr.length; k++) {
     const key = keysArr[k];
     const value = data[key];
@@ -20,46 +18,66 @@ const handleVideoUpload = async (data, keysArr) => {
     }
 
     const uploadedResults = [];
+    const isVideo = key === "videos";
 
     for (let f = 0; f < value.length; f++) {
       const file = value[f];
 
-      // Each item should be a File object
       if (!(file instanceof File)) {
         console.log(`[handleVideoUpload] Key "${key}" item ${f} is not a File — skipping`);
         continue;
       }
 
-      const fileSize = file.size;
-      const chunkSize = getOptimalChunkSize(fileSize);
-      const totalChunks = Math.ceil(fileSize / chunkSize);
+      if (isVideo) {
+        // ── Chunked upload for videos ──
+        const fileSize = file.size;
+        const chunkSize = getOptimalChunkSize(fileSize);
+        const totalChunks = Math.ceil(fileSize / chunkSize);
+        const uniqueUploadId = nanoid();
+        const fileName = `courses/${key}/${file.name}_${nanoid(6)}`;
 
-      console.log(`[handleVideoUpload] Key: "${key}", File: "${file.name}", Size: ${(fileSize / 1024 / 1024).toFixed(2)}MB, Chunks: ${totalChunks}`);
+        console.log(`[Chunked] "${file.name}", ${(fileSize / 1024 / 1024).toFixed(2)}MB, ${totalChunks} chunks`);
 
-      const chunkUrls = [];
-      const uniqueUploadId = nanoid();
-      const fileName = `courses/${key}/${file.name}_${nanoid(6)}_chunk${f}`;
-      
-      for (let i = 0; i < totalChunks; i++) {
-        const start = i * chunkSize;
-        const end = Math.min(start + chunkSize, fileSize);
+        const chunkUrls = [];
 
-        const chunkBlob = file.slice(start, end);
-        
-        const contentRange = `bytes ${start}-${end - 1}/${fileSize}`;
-        
-        const secureUrl = await courseServices.uploadToMediaBucket(chunkBlob, fileName, "video",contentRange,uniqueUploadId);
-        console.log(`[handleVideoUpload] Chunk ${i + 1}/${totalChunks} uploaded:`, secureUrl);
-        chunkUrls.push(secureUrl);
+        for (let i = 0; i < totalChunks; i++) {
+          const start = i * chunkSize;
+          const end = Math.min(start + chunkSize, fileSize);
+          const chunkBlob = file.slice(start, end);
+          const contentRange = `bytes ${start}-${end - 1}/${fileSize}`;
+
+          const secureUrl = await courseServices.uploadToMediaBucket(
+            chunkBlob, fileName, "video", contentRange, uniqueUploadId
+          );
+          console.log(`[Chunked] Chunk ${i + 1}/${totalChunks}:`, secureUrl);
+          chunkUrls.push(secureUrl);
+        }
+
+        uploadedResults.push({
+          title: file.name,
+          url: chunkUrls,
+        });
+
+      } else {
+        // ── Normal single upload for images and notes ──
+        const resourceType = key === "images" ? "image" : "raw";
+        const fileName = `courses/${key}/${file.name}_${nanoid(6)}`;
+
+        console.log(`[Single] "${file.name}" as ${resourceType}`);
+
+        const secureUrl = await courseServices.uploadToMediaBucket(
+          file, fileName, resourceType
+        );
+
+        console.log(`[Single] Uploaded:`, secureUrl);
+
+        uploadedResults.push({
+          title: file.name,
+          url: secureUrl,
+        });
       }
-
-      uploadedResults.push({
-        title: file.name,
-        url: chunkUrls,
-      });
     }
 
-    // Replace the File array with the upload results
     data[key] = uploadedResults;
   }
 

@@ -153,12 +153,14 @@ export class courseAction {
    formData.append('upload_preset', uploadPreset);
   
    try {
+    const headers = { 'Content-Type': 'multipart/form-data' };
+
+    // Only add chunked upload headers when provided
+    if (uploadId) headers['X-Unique-Upload-ID'] = uploadId;
+    if (contentRange) headers['Content-Range'] = contentRange;
+
     const response = await axios.post(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', 
-        'X-Unique-Upload-ID': uploadId,
-        'Content-Range': contentRange,
-      },
+      headers,
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         console.log(`Upload Progress (${fileName}): ${percentCompleted}%`);
