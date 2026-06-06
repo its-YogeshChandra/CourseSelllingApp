@@ -3,6 +3,7 @@ import { Header } from "./header";
 import { Sidebar, MobileTabBar } from "./sidebar";
 import { DashboardContent } from "./dashboard-content";
 import { UploadNewCourse } from "./upload-course";
+import { CoursesTable } from "./course-table";
 
 export function DashboardLayout() {
   const [darkMode, setDarkMode] = React.useState(false);
@@ -20,6 +21,8 @@ export function DashboardLayout() {
     switch (activeTab) {
       case "dashboard":
         return <DashboardContent />;
+      case "courses":
+        return <CoursesTable />;
       case "upload":
         return <UploadNewCourse />;
       default:

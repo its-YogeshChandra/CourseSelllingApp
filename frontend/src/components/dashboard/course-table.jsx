@@ -9,6 +9,7 @@ import {
   MoreHorizontal,
   Plus,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,8 +45,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-import { mockCourses } from "@/lib/mock-data";
 import { UploadCourseModal } from "./upload-course-modal";
+import { courseServices } from "../../services/courseService";
 
 /**
  * CoursesTable component - displays instructor's courses with filtering and pagination
@@ -57,12 +58,37 @@ export function CoursesTable() {
   const [courseFilter, setCourseFilter] = React.useState("all");
   const [currentPage, setCurrentPage] = React.useState(1);
   const [isUploadModalOpen, setIsUploadModalOpen] = React.useState(false);
+  const [courses, setCourses] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  // Fetch instructor's courses on mount
+  React.useEffect(() => {
+    const fetchCourses = async () => {
+      setLoading(true);
+      const response = await courseServices.getInstructorCourses();
+      if (response?.data) {
+        // Map backend shape to table shape
+        const mapped = response.data.map((c) => ({
+          id: c._id,
+          title: c.title || "Untitled",
+          thumbnail: c.thumbnail || "",
+          status: "Published",
+          students: c.students?.length || 0,
+          earnings: c.price?.price ? c.price.price * (c.students?.length || 0) : 0,
+          category: c.category || "",
+        }));
+        setCourses(mapped);
+      }
+      setLoading(false);
+    };
+    fetchCourses();
+  }, []);
 
   // Pagination configuration
   const coursesPerPage = 3;
 
   // Filter courses based on selected status
-  const filteredCourses = mockCourses.filter((course) => {
+  const filteredCourses = courses.filter((course) => {
     if (courseFilter === "all") return true;
     return course.status.toLowerCase() === courseFilter.toLowerCase();
   });
@@ -163,6 +189,20 @@ export function CoursesTable() {
         </div>
       </CardHeader>
       <CardContent>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground mb-4">You haven't created any courses yet.</p>
+            <Button onClick={() => setIsUploadModalOpen(true)} size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Your First Course
+            </Button>
+          </div>
+        ) : (
+        <>
         {/* ---- Mobile Card Layout (below md) ---- */}
         <div className="md:hidden space-y-3">
           {paginatedCourses.map((course) => (
@@ -287,6 +327,8 @@ export function CoursesTable() {
               </PaginationContent>
             </Pagination>
           </div>
+        )}
+        </>
         )}
       </CardContent>
       <UploadCourseModal

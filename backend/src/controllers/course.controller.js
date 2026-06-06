@@ -23,7 +23,7 @@ const createcourse = asyncHandler(async (req, res) => {
     title,
     courseName,
     category,
-    instructor,
+    instructor: req.user?._id ? [req.user._id.toString()] : (instructor || []),
     courseDescription: description,
     price,
     thumbnail: url,
@@ -154,6 +154,21 @@ const getCourses = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "data successfully received", data));
 });
 
+// controller for getting instructor's own courses
+const getInstructorCourses = asyncHandler(async (req, res) => {
+  const userId = req.user._id.toString();
+
+  const data = await Course.find({ instructor: userId });
+
+  if (!data) {
+    throw new ApiError(500, "Error while fetching instructor courses");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Instructor courses fetched", data));
+});
+
 //controller for getting both course and lessons
 const getCourseAndLessons = asyncHandler(async (req, res) => {
   //get query data from queries
@@ -267,6 +282,7 @@ export {
   uploadlessons,
   updatelessons,
   getCourses,
+  getInstructorCourses,
   getCourseAndLessons,
   isSubscribed,
   addStudentToCourse,

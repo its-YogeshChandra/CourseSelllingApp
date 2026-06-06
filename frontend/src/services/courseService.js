@@ -4,6 +4,7 @@ const {
   courseUrl,
   lessonUrl,
   getCoursesUrl,
+  getInstructorCoursesUrl,
   getCourseandLessonUrl,
   isPresent,
   addSubscription,
@@ -57,6 +58,21 @@ export class courseAction {
     const response = await axios.get(getCoursesUrl);
     if (response.data) {
       return response.data;
+    }
+  }
+
+  // function for getting instructor's own courses
+  async getInstructorCourses() {
+    try {
+      const response = await axios.get(getInstructorCoursesUrl, {
+        withCredentials: true,
+      });
+      if (response.data) {
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error fetching instructor courses:", error);
+      return null;
     }
   }
 

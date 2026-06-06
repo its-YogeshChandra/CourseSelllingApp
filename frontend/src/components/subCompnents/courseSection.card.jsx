@@ -23,7 +23,7 @@ export default function CourseSectionCard({ data }) {
         />
         <div className="absolute bottom-2 left-4 flex gap-2">
           <span className="bg-[#151522] text-white px-2 py-1 rounded-full text-sm ">
-            {data.category || Business & Finance}
+            {data.category || "General"}
           </span>
           <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm">
             Online Course
@@ -43,10 +43,10 @@ export default function CourseSectionCard({ data }) {
         <div className="flex items-center justify-between">
           <div>
             <span className="text-2xl font-bold text-red-500">
-              {data.price.currency}{" "}
+              {data.price?.currency || ""}{" "}
             </span>
             <span className="text-2xl font-bold text-red-500">
-              {data.price.price}{" "}
+              {data.price?.price != null ? data.price.price : "Free"}{" "}
             </span>
           </div>
 

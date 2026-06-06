@@ -15,6 +15,7 @@ import {
 import {
   createcourse,
   getCourses,
+  getInstructorCourses,
   uploadlessons,
   getCourseAndLessons,
   isSubscribed,
@@ -67,14 +68,17 @@ router.route("/updatepassword").post(updatePassword);
 
 //routes of course
 
-// #1 for creating course
-courseRouter.route("/createcourse").post(uploadMiddleware, createcourse);
+// #1 for creating course (jwtVerify ensures req.user is set for instructor linkage)
+courseRouter.route("/createcourse").post(jwtVerify, uploadMiddleware, createcourse);
 
 //#2 for uploading lessons (JSON metadata — files are uploaded directly to Cloudinary by frontend)
 courseRouter.route("/uploadlessons").post(uploadlessons);
 
 //#3 for getting course data
 courseRouter.route("/getCourseData").get(getCourses);
+
+//#3b for getting instructor's own courses
+courseRouter.route("/getInstructorCourses").get(jwtVerify, getInstructorCourses);
 
 //#4  for getting course and lesson data both
 courseRouter.route("/getCourseAndLessonData").get(getCourseAndLessons);
