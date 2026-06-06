@@ -50,17 +50,13 @@ pub async fn process_video(
 
     while let Some(entry) = entries.next_entry().await? {
         let fname = entry.file_name().to_string_lossy().to_string();
-        if fname.ends_with(".m4s") || fname == "init.mp4" {
+        if fname.ends_with(".ts") {
             file_names.push(fname);
         }
     }
 
-    // Sort: init.mp4 first, then chunks in order
-    file_names.sort_by(|a, b| {
-        if a == "init.mp4" { return std::cmp::Ordering::Less; }
-        if b == "init.mp4" { return std::cmp::Ordering::Greater; }
-        a.cmp(b)
-    });
+    // Sort chunks in order
+    file_names.sort();
 
     // Upload segments
     for fname in &file_names {
@@ -139,14 +135,14 @@ async fn download_file(
     Ok(())
 }
 
-/// Run FFmpeg to convert input video → HLS with fMP4 segments.
+/// Run FFmpeg to convert input video → HLS with MPEG-TS segments.
 /// Tries VP9 first, falls back to H.264, then passthrough (copy).
 async fn run_ffmpeg_hls(
     input: &Path,
     output_dir: &Path,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let playlist = output_dir.join("playlist.m3u8");
-    let segment_pattern = output_dir.join("chunk_%03d.m4s");
+    let segment_pattern = output_dir.join("chunk_%03d.ts");
 
     let hls_args = |codec_args: Vec<&str>| -> Vec<String> {
         let mut args: Vec<String> = vec![
@@ -157,7 +153,7 @@ async fn run_ffmpeg_hls(
             "-f".into(), "hls".into(),
             "-hls_time".into(), "4".into(),
             "-hls_playlist_type".into(), "vod".into(),
-            "-hls_segment_type".into(), "fmp4".into(),
+            "-hls_segment_type".into(), "mpegts".into(),
             "-hls_segment_filename".into(), segment_pattern.to_string_lossy().into(),
             playlist.to_string_lossy().into(),
         ]);

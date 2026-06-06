@@ -83,7 +83,7 @@ export function PublishCourse({
             lessons: [],
           });
           setStep("course");
-          toast;
+          toast.success("Course uploaded successfully!");
         };
 
         setTimeout(() => {

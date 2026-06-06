@@ -11,6 +11,7 @@ import {
   Save,
   Trash2,
   Upload,
+  Loader2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,7 @@ export function LessonManager({
     notesFile: undefined,
     imageFiles: [],
   });
+  const [isUploading, setIsUploading] = useState(false);
   const {
     handleSubmit,
     formState: { errors },
@@ -69,6 +71,7 @@ export function LessonManager({
   } = useForm({});
 
   const addtheLesson = async (data) => {
+    setIsUploading(true);
     data.id = nanoid();
     const keysArr = [];
     //clear the non-existent keys and make keysout of array value keys
@@ -86,7 +89,11 @@ export function LessonManager({
     
     const courseVal = localStorageService.getfromStorage("courseData")[0];
     onContinueToPublish(lessonObj, courseVal.id);
+    setIsUploading(false);
     setIsLessonModalOpen(false);
+    toast.success(`"${data.title}" has been added to your course.`, {
+      description: "Lesson Added",
+    });
   };
 
   const editlesson = (lessonid) => {
@@ -468,9 +475,13 @@ export function LessonManager({
             </div>
             <DialogFooter>
               {/* <Button variant="outline">Cancel</Button> */}
-              <Button type="submit">
-                <Save className="mr-2 h-4 w-4" />
-                {editingLesson ? "Update Lesson" : "Add Lesson"}
+              <Button type="submit" disabled={isUploading}>
+                {isUploading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Save className="mr-2 h-4 w-4" />
+                )}
+                {editingLesson ? (isUploading ? "Updating..." : "Update Lesson") : (isUploading ? "Adding..." : "Add Lesson")}
               </Button>
             </DialogFooter>
           </form>
