@@ -73,7 +73,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
       const v = videos[i];
       videosArr.push({
         title: v.title || `video_${i}`,
-        url: Array.isArray(v.url) ? v.url[0] : v.url,
+        url: Array.isArray(v.url) ? v.url[v.url.length - 1] : v.url,
       });
     }
   }
@@ -83,7 +83,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
       const img = images[i];
       imagesArr.push({
         title: img.title || `image_${i}`,
-        url: Array.isArray(img.url) ? img.url[0] : img.url,
+        url: Array.isArray(img.url) ? img.url[img.url.length - 1] : img.url,
       });
     }
   }
@@ -93,7 +93,7 @@ const uploadlessons = asyncHandler(async (req, res) => {
       const n = notes[i];
       notesArr.push({
         title: n.title || `note_${i}`,
-        url: Array.isArray(n.url) ? n.url[0] : n.url,
+        url: Array.isArray(n.url) ? n.url[n.url.length - 1] : n.url,
       });
     }
   }
