@@ -160,26 +160,11 @@ async fn run_ffmpeg_hls(
         args
     };
 
-    // ── Attempt 1: VP9 ──
-    info!("FFmpeg attempt 1: VP9 (libvpx-vp9)");
-    let vp9_args = hls_args(vec![
-        "-vf", "scale='min(1280,iw)':'min(720,ih)'",
-        "-c:v", "libvpx-vp9", "-b:v", "2800k",
-        "-c:a", "aac", "-b:a", "128k",
-    ]);
-
-    if run_ffmpeg_cmd(&vp9_args).await? {
-        info!("VP9 succeeded ✓");
-        return Ok(());
-    }
-    warn!("VP9 failed, cleaning output and trying H.264...");
-    clean_dir(output_dir).await?;
-
-    // ── Attempt 2: H.264 ──
-    info!("FFmpeg attempt 2: H.264 (libx264)");
+    // ── Attempt 1: H.264 (native codec for MPEG-TS, best compatibility) ──
+    info!("FFmpeg attempt 1: H.264 (libx264)");
     let h264_args = hls_args(vec![
         "-vf", "scale='min(1280,iw)':'min(720,ih)'",
-        "-c:v", "libx264", "-b:v", "2800k",
+        "-c:v", "libx264", "-preset", "medium", "-b:v", "2800k",
         "-c:a", "aac", "-b:a", "128k",
     ]);
 
@@ -190,8 +175,8 @@ async fn run_ffmpeg_hls(
     warn!("H.264 failed, cleaning output and trying passthrough...");
     clean_dir(output_dir).await?;
 
-    // ── Attempt 3: Passthrough ──
-    info!("FFmpeg attempt 3: Passthrough (copy)");
+    // ── Attempt 2: Passthrough (copy — only works if source is already H.264) ──
+    info!("FFmpeg attempt 2: Passthrough (copy)");
     let copy_args = hls_args(vec![
         "-c:v", "copy",
         "-c:a", "aac", "-b:a", "128k",
