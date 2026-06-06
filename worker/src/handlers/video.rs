@@ -68,7 +68,7 @@ pub async fn process_video(
         let public_id = format!("{}/{}", cloud_folder, fname.replace('.', "_"));
 
         info!("Uploading segment: {} → {}", fname, public_id);
-        let url = upload_to_cloudinary(http, config, &file_path, &public_id, "raw").await?;
+        let url = upload_to_cloudinary(http, config, &file_path, &public_id, "video").await?;
 
         segment_urls.push(url.clone());
         name_to_url.insert(fname.clone(), url);

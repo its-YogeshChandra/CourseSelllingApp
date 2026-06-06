@@ -19,9 +19,7 @@ export class courseAction {
     //#1 seperating course object
     const { lessons } = course;
     delete course.lessons;
-    // Media files are already processed and uploaded to Cloudinary
-    // by modifiedObject() in impfunctions.js — lesson data now contains
-    // URLs ({title, url} objects), not File objects.
+ 
 
     //#2 sending course data to backend
     try {
