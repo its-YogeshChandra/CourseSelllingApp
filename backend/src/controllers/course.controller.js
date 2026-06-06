@@ -112,24 +112,23 @@ const uploadlessons = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Error while creating database document");
   }
 
-  // Queue Redis jobs for each media item
-  const mediaGroups = [
-    { items: videosArr, type: "video" },
-  ];
+  // Queue video jobs for the Rust worker
+  const { connection, channel } = await connectToRabbitMQ();
 
-  for (let g = 0; g < mediaGroups.length; g++) {
-    const group = mediaGroups[g];
-    for (let i = 0; i < group.items.length; i++) {
-      const item = group.items[i];
-      const {connection, channel} = await connectToRabbitMQ();
-      const job = await sendMessageToQueue(channel , "videoProcessing" , item);
-      console.log("job details : ", job)
-      if (job){
-        console.log(`[RabbitMQ] Job queued for ${group.type}: ${item.title}`);
-      }else {
-        console.error(`[RabbitMQ] Failed to queue job for ${group.type}: ${item.title}`);
-        throw new ApiError(500 , "Error while queuing job")
-      }
+  for (let i = 0; i < videosArr.length; i++) {
+    const item = videosArr[i];
+    const message = {
+      title: item.title,
+      url: item.url,
+      lesson_id: createLesson._id.toString(),
+    };
+    const job = await sendMessageToQueue(channel, "videoProcessing", message);
+    console.log("job details : ", job);
+    if (job) {
+      console.log(`[RabbitMQ] Job queued for video: ${item.title}`);
+    } else {
+      console.error(`[RabbitMQ] Failed to queue job for video: ${item.title}`);
+      throw new ApiError(500, "Error while queuing job");
     }
   }
 

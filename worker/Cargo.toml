@@ -4,7 +4,31 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-dotenvy = "0.15.7"
+# Async runtime
+tokio = { version = "1.52.3", features = ["full"] }
+
+# RabbitMQ client
 lapin = "4.10.0"
+
+# Serialization
 serde = { version = "1.0.228", features = ["derive"] }
-tokio = {version = "1.52.3", features = ["full"]}
+serde_json = "1.0"
+
+# Environment variables
+dotenvy = "0.15.7"
+
+# HTTP client (Cloudinary uploads)
+reqwest = { version = "0.12", features = ["json", "multipart", "stream"] }
+
+# MongoDB driver
+mongodb = "3.2"
+
+# Temp directory for FFmpeg output
+tempfile = "3.20"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Async stream utilities (for consumer iteration)
+futures-lite = "2.6"
