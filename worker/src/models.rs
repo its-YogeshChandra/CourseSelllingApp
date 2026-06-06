@@ -11,7 +11,7 @@ pub struct JobPayload {
 
 /// Result of HLS processing — one entry per segment + the playlist.
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct HlsSegment {
+pub struct _HlsSegment {
     pub name: String,
     pub cloud_url: String,
 }

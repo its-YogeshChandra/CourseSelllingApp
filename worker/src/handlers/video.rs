@@ -2,7 +2,7 @@ use std::path::Path;
 use mongodb::bson::{doc, Document};
 use mongodb::Collection;
 use reqwest::Client;
-use tracing::{info, warn, error};
+use tracing::{info, warn};
 
 use crate::cloudinary::upload_to_cloudinary;
 use crate::config::Config;
