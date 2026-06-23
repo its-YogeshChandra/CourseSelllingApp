@@ -1,6 +1,29 @@
 name: coursesellingapp-podman
 
 services:
+  #rabbit mq 
+  rabbitmq:
+    image: docker.io/library/rabbitmq:management-alpine
+    container_name: courseselling_rabbitmq
+    ports:
+      - "15672:15672"
+    expose:
+      - "5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - courseselling
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   backend:
     image: localhost/courseselling-backend:podman
     build:
@@ -18,6 +41,9 @@ services:
       - backend_chunks:/app/public/chunkPlaylist
     networks:
       - courseselling
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     restart: unless-stopped
     read_only: true
     tmpfs:
@@ -37,6 +63,9 @@ services:
       - ./worker/podman.env.sample
     networks:
       - courseselling
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     restart: unless-stopped
     init: true
     security_opt:
@@ -97,3 +126,4 @@ networks:
 volumes:
   backend_temp:
   backend_chunks:
+  rabbitmq_data:
