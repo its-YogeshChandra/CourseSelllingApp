@@ -1,0 +1,16 @@
+.git
+.gitignore
+.DS_Store
+.env
+.env.*
+node_modules
+**/node_modules
+**/.pnpm-store
+**/dist
+**/build
+**/coverage
+**/target
+**/.cache
+**/*.log
+frontend/node_modules
+worker/target

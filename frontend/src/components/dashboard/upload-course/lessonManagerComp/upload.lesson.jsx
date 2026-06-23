@@ -25,7 +25,6 @@ const UpdateLessonWithPreview = ({
     const fetchData = async () => {
       const data = await getData();
       const neededVal = data.filter((e) => e.id === courseId)[0];
-      console.log(neededVal);
       const lessonData = neededVal.lessons.filter((e) => e.id == lessonId)[0];
       setprevData(lessonData);
       setTitle(lessonData.title);
@@ -47,8 +46,6 @@ const UpdateLessonWithPreview = ({
     }, 6000);
     return () => clearTimeout(changeinDescription);
   }, [description]);
-
-  console.log(prevData);
 
   const modifier = (data, func) => {
     if (func == "add") {

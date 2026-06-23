@@ -100,11 +100,9 @@ export class courseAction {
         studentId,
       });
       if (response) {
-        console.log(response);
         return response.data;
       }
     } catch (error) {
-      console.log(error);
       return error.response.data;
     }
   }
@@ -117,11 +115,9 @@ export class courseAction {
         studentId,
       });
       if (response) {
-        console.log(response.data);
         return response.data;
       }
     } catch (error) {
-      console.log(error);
       return error.response.data;
     }
   }
@@ -134,11 +130,9 @@ export class courseAction {
       });
 
       if (response) {
-        console.log(response.data);
         return response.data;
       }
     } catch (error) {
-      console.log(error);
       return error.response.data;
     }
   }
@@ -151,11 +145,9 @@ export class courseAction {
       });
 
       if (response) {
-        console.log(response.data);
         return response.data;
       }
     } catch (error) {
-      console.log(error);
       return error.response.data;
     }
   }
@@ -177,13 +169,11 @@ export class courseAction {
       headers,
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        console.log(`Upload Progress (${fileName}): ${percentCompleted}%`);
       }
     });
 
     // Axios automatically parses the JSON response into 'data'
     //has to clear once api get checked 
-    console.log(`Successfully uploaded: ${response.data.secure_url}`);
     return response.data.secure_url; 
 
   } catch (error) {

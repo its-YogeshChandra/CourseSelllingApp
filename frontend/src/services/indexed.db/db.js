@@ -37,7 +37,6 @@ const dbinitialzed = new Promise((resolve, reject) => {
 const addData = async (data) => {
   const isDb = await dbinitialzed;
   if (isDb) {
-    console.log(data);
     const tx = db.transaction("courses", "readwrite");
     const addtoStore = tx.objectStore("courses");
     const request = addtoStore.add(data);
@@ -85,7 +84,6 @@ const addlesson = (lessonData, courseId) => {
     const getfromStore = tx.objectStore("courses");
     const request = getfromStore.getAll();
     request.onsuccess = (e) => {
-      console.log(lessonData);
       const val = e.target.result.filter((e) => e.id === courseId);
       const course = val[0];
       course.lessons = [...course.lessons, lessonData];
@@ -136,7 +134,6 @@ const deleteLesson = (courseId, lessonId) => {
     request.onsuccess = (e) => {
       const val = e.target.result.filter((e) => e.id === courseId);
       const course = val[0];
-      console.log(course);
       course.lessons = course.lessons.filter((e) => e.id !== lessonId);
       const updatetheStore = getfromStore.put(course);
       updatetheStore.onsuccess = (e) => {

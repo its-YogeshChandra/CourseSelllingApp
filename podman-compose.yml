@@ -1,0 +1,99 @@
+name: coursesellingapp-podman
+
+services:
+  backend:
+    image: localhost/courseselling-backend:podman
+    build:
+      context: ./backend
+      dockerfile: Containerfile.podman
+    env_file:
+      - ./backend/podman.env.sample
+    environment:
+      NODE_ENV: production
+      PORT: ${PORT:-8080}
+    expose:
+      - "8080"
+    volumes:
+      - backend_temp:/app/public/temp
+      - backend_chunks:/app/public/chunkPlaylist
+    networks:
+      - courseselling
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cpus: "1.0"
+    mem_limit: 512m
+    pids_limit: 256
+
+  worker:
+    image: localhost/courseselling-worker:podman
+    build:
+      context: ./worker
+      dockerfile: Containerfile.podman
+    env_file:
+      - ./worker/podman.env.sample
+    networks:
+      - courseselling
+    restart: unless-stopped
+    init: true
+    security_opt:
+      - no-new-privileges:true
+    cpus: "1.0"
+    mem_limit: 768m
+    pids_limit: 256
+
+  frontend:
+    image: localhost/courseselling-frontend:podman
+    build:
+      context: ./frontend
+      dockerfile: Containerfile.podman
+      args:
+        VITE_SIGNUP_USER: ${VITE_SIGNUP_USER:-/api/v1/users/signup}
+        VITE_LOGIN_USER: ${VITE_LOGIN_USER:-/api/v1/users/login}
+        VITE_GOOGLE_USER: ${VITE_GOOGLE_USER:-/api/v1/users/googleLogin}
+        VITE_AUTHME_URL: ${VITE_AUTHME_URL:-/api/v1/users/authme}
+        VITE_COURSE_ADDTOCOMPLETION_URL: ${VITE_COURSE_ADDTOCOMPLETION_URL:-/api/v1/users/addtocompletion}
+        VITE_COURSE_CHECKCOMPLETION_URL: ${VITE_COURSE_CHECKCOMPLETION_URL:-/api/v1/users/completioncheck}
+        VITE_FINDUSER_URL: ${VITE_FINDUSER_URL:-/api/v1/users/findUser}
+        VITE_UPDATEPASSWORD_URL: ${VITE_UPDATEPASSWORD_URL:-/api/v1/users/updatepassword}
+        VITE_UPDATEPROFILE_URL: ${VITE_UPDATEPROFILE_URL:-/api/v1/users/updateprofile}
+        VITE_LOGOUT_USER: ${VITE_LOGOUT_USER:-/api/v1/users/logout}
+        VITE_CREATEINSTRUCTOR_URL: ${VITE_CREATEINSTRUCTOR_URL:-/api/v1/instructor/createInstructor}
+        VITE_COURSE_URL: ${VITE_COURSE_URL:-/api/v1/course/createcourse}
+        VITE_LESSON_URL: ${VITE_LESSON_URL:-/api/v1/course/uploadlessons}
+        VITE_GETCOURSE_URL: ${VITE_GETCOURSE_URL:-/api/v1/course/getCourseData}
+        VITE_GETINSTRUCTOR_COURSES_URL: ${VITE_GETINSTRUCTOR_COURSES_URL:-/api/v1/course/instructorCourses}
+        VITE_GETCOURSE_LESSONS_URL: ${VITE_GETCOURSE_LESSONS_URL:-/api/v1/course/getCourseAndLessonData}
+        VITE_ISPRESENT_URL: ${VITE_ISPRESENT_URL:-/api/v1/course/isSubscribed}
+        VITE_ADDSUBSCRIPTION_URL: ${VITE_ADDSUBSCRIPTION_URL:-/api/v1/course/addStudentToCourse}
+        VITE_CLOUDNAME: ${VITE_CLOUDNAME:-}
+        VITE_UPLOADPRESET: ${VITE_UPLOADPRESET:-}
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_CLERK_PUBLISHABLE_KEY: ${VITE_CLERK_PUBLISHABLE_KEY:-}
+    expose:
+      - "80"
+    depends_on:
+      - backend
+    networks:
+      - courseselling
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:size=32m,mode=0755
+      - /var/run:size=8m,mode=0755
+    security_opt:
+      - no-new-privileges:true
+    cpus: "0.5"
+    mem_limit: 128m
+    pids_limit: 128
+
+networks:
+  courseselling:
+    driver: bridge
+
+volumes:
+  backend_temp:
+  backend_chunks:

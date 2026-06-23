@@ -5,15 +5,12 @@ import { courseServices } from "./courseService.js";
 
 //rewriting the upload logic 
 const handleVideoUpload = async (data, keysArr) => {
-  console.log("[handleVideoUpload] Called with keys:", keysArr);
-  console.log("[handleVideoUpload] Input data:", data);
 
   for (let k = 0; k < keysArr.length; k++) {
     const key = keysArr[k];
     const value = data[key];
 
     if (!Array.isArray(value)) {
-      console.log(`[handleVideoUpload] Key "${key}" is not an array — skipping`);
       continue;
     }
 
@@ -24,7 +21,6 @@ const handleVideoUpload = async (data, keysArr) => {
       const file = value[f];
 
       if (!(file instanceof File)) {
-        console.log(`[handleVideoUpload] Key "${key}" item ${f} is not a File — skipping`);
         continue;
       }
 
@@ -35,8 +31,6 @@ const handleVideoUpload = async (data, keysArr) => {
         const totalChunks = Math.ceil(fileSize / chunkSize);
         const uniqueUploadId = nanoid();
         const fileName = `courses/${key}/${file.name}_${nanoid(6)}`;
-
-        console.log(`[Chunked] "${file.name}", ${(fileSize / 1024 / 1024).toFixed(2)}MB, ${totalChunks} chunks`);
 
         const chunkUrls = [];
 
@@ -49,7 +43,6 @@ const handleVideoUpload = async (data, keysArr) => {
           const secureUrl = await courseServices.uploadToMediaBucket(
             chunkBlob, fileName, "video", contentRange, uniqueUploadId
           );
-          console.log(`[Chunked] Chunk ${i + 1}/${totalChunks}:`, secureUrl);
           chunkUrls.push(secureUrl);
         }
 
@@ -63,13 +56,9 @@ const handleVideoUpload = async (data, keysArr) => {
         const resourceType = key === "images" ? "image" : "raw";
         const fileName = `courses/${key}/${file.name}_${nanoid(6)}`;
 
-        console.log(`[Single] "${file.name}" as ${resourceType}`);
-
         const secureUrl = await courseServices.uploadToMediaBucket(
           file, fileName, resourceType
         );
-
-        console.log(`[Single] Uploaded:`, secureUrl);
 
         uploadedResults.push({
           title: file.name,
@@ -81,7 +70,6 @@ const handleVideoUpload = async (data, keysArr) => {
     data[key] = uploadedResults;
   }
 
-  console.log("[handleVideoUpload] Final data:", data);
   return data;
 }
 

@@ -56,7 +56,6 @@ export default function CourseBuyCard({ courseData }) {
 
         if (val?.success === true) {
           // User is already subscribed - could redirect to course player
-          console.log("User already subscribed to this course");
         } else {
           // User not subscribed - redirect to cart
           const meta = {
