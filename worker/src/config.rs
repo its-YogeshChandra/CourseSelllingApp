@@ -18,8 +18,8 @@ impl Config {
         Self {
             rabbitmq_url: env::var("RABBITMQ_URL")
                 .expect("RABBITMQ_URL must be set"),
-            mongodb_url: env::var("MONGODB_URL")
-                .expect("MONGODB_URL must be set"),
+            mongodb_url: env::var("WORKER_MONGODB_URL")
+                .expect("WORKER_MONGODB_URL must be set"),
             mongodb_db_name: env::var("MONGODB_DB_NAME")
                 .unwrap_or_else(|_| "CourseSellingDB".to_string()),
             cloudinary_cloud_name: env::var("CLOUDINARY_CLOUD_NAME")
