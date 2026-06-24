@@ -26,6 +26,7 @@ services:
 
   backend:
     image: localhost/courseselling-backend:podman
+    container_name: courseselling_backend
     build:
       context: ./backend
       dockerfile: Containerfile.podman
@@ -56,6 +57,7 @@ services:
 
   worker:
     image: localhost/courseselling-worker:podman
+    container_name: courseselling_worker
     build:
       context: ./worker
       dockerfile: Containerfile.podman
@@ -76,6 +78,7 @@ services:
 
   frontend:
     image: localhost/courseselling-frontend:podman
+    container_name: courseselling_frontend
     build:
       context: ./frontend
       dockerfile: Containerfile.podman
