@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/Logo.png";
 import { DivideCircle } from "lucide-react";
 
 function NavSidebar({clickHandler}) {
