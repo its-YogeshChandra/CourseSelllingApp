@@ -80,11 +80,11 @@ services:
   frontend:
     image: courseselling-frontend:docker
     container_name: courseselling_frontend
+    env_file:
+      - ./env.container
     build:
       context: ./frontend
       dockerfile: Dockerfile.docker
-      env_file:
-        - ./env.container
       args:
         - VITE_SIGNUP_USER
         - VITE_LOGIN_USER
