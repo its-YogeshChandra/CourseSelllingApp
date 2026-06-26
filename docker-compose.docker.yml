@@ -1,7 +1,7 @@
 name: coursesellingapp-docker
 
 services:
-  #rabbit mq 
+  #rabbit mq
   rabbitmq:
     image: rabbitmq:management-alpine
     container_name: courseselling_rabbitmq
