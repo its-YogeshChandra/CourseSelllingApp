@@ -69,6 +69,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "none",
   };
 
   res
@@ -106,7 +107,7 @@ const googleLogin = asyncHandler(async (req, res) => {
     const option = {
       httpOnly: true,
       secure: true,
-      // maxAge: 10*60*60*1000
+      sameSite: "none",
     };
 
     const access_Token = alreadyDbuser.generateAccessToken();
@@ -151,6 +152,7 @@ const googleLogin = asyncHandler(async (req, res) => {
     const option = {
       httpOnly: true,
       secure: true,
+      sameSite: "none",
     };
     res
       .status(200)
@@ -185,6 +187,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   const option = {
     httpOnly: true,
     secure: true,
+    sameSite: "none",
   };
   res
     .status(200)

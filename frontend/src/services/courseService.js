@@ -167,6 +167,7 @@ export class courseAction {
 
     const response = await axios.post(url, formData, {
       headers,
+      withCredentials: false, // override global default — Cloudinary doesn't support credentialed requests
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
       }

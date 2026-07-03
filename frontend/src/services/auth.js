@@ -3,6 +3,9 @@
 
 import axios from "axios";
 import { conf } from "../conf.js";
+
+// Send cookies with every request to the backend (cross-origin)
+axios.defaults.withCredentials = true;
 const {
   signupUrl,
   loginUrl,
@@ -80,9 +83,8 @@ export class AuthServices {
   //for auth me service
   async authMehandler() {
     try {
-      const response = await axios.post(authMe, {
+      const response = await axios.post(authMe, {}, {
         withCredentials: true,
-        credentials: "include",
       });
       if (response) {
         return response.data;
