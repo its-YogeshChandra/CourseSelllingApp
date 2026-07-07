@@ -55,7 +55,8 @@ export default function CourseBuyCard({ courseData }) {
         const val = await courseServices.isSubscribed(courseData._id, studentId);
 
         if (val?.success === true) {
-          // User is already subscribed - could redirect to course player
+          // User is already subscribed - redirect to course player
+          navigate(`/courseplayer?id=${courseData._id}`);
         } else {
           // User not subscribed - redirect to cart
           const meta = {

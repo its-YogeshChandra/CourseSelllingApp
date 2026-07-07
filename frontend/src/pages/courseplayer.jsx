@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import CoursePlaylist from "../components/course.playlist ";
 import CoursePlayerComp from "../components/course.player.jsx";
 import { courseServices } from "../services/courseService.js";
+import { useSearchParams } from "react-router";
 
 export default function CoursePlayer() {
   const [isVideo, setisVideo] = useState(true);
-  const courseId = "68773d54730e38b196734fb3";
+  const [searchParams] = useSearchParams();
+  const courseId = searchParams.get("id");
   const [courseData, setCourseData] = useState();
   const [lessonData, setlessonData] = useState();
   const [selectedDataType, setSelectedDataType] = useState({

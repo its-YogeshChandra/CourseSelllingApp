@@ -1,0 +1,62 @@
+{
+  "title": "LearnVerge – Course Selling Platform",
+
+  "summary": "A full-stack course selling platform where instructors can upload and manage video-based courses, and students can browse, subscribe, and track their learning progress with an integrated video player.",
+
+  "image": "./frontend/src/assets/screenshot.png",
+
+  "technologies": [
+    "React 19",
+    "Vite",
+    "Tailwind CSS v4",
+    "Radix UI",
+    "Redux Toolkit",
+    "React Query (TanStack)",
+    "React Router v7",
+    "React Hook Form + Zod",
+    "Axios",
+    "Shadcn/ui (via Radix + CVA)",
+    "Express.js v5",
+    "MongoDB (Mongoose)",
+    "Redis",
+    "RabbitMQ (amqplib)",
+    "Cloudinary",
+    "FFmpeg (fluent-ffmpeg)",
+    "JWT + bcrypt",
+    "Google OAuth (google-auth-library)",
+    "Multer",
+    "Rust (Tokio + Lapin)",
+    "Docker / Docker Compose",
+    "Nginx",
+    "pnpm"
+  ],
+
+  "role": "Full-stack developer – backend API, Rust worker, React frontend, DevOps (Docker, Nginx, CI)",
+
+  "whatItDoes": "Provides an end-to-end online learning experience: instructors create courses with video lessons (uploaded via chunked Cloudinary uploads), and students can browse course catalogs, subscribe to courses, stream HLS video, view PDF notes, and track lesson completion.",
+
+  "problem": "Aspiring educators lack an affordable, self-hostable platform to sell and deliver video courses, while students need a seamless way to discover, purchase, and consume course content with progress tracking.",
+
+  "approach": "Three-service architecture — a Node.js/Express REST API handles auth, course CRUD, and enrollment; a Rust-based async worker (Tokio + Lapin) consumes RabbitMQ jobs for heavy-lifting tasks like video transcoding via FFmpeg and Cloudinary uploads; and a React SPA served via Nginx provides the student/instructor UI. MongoDB stores course and user data, Redis handles caching/sessions, and Docker Compose orchestrates all services with health checks, resource limits, and security hardening.",
+
+  "highlights": [
+    "Polyglot backend: Node.js API + high-performance Rust worker for CPU-bound video processing",
+    "Chunked video uploads to Cloudinary with progress tracking and resumable uploads",
+    "RabbitMQ message queue decouples API from heavy media processing tasks",
+    "Dual auth: JWT cookie-based auth + Google OAuth sign-in",
+    "Role-based access for students and instructors with separate dashboards",
+    "HLS video streaming with FFmpeg-generated adaptive playlists",
+    "Course completion tracking at the per-lesson level",
+    "Production-ready Docker Compose with read-only containers, resource caps, PID limits, and no-new-privileges",
+    "Radix UI + Shadcn/ui component system with Tailwind CSS v4 for a polished, accessible frontend",
+    "Input validation with Zod on both client and server",
+    "Vercel-ready frontend config with SPA fallback routing"
+  ],
+
+  "links": {
+    "live": "https://learnverge.site",
+    "github": "https://github.com/its-YogeshChandra/CourseSelllingApp"
+  },
+
+  "status": "in production"
+}
