@@ -15,7 +15,12 @@ RUN --mount=type=cache,id=worker-cargo-registry,target=/usr/local/cargo/registry
     && rm -rf src
 
 COPY src ./src
-RUN --mount=type=cache,id=worker-cargo-registry,target=/usr/local/cargo/registry     --mount=type=cache,id=worker-cargo-git,target=/usr/local/cargo/git     --mount=type=cache,id=worker-target,target=/app/target     cargo build --release   && cp /app/target/release/worker /usr/local/bin/worker
+RUN --mount=type=cache,id=worker-cargo-registry,target=/usr/local/cargo/registry \
+    --mount=type=cache,id=worker-cargo-git,target=/usr/local/cargo/git \
+    --mount=type=cache,id=worker-target,target=/app/target \
+    touch src/main.rs \
+    && cargo build --release \
+    && cp /app/target/release/worker /usr/local/bin/worker
 
 FROM debian:bookworm-slim AS runtime
 
